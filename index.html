@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ESIR x EESAB</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./style.css">
+
+    <!-- Javascript -->
+    <script type="text/javascript" src="./vue.min.js" charset="utf-8"></script>
+
+
+
+  </head>
+  <body>
+
+    <div id="mainStrip" v-bind:style="style">
+    </div>
+
+    <div id="montageStrip" v-bind:style="style">
+      <div id="mMontageStrip">
+
+      </div>
+    </div>
+
+    <div id="montageShutter" v-bind:style="style">
+      <div id="mMontageShutter">
+
+      </div>
+    </div>
+
+    <div id="libraryStrip"v-on:click="click" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-bind:style="style">
+      <div id="mLibraryStrip" >
+
+      </div>
+    </div>
+
+    <div id="libraryShutter" v-bind:style="style">
+      <div id="mLibraryShutter">
+
+      </div>
+    </div>
+
+
+    <script type="text/javascript" src="./app.js" charset="utf-8"></script>
+  </body>
+</html>
