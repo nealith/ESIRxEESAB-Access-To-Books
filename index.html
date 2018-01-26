@@ -28,6 +28,15 @@
     </div>
 
     <div id="libraryShutter" v-bind:style="style">
+      <template v-for="book in books">
+        <div v-bind:style="styleBook" v-bind:id="book.name" v-on:wheel="onWheel">
+          <template v-for="page in book.pages">
+            <div v-bind:style="stylePage" >
+              <img v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage">
+            </div>
+          </template>
+        </div>
+      </template>
     </div>
 
 

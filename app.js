@@ -12,7 +12,15 @@ var frame = {
 
 const sizePourcent = 0.03125;
 
+var mouseCoord = {
+  x:0,
+  y:0
+}
 
+window.addEventListener('mousemove',function(e){
+  mouseCoord.x = e.clientX;
+  mouseCoord.y = e.clientY;
+});
 
 function strToFloat(s){
   //DEBUG

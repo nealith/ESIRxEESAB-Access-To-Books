@@ -17,6 +17,13 @@ montageShutter = new Vue({
       this.style.height = frame.h+'px';
       this.style.width = (strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left))) +'px';
 
+    }    ,
+    onScroll:function(){
+      console.log("scroll");
+      //console.log(e.id);
+      //var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+      //document.getElementById('yourDiv').scrollLeft -= (delta*40); // Multiplied by 40
+      e.preventDefault();
     }
   }
 });
