@@ -84,6 +84,30 @@ libraryShutter = new Vue({
       var delta = Math.max(-1, Math.min(1, e.deltaY));
       document.getElementById(e.currentTarget.id).scrollLeft += (delta*40); // Multiplied by 40
       e.preventDefault();
+    },
+    mouseDown:function(e){
+      //DEBUG
+      //console.log('libraryShutter:mouseDown');
+      this.down = true;
+    },
+    mouseUp:function(e){
+      //DEBUG
+      //console.log('libraryShutter:mouseUp');
+      this.down = false;
+    },
+    mouseMove:function(e){
+      //DEBUG
+      //console.log('libraryShutter:mouseMove');
+      if (this.down == true) {
+        var delta = Math.max(-1, Math.min(1, e.movementX));
+        console.log(e.movementY);
+        document.getElementById(e.currentTarget.id).scrollLeft -= (delta*10); // Multiplied by 40
+        var t = document.getElementById(e.currentTarget.id);
+        e.preventDefault();
+        //DEBUG
+        //console.log('libraryShutter:mouseMove:true');
+
+      }
     }
   }
 });
