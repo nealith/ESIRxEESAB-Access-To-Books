@@ -21,7 +21,13 @@
     <div id="montageStrip" v-bind:style="style">
     </div>
 
-    <div id="montageShutter" v-bind:style="style">
+    <div id="montageShutter" v-bind:style="style" v-on:wheel="onWheel">
+      <div id="montages" v-bind:style="styleMontages" v-on:wheel="onWheel">
+        <template v-for="montage in montages">
+          <div v-bind:style="styleMontage" v-bind:id="montage.name">
+          </div>
+        </template>
+      </div>
     </div>
 
     <div id="libraryStrip"v-on:click="click" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-bind:style="style">
@@ -43,8 +49,8 @@
     <script type="text/javascript" src="./app.js" charset="utf-8"></script>
     <script type="text/javascript" src="./mainStrip.js" charset="utf-8"></script>
     <script type="text/javascript" src="./montageStrip.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./montageShutter.js" charset="utf-8"></script>
     <script type="text/javascript" src="./libraryStrip.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./montageShutter.js" charset="utf-8"></script>
     <script type="text/javascript" src="./libraryShutter.js" charset="utf-8"></script>
   </body>
 </html>
