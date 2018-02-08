@@ -55,6 +55,11 @@ montageShutter = new Vue({
       this.styleMontage.height = size+'px';
       this.styleMontage.width = size+'px';
 
+      this.styleMontages['padding-left'] = 'auto';
+      this.styleMontages['padding-right'] = 'auto';
+
+      this.styleMontage.margin = size/8.0+'px auto '+size/8.0+'px auto';
+
 
 
     },
@@ -66,9 +71,9 @@ montageShutter = new Vue({
   }
 });
 
-montageShutter.styleMontage['padding-left'] = 'auto';
-montageShutter.styleMontage['padding-right'] = 'auto';
-montageShutter.styleMontage['overflow-y'] = 'scroll';
-montageShutter.styleMontage['overflow-x'] = 'hidden';
-montageShutter.styleMontage['margin-right'] = '-14px';
-montageShutter.styleMontage['white-space'] = 'nowrap';
+montageShutter.styleMontages['padding-left'] = 'auto';
+montageShutter.styleMontages['padding-right'] = 'auto';
+montageShutter.styleMontages['overflow-y'] = 'scroll';
+montageShutter.styleMontages['overflow-x'] = 'hidden';
+montageShutter.styleMontages['margin-right'] = '-14px';
+montageShutter.styleMontages['white-space'] = 'nowrap';
