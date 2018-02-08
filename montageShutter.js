@@ -68,17 +68,17 @@ montageShutter = new Vue({
     },
     mouseDown:function(e){
       //DEBUG
-      //console.log('libraryStrip:mouseDown');
+      //console.log('montageShutter:mouseDown');
       this.down = true;
     },
     mouseUp:function(e){
       //DEBUG
-      //console.log('libraryStrip:mouseUp');
+      //console.log('montageShutter:mouseUp');
       this.down = false;
     },
     mouseMove:function(e){
       //DEBUG
-      //console.log('libraryStrip:mouseMove');
+      //console.log('montageShutter:mouseMove');
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementY));
         console.log(e.movementY);
@@ -86,7 +86,7 @@ montageShutter = new Vue({
         var t = document.getElementById(e.currentTarget.id);
         e.preventDefault();
         //DEBUG
-        //console.log('libraryStrip:mouseMove:true');
+        //console.log('montageShutter:mouseMove:true');
 
       }
     }
