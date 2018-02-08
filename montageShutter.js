@@ -95,7 +95,4 @@ montageShutter = new Vue({
 
 montageShutter.style['padding-left'] = 'auto';
 montageShutter.style['padding-right'] = 'auto';
-montageShutter.style['overflow-y'] = 'scroll';
-montageShutter.style['overflow-x'] = 'hidden';
-montageShutter.style['margin-right'] = '-14px';
 montageShutter.style['white-space'] = 'nowrap';

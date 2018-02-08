@@ -46,7 +46,8 @@ libraryShutter = new Vue({
     styleBook:{
       height:(frame.h/booksLength)+14+'px',
       width:'auto',
-      background:'black'
+      background:'black',
+      overflow:'hidden'
     },
     stylePage:{
       display:'inline-block',
@@ -87,10 +88,4 @@ libraryShutter = new Vue({
   }
 });
 
-libraryShutter.styleBook['overflow-x'] = 'scroll';
-libraryShutter.styleBook['overflow-y'] = 'hidden';
-libraryShutter.styleBook['margin-bottom'] = '-14px';
-//libraryShutter.styleBook['overflow-y'] = 'hidden';
 libraryShutter.styleBook['white-space'] = 'nowrap';
-
-//window.addEventListener('scroll',libraryShutter.onScroll);
