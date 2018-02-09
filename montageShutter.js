@@ -89,6 +89,34 @@ montageShutter = new Vue({
         //console.log('montageShutter:mouseMove:true');
 
       }
+    },
+    touch:function(e){
+      switch (e.type) {
+        case "touchstart":
+          //DEBUG
+          //console.log('montageShutter:touchstart');
+          this.down = true;
+          break;
+        case "touchmove":
+          //DEBUG
+          //console.log('montageShutter:touchmove');
+          if (this.down == true) {
+            var delta = Math.max(-1, Math.min(1, e.movementY));
+            console.log(e.movementY);
+            document.getElementById(e.currentTarget.id).scrollTop -= (delta*40); // Multiplied by 40
+            var t = document.getElementById(e.currentTarget.id);
+            e.preventDefault();
+            //DEBUG
+            //console.log('montageShutter:touchmove:true');
+
+          }
+          break;
+        case "touchend":
+          //DEBUG
+          //console.log('montageShutter:touchend');
+          this.down = false;
+          break;
+      }
     }
   }
 });

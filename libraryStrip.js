@@ -59,6 +59,37 @@ libraryStrip = new Vue({
         //console.log('libraryStrip:mouseMove:new position:'+this.style.left);
 
       }
+    },
+    touch:function(e){
+      switch (e.type) {
+        case "touchstart":
+          //DEBUG
+          //console.log('libraryStrip:touchstart');
+          this.offsetX = strToFloat(this.style.left) - e.clientX;
+          //DEBUG
+          //console.log('libraryStrip:touchstart:new offsetX:'+this.offsetX);
+          this.down = true;
+          break;
+        case "touchmove":
+          //DEBUG
+          //console.log('libraryStrip:touchmove:'+e.clientX);
+          if (this.down == true &&
+            strToFloat(this.style.left) + strToFloat(this.style.width) + e.movementX <= frame.w &&
+            strToFloat(this.style.left) + e.movementX >= strToFloat(montageStrip.style.left) + strToFloat(montageStrip.style.width)) {
+            shutterController.onLibraryStripMove(e.movementX);
+            this.style.left  = (strToFloat(this.style.left) + e.movementX) + 'px';
+            ///DEBUG
+            //console.log('libraryStrip:touchmove:new position:'+this.style.left);
+
+          }
+          break;
+        case "touchend":
+          //DEBUG
+          //console.log('libraryStrip:touchend');
+          this.down = false;
+          break;
+      }
     }
+
   }
 });
