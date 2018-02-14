@@ -5,11 +5,11 @@
     <title>ESIR x EESAB</title>
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./ihm/style.css">
 
     <!-- Javascript -->
-    <script type="text/javascript" src="./vue.min.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./raphael.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./libs/vue.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./libs/raphael.min.js" charset="utf-8"></script>
 
 
 
@@ -37,7 +37,7 @@
         <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
           <template v-for="page in book.pages">
             <div v-bind:style="stylePage" >
-              <img v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage">
+              <img v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:mousedown.left="mouseDownPage">
             </div>
           </template>
         </div>
@@ -45,11 +45,11 @@
     </div>
 
 
-    <script type="text/javascript" src="./app.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./mainStrip.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./montageStrip.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./libraryStrip.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./montageShutter.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./libraryShutter.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/app.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/mainStrip.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/montageStrip.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/libraryStrip.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/montageShutter.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/libraryShutter.js" charset="utf-8"></script>
   </body>
 </html>

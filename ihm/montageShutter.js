@@ -18,6 +18,10 @@ var montages = [
 
 var size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 
+for (var i = 0; i < montages.length; i++) {
+  montages[i].raphael = {};
+}
+
 montageShutter = new Vue({
   el: '#montageShutter',
   data:{
@@ -56,7 +60,9 @@ montageShutter = new Vue({
 
       this.styleMontage.margin = size/8.0+'px auto '+size/8.0+'px auto';
 
-
+      for (var i = 0; i < montages.length; i++) {
+        montages[i].raphael.setSize(size,size);
+      }
 
     },
     onWheel:function(e){
@@ -120,6 +126,10 @@ montageShutter = new Vue({
     }
   }
 });
+
+for (var i = 0; i < montages.length; i++) {
+  montages[i].raphael = Raphael(montages[i].name,size,size);
+}
 
 montageShutter.style['padding-left'] = 'auto';
 montageShutter.style['padding-right'] = 'auto';

@@ -1,6 +1,36 @@
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
+const {ipcMain} = require('electron')
+
+// Library
+var library = require('./library.json')
+
+for (var i = 0; i < library.books.length; i++) {
+  for (var j = 0; j < library.books[i].pages.length; j++) {
+    library.books[i].pages[j].src =  'library/'+library.books[i].path+'/'+ library.books[i].pages[j].src
+  }
+}
+
+//----------------------------------------------------------------------
+// ipc
+//----------------------------------------------------------------------
+
+ipcMain.on('stripMoved',(event,arg) => {
+  console.log(arg)
+})
+
+ipcMain.on('getLibrary',(event,arg) => {
+
+  console.log('ask for library');
+  event.sender.send('receiveLibrary',library)
+
+})
+
+
+//----------------------------------------------------------------------
+// window
+//----------------------------------------------------------------------
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -12,10 +42,13 @@ function createWindow () {
 
   // and load the index.html of the app.
   win.loadURL(url.format({
-    pathname: path.join(__dirname, 'ihm/index.html'),
+    pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
     slashes: true
   }))
+
+
+
 
   // Open the DevTools.
   // win.webContents.openDevTools()
@@ -27,6 +60,8 @@ function createWindow () {
     // when you should delete the corresponding element.
     win = null
   })
+
+
 }
 
 // This method will be called when Electron has finished
