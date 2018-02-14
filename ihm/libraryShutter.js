@@ -92,7 +92,6 @@ function renderLibrary(library){
         }
         if (this.down == true) {
           var delta = Math.max(-1, Math.min(1, e.movementX));
-          console.log(e.movementY);
           document.getElementById(e.currentTarget.id).scrollLeft -= (delta*10); // Multiplied by 40
           var t = document.getElementById(e.currentTarget.id);
           e.preventDefault();
@@ -116,7 +115,6 @@ function renderLibrary(library){
             }
             if (this.down == true) {
               var delta = Math.max(-1, Math.min(1, e.movementX));
-              console.log(e.movementY);
               document.getElementById(e.currentTarget.id).scrollLeft -= (delta*10); // Multiplied by 40
               var t = document.getElementById(e.currentTarget.id);
               e.preventDefault();
@@ -137,6 +135,18 @@ function renderLibrary(library){
 
           pressTimer = window.setTimeout(function() { libraryShutter.down = false;},1000);
         }
+      },
+      dragPage:function(e){
+        var src = '';
+        for (var i = 0; i < books.length; i++) {
+          for (var j = 0; j < books[i].pages.length; j++) {
+            if (books[i].pages[j].id == e.currentTarget.id) {
+              src = books[i].pages[j].src;
+              break;
+            }
+          }
+        }
+        e.dataTransfer.setData('text',src);
       }
     }
   });

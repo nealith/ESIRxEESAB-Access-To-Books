@@ -123,6 +123,33 @@ montageShutter = new Vue({
           this.down = false;
           break;
       }
+    },
+    dragOverMontage:function(e){
+      e.preventDefault();
+    },
+    dropMontage:function(e){
+      var k = -1;
+      for (var i = 0; i < montages.length; i++) {
+        montages[i].name
+        if (e.currentTarget.id == montages[i].name) {
+          k=i;
+          break;
+        }
+      }
+
+      if (k >= 0) {
+        var a = size * 0.5;
+        var b = a / Math.sqrt(2);
+        var x = size * 0.5 - b * 0.5;
+        var y = size * 0.5 - a * 0.5;
+        var img = montages[k].raphael.image(e.dataTransfer.getData('text'),x,y,b,a);
+        img.show();
+        console.log("pass in a canvas, src:"+e.dataTransfer.getData('text'));
+      }
+
+      console.log("pass in dropImg");
+      console.log("target element : "+e.currentTarget.id);
+
     }
   }
 });

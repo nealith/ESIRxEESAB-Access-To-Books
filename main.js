@@ -9,6 +9,7 @@ var library = require('./library.json')
 for (var i = 0; i < library.books.length; i++) {
   for (var j = 0; j < library.books[i].pages.length; j++) {
     library.books[i].pages[j].src =  'library/'+library.books[i].path+'/'+ library.books[i].pages[j].src
+    library.books[i].pages[j].id = library.books[i].name + '_' + j
   }
 }
 

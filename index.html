@@ -24,7 +24,7 @@
 
     <div id="montageShutter" v-bind:style="style" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
       <template v-for="montage in montages">
-        <div v-bind:style="styleMontage" v-bind:id="montage.name">
+        <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage">
         </div>
       </template>
     </div>
@@ -37,7 +37,7 @@
         <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
           <template v-for="page in book.pages">
             <div v-bind:style="stylePage" >
-              <img v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:mousedown.left="mouseDownPage">
+              <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:drag="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
             </div>
           </template>
         </div>
