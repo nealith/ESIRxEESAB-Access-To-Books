@@ -17,6 +17,30 @@ var montages = [
 ]
 
 var size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
+var montage_data;
+
+//-
+// Raphael
+//
+
+start = function () {
+        // storing original coordinates
+        this.ox = this.attr("x");
+        this.oy = this.attr("y");
+},
+move = function (dx, dy) {
+
+    this.attr({x: this.ox + dx, y: this.oy + dy});
+
+}
+up = function () {
+
+};
+
+//
+// MontageShutter
+//
+
 
 for (var i = 0; i < montages.length; i++) {
   montages[i].raphael = {};
@@ -85,9 +109,11 @@ montageShutter = new Vue({
     mouseMove:function(e){
       //DEBUG
       //console.log('montageShutter:mouseMove');
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+      }
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementY));
-        console.log(e.movementY);
         document.getElementById(e.currentTarget.id).scrollTop -= (delta*40); // Multiplied by 40
         var t = document.getElementById(e.currentTarget.id);
         e.preventDefault();
@@ -106,6 +132,9 @@ montageShutter = new Vue({
         case "touchmove":
           //DEBUG
           //console.log('montageShutter:touchmove');
+          if (pressTimer) {
+            clearTimeout(pressTimer);
+          }
           if (this.down == true) {
             var delta = Math.max(-1, Math.min(1, e.movementY));
             console.log(e.movementY);
@@ -124,6 +153,16 @@ montageShutter = new Vue({
           break;
       }
     },
+    mouseDownPage:function(e){
+      this.down = true;
+      pressTimer = window.setTimeout(function() { montageShutter.down = false;},200);
+    },
+    touchPage:function(e){
+      if (e.type = 'touchstart') {
+
+        pressTimer = window.setTimeout(function() { montageShutter.down = false;},200);
+      }
+    },
     dragOverMontage:function(e){
       e.preventDefault();
     },
@@ -139,13 +178,25 @@ montageShutter = new Vue({
 
       if (k >= 0) {
         var rect = e.currentTarget.getBoundingClientRect();
-        var data = JSON.parse(e.dataTransfer.getData('text'));
+
+        var data;
+
+        try {
+          data = JSON.parse(e.dataTransfer.getData('text'));
+        } catch (e) {
+          data = montage_data;
+        } finally {
+
+        }
         var a = data.height;
         var b = data.width;
         var x = (e.clientX - rect.left) - data.offsetx;
         var y = (e.clientY - rect.top) - data.offsety;
         var img = montages[k].raphael.image(data.src,x,y,b,a);
-        img.show();
+        img.drag(move,start,up);
+        img.mousedown(montageShutter.mouseDownPage);
+        img.touchstart(montageShutter.touchPage);
+        //img.show();
         console.log("pass in a canvas, src:"+e.dataTransfer.getData('text'));
       }
 

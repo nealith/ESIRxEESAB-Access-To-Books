@@ -44,7 +44,7 @@ function renderLibrary(library){
         background:'pink',
         display:'block',
         height:(frame.h/booksLength - 2*pagePadding*(frame.h/booksLength))+'px',
-        width:(frame.h/booksLength - 2*pagePadding*(frame.h/booksLength))/Math.sqrt(2)+'px',
+        //width:(frame.h/booksLength - 2*pagePadding*(frame.h/booksLength))/Math.sqrt(2)+'px',
         overflow:'hidden'
       }
     },
@@ -62,7 +62,7 @@ function renderLibrary(library){
         this.stylePage.padding = pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px';
 
         this.styleImage.height = (pageHeight - 2*pagePadding*(pageHeight))+'px';
-        this.styleImage.width = (pageHeight - 2*pagePadding*(pageHeight))/Math.sqrt(2)+'px';
+        //this.styleImage.width = (pageHeight - 2*pagePadding*(pageHeight))/Math.sqrt(2)+'px';
 
       },
       onWheel:function(e){
@@ -77,7 +77,7 @@ function renderLibrary(library){
       },
       mouseDownPage:function(e){
         this.down = true;
-        pressTimer = window.setTimeout(function() { libraryShutter.down = false;},1000);
+        pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
       },
       mouseUp:function(e){
         //DEBUG
@@ -133,7 +133,7 @@ function renderLibrary(library){
       touchPage:function(e){
         if (e.type = 'touchstart') {
 
-          pressTimer = window.setTimeout(function() { libraryShutter.down = false;},1000);
+          pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
         }
       },
       dragPage:function(e){
