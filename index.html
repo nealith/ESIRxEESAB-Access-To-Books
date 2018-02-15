@@ -37,7 +37,7 @@
         <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
           <template v-for="page in book.pages">
             <div v-bind:style="stylePage" >
-              <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:drag="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
+              <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
             </div>
           </template>
         </div>

@@ -138,11 +138,13 @@ montageShutter = new Vue({
       }
 
       if (k >= 0) {
-        var a = size * 0.5;
-        var b = a / Math.sqrt(2);
-        var x = size * 0.5 - b * 0.5;
-        var y = size * 0.5 - a * 0.5;
-        var img = montages[k].raphael.image(e.dataTransfer.getData('text'),x,y,b,a);
+        var rect = e.currentTarget.getBoundingClientRect();
+        var data = JSON.parse(e.dataTransfer.getData('text'));
+        var a = data.height;
+        var b = data.width;
+        var x = (e.clientX - rect.left) - data.offsetx;
+        var y = (e.clientY - rect.top) - data.offsety;
+        var img = montages[k].raphael.image(data.src,x,y,b,a);
         img.show();
         console.log("pass in a canvas, src:"+e.dataTransfer.getData('text'));
       }

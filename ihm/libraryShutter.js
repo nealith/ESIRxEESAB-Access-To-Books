@@ -146,7 +146,20 @@ function renderLibrary(library){
             }
           }
         }
-        e.dataTransfer.setData('text',src);
+        var rect = e.currentTarget.getBoundingClientRect();
+        var data = {
+          offsetx: e.clientX - rect.left,
+          offsety: e.clientY - rect.top,
+          width: e.currentTarget.width,
+          height: e.currentTarget.height,
+          src: src
+        }
+
+        //e.dataTransfer.setData('text',src);
+        e.dataTransfer.setData('text',JSON.stringify(data));
+        e.dataTransfer.setDragImage(e.currentTarget, data.offsetx, data.offsety);
+        console.log(data);
+        //e.dataTransfer.setData('text',JSON.stringify(data));
       }
     }
   });
