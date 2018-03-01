@@ -75,12 +75,23 @@ const addPage = through2.obj(function (item, enc, next) {
   }
 })
 
-function walkBook(bookPath){
+
+ipcMain.on('walkonBook',(event,arg) => {
+
+  book={
+    name:arg.name,
+    path:libraryBooksPath+arg.name+'/',
+    originalPath: arg.path,
+    pages:[
+
+    ]
+  }
 
   var pages = []
 
-  klaw(bookPath)
+  klaw(arg.path)
     .pipe(addPage)
+    .on('error', err => event.sender.send('errorWhileWalkinOnBook',err))
     .on('data', item => {
       if (!item.deleted) return
       pages.push(item.path)
@@ -89,20 +100,10 @@ function walkBook(bookPath){
       console.dir(pages)
       library.books.push(book)
       saveLibrairy()
-    }) // => all deleted files
+      event.sender.send('receiveNewBook',null)
+    })
 
-}
-
-function addBook(name,bookPath){
-  book={
-    name:name,
-    path:libraryBooksPath+name+'/',
-    originalPath: bookPath,
-    pages:[
-
-    ]
-  }
-}
+})
 
 //----------------------------------------------------------------------
 // Rerpertory walking
