@@ -1,5 +1,10 @@
 {
-  "name"    : "your-app",
-  "version" : "0.1.0",
-  "main"    : "main.js"
+  "name": "your-app",
+  "version": "0.1.0",
+  "main": "main.js",
+  "dependencies": {
+    "klaw": "^2.1.1",
+    "through2": "^2.0.3",
+    "sharp": "^0.19.1"
+  }
 }
