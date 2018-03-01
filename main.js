@@ -105,6 +105,37 @@ function addBook(name,bookPath){
 }
 
 //----------------------------------------------------------------------
+// Rerpertory walking
+//----------------------------------------------------------------------
+
+var dirs = []
+
+const onlyDir = through2.obj(function (item, enc, next) {
+  if (item.stats.isDirectory()) {
+    this.push(item)
+    dirs.push({
+      name:path.basename(item),
+      path:item.path
+    })
+  }
+  next()
+})
+
+var items = [] // files, directories, symlinks, etc
+
+ipcMain.on('walkon',(event,arg) => {
+
+  klaw(arg)
+    .pipe(onlyDir)
+    .on('data', item => items.push(item.path))
+    .on('end', () => {
+      console.dir(items)
+      event.sender.send('receiveDirList',dirs)
+    })
+
+})
+
+//----------------------------------------------------------------------
 // ipc
 //----------------------------------------------------------------------
 
