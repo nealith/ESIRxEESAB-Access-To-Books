@@ -3,13 +3,104 @@ const path = require('path')
 const url = require('url')
 const {ipcMain} = require('electron')
 
+
+const fs = require('fs')
+const klaw = require('klaw')
+const through2 = require('through2')
+
+
 // Library
 var library = require('./library.json')
 
-for (var i = 0; i < library.books.length; i++) {
-  for (var j = 0; j < library.books[i].pages.length; j++) {
-    library.books[i].pages[j].src =  'library/'+library.books[i].path+'/'+ library.books[i].pages[j].src
-    library.books[i].pages[j].id = library.books[i].name + '_' + j
+function saveLibrairy(){
+  var jsonData = JSON.stringify(library);
+  fs.writeFile("library.json", jsonData, function(err) {
+      if(err) {
+          return console.log(err);
+      }
+  });
+}
+
+//----------------------------------------------------------------------
+// Librairy building
+//----------------------------------------------------------------------
+
+var book = {}
+var libraryPath = "./"
+var libraryBooksPath = "./library/"
+
+const Exts = [
+  "jpeg",
+  "jpg",
+  "png",
+  "webp",
+  "tiff",
+  "gif",
+  "svg"
+]
+
+function checkExt(ext){
+  for (var i = 0; i < Exts.length; i++) {
+    if(Exts[i].toUpperCase() === ext.toUpperCase()){
+      return true
+    }
+  }
+  return false
+}
+
+const addPage = through2.obj(function (item, enc, next) {
+  if (!item.stats.isDirectory() && checkExt(path.extname(item.path))) {
+    this.push(item)
+
+    sharp(item.path)
+    .resize(560, 360, {
+      kernel: sharp.kernel.lanczos3
+    })
+    .max()
+    .toFile(book.path+"page_"+book.page.length+".png",function(err){
+      if (err === undefined) {
+        book.pages.push({
+          originalPath:item.path,
+          description:"page "+book.page.length,
+          path:"page_"+book.page.length+".png",
+          id:book.name+'_'+book.page.length
+        })
+        next()
+      } else {
+        console.log(err)
+      }
+    })
+  } else {
+    next()
+  }
+})
+
+function walkBook(bookPath){
+
+  var pages = []
+
+  klaw(bookPath)
+    .pipe(addPage)
+    .on('data', item => {
+      if (!item.deleted) return
+      pages.push(item.path)
+    })
+    .on('end', () => {
+      console.dir(pages)
+      library.books.push(book)
+      saveLibrairy()
+    }) // => all deleted files
+
+}
+
+function addBook(name,bookPath){
+  book={
+    name:name,
+    path:libraryBooksPath+name+'/',
+    originalpath = bookPath,
+    pages:[
+
+    ]
   }
 }
 
