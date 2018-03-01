@@ -2,110 +2,140 @@
   "books":[
     {
       "name":"fake1",
-      "path":"fake1",
+      "path":"./library/fake1/",
       "pages":[
         {
-          "src":"page_1.png",
-          "description":"page_1"
+          "src":"./library/fake1/page_1.png",
+          "description":"page 1",
+          "id":"fake1_1"
         },{
-          "src":"page_2.png",
-          "description":"page_2"
+          "src":"./library/fake1/page_2.png",
+          "description":"page 2",
+          "id":"fake1_2"
         },{
-          "src":"page_3.png",
-          "description":"page_3"
+          "src":"./library/fake1/page_3.png",
+          "description":"page 3",
+          "id":"fake1_3"
         },{
-          "src":"page_4.png",
-          "description":"page_4"
+          "src":"./library/fake1/page_4.png",
+          "description":"page 4",
+          "id":"fake1_4"
         },{
-          "src":"page_5.png",
-          "description":"page_5"
+          "src":"./library/fake1/page_5.png",
+          "description":"page 5",
+          "id":"fake1_5"
         },{
-          "src":"page_6.png",
-          "description":"page_6"
+          "src":"./library/fake1/page_6.png",
+          "description":"page 6",
+          "id":"fake1_6"
         },{
-          "src":"page_7.png",
-          "description":"page_7"
+          "src":"./library/fake1/page_7.png",
+          "description":"page 7",
+          "id":"fake1_7"
         },{
-          "src":"page_8.png",
-          "description":"page_8"
+          "src":"./library/fake1/page_8.png",
+          "description":"page 8",
+          "id":"fake1_8"
         },{
-          "src":"page_9.png",
-          "description":"page_9"
+          "src":"./library/fake1/page_9.png",
+          "description":"page 9",
+          "id":"fake1_9"
         },{
-          "src":"page_10.png",
-          "description":"page_10"
+          "src":"./library/fake1/page_10.png",
+          "description":"page 10",
+          "id":"fake1_10"
         }
       ]
         },{
       "name":"fake2",
-      "path":"fake2",
+      "path":"./library/fake2/",
       "pages":[
         {
-          "src":"page_1.png",
-          "description":"page_1"
+          "src":"./library/fake2/page_1.png",
+          "description":"page 1",
+          "id":"fake2_1"
         },{
-          "src":"page_2.png",
-          "description":"page_2"
+          "src":"./library/fake2/page_2.png",
+          "description":"page 2",
+          "id":"fake2_2"
         },{
-          "src":"page_3.png",
-          "description":"page_3"
+          "src":"./library/fake2/page_3.png",
+          "description":"page 3",
+          "id":"fake2_3"
         },{
-          "src":"page_4.png",
-          "description":"page_4"
+          "src":"./library/fake2/page_4.png",
+          "description":"page 4",
+          "id":"fake2_4"
         },{
-          "src":"page_5.png",
-          "description":"page_5"
+          "src":"./library/fake2/page_5.png",
+          "description":"page 5",
+          "id":"fake2_5"
         },{
-          "src":"page_6.png",
-          "description":"page_6"
+          "src":"./library/fake2/page_6.png",
+          "description":"page 6",
+          "id":"fake2_6"
         },{
-          "src":"page_7.png",
-          "description":"page_7"
+          "src":"./library/fake2/page_7.png",
+          "description":"page 7",
+          "id":"fake2_7"
         },{
-          "src":"page_8.png",
-          "description":"page_8"
+          "src":"./library/fake2/page_8.png",
+          "description":"page 8",
+          "id":"fake2_8"
         },{
-          "src":"page_9.png",
-          "description":"page_9"
+          "src":"./library/fake2/page_9.png",
+          "description":"page 9",
+          "id":"fake2_9"
         },{
-          "src":"page_10.png",
-          "description":"page_10"
+          "src":"./library/fake2/page_10.png",
+          "description":"page 10",
+          "id":"fake2_10"
         }
       ]
     },{
       "name":"fake3",
-      "path":"fake3",
+      "path":"./library/fake3/",
       "pages":[
         {
-          "src":"page_1.png",
-          "description":"page_1"
+          "src":"./library/fake3/page_1.png",
+          "description":"page 1",
+          "id":"fake3_1"
         },{
-          "src":"page_2.png",
-          "description":"page_2"
+          "src":"./library/fake3/page_2.png",
+          "description":"page 2",
+          "id":"fake3_2"
         },{
-          "src":"page_3.png",
-          "description":"page_3"
+          "src":"./library/fake3/page_3.png",
+          "description":"page 3",
+          "id":"fake3_3"
         },{
-          "src":"page_4.png",
-          "description":"page_4"
+          "src":"./library/fake3/page_4.png",
+          "description":"page 4",
+          "id":"fake3_4"
         },{
-          "src":"page_5.png",
-          "description":"page_5"
+          "src":"./library/fake3/page_5.png",
+          "description":"page 5",
+          "id":"fake3_5"
         },{
-          "src":"page_6.png",
-          "description":"page_6"
+          "src":"./library/fake3/page_6.png",
+          "description":"page 6",
+          "id":"fake3_6"
         },{
-          "src":"page_7.png",
-          "description":"page_7"
+          "src":"./library/fake3/page_7.png",
+          "description":"page 7",
+          "id":"fake3_7"
         },{
-          "src":"page_8.png",
-          "description":"page_8"
+          "src":"./library/fake3/page_8.png",
+          "description":"page 8",
+          "id":"fake3_8"
         },{
-          "src":"page_9.png",
-          "description":"page_9"
+          "src":"./library/fake3/page_9.png",
+          "description":"page 9",
+          "id":"fake3_9"
         },{
-          "src":"page_10.png",
-          "description":"page_10"
+          "src":"./library/fake3/page_10.png",
+          "description":"page 10",
+          "id":"fake3_10"
         }
       ]
     }

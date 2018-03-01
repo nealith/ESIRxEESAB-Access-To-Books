@@ -62,7 +62,7 @@ const addPage = through2.obj(function (item, enc, next) {
         book.pages.push({
           originalPath:item.path,
           description:"page "+book.page.length,
-          path:"page_"+book.page.length+".png",
+          src:book.path+"page_"+book.page.length+".png",
           id:book.name+'_'+book.page.length
         })
         next()
@@ -97,7 +97,7 @@ function addBook(name,bookPath){
   book={
     name:name,
     path:libraryBooksPath+name+'/',
-    originalpath = bookPath,
+    originalPath: bookPath,
     pages:[
 
     ]
