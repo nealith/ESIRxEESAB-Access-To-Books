@@ -1,20 +1,4 @@
-var montages = [
-  {
-    name:"montage1"
-  },
-  {
-    name:"montage2"
-  },
-  {
-    name:"montage3"
-  },
-  {
-    name:"montage4"
-  },
-  {
-    name:"montage5"
-  }
-]
+var montages = remote.getGlobal('montages');
 
 var size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 var montage_data;
@@ -40,7 +24,6 @@ up = function () {
 //
 // MontageShutter
 //
-
 
 for (var i = 0; i < montages.length; i++) {
   montages[i].raphael = {};

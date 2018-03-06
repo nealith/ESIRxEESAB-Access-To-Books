@@ -13,10 +13,21 @@ var BOOKS_INDEX = require(CONFIG.books.index)
 var MONTAGES_INDEX = require(CONFIG.montages.index)
 const BOOKS_PATH = CONFIG.books.path
 const MONTAGES_PATH = CONFIG.montages.path
+global.books = BOOKS_INDEX
+global.montages = MONTAGES_INDEX
 
-function saveLibrairy(){
+function saveBooksIndex(){
   var jsonData = JSON.stringify(BOOKS_INDEX);
   fs.writeFile("BOOKS_INDEX.json", jsonData, function(err) {
+      if(err) {
+          return console.log(err);
+      }
+  });
+}
+
+function saveMontagesIndex(){
+  var jsonData = JSON.stringify(BOOKS_INDEX);
+  fs.writeFile("MONTAGES_INDEX.json", jsonData, function(err) {
       if(err) {
           return console.log(err);
       }
@@ -98,8 +109,8 @@ ipcMain.on('walkonBook',(event,arg) => {
     })
     .on('end', () => {
       console.dir(pages)
-      BOOKS_INDEX.books.push(book)
-      saveLibrairy()
+      BOOKS_INDEX.push(book)
+      saveBooksIndex()
       event.sender.send('receiveNewBook',null)
     })
 
@@ -143,14 +154,6 @@ ipcMain.on('walkon',(event,arg) => {
 ipcMain.on('stripMoved',(event,arg) => {
   console.log(arg)
 })
-
-ipcMain.on('getLibrary',(event,arg) => {
-
-  console.log('ask for Librairy');
-  event.sender.send('receiveLibrary',BOOKS_INDEX)
-
-})
-
 
 //----------------------------------------------------------------------
 // window

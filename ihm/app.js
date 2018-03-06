@@ -1,4 +1,5 @@
-const {ipcRenderer} = require('electron')
+const {ipcRenderer} = require('electron');
+const {remote} = require('electron');
 
 
 ///DEBUG
