@@ -1,0 +1,10 @@
+{
+  "montages":{
+    "index":"./montages.json",
+    "path":"./montages/"
+  },
+  "books":{
+    "index":"./books.json",
+    "path":"./books/"
+  }
+}

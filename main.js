@@ -8,13 +8,15 @@ const fs = require('fs')
 const klaw = require('klaw')
 const through2 = require('through2')
 
-
-// Library
-var library = require('./library.json')
+const CONFIG = require('./config.json')
+var BOOKS_INDEX = require(CONFIG.books.index)
+var MONTAGES_INDEX = require(CONFIG.montages.index)
+const BOOKS_PATH = CONFIG.books.path
+const MONTAGES_PATH = CONFIG.montages.path
 
 function saveLibrairy(){
-  var jsonData = JSON.stringify(library);
-  fs.writeFile("library.json", jsonData, function(err) {
+  var jsonData = JSON.stringify(BOOKS_INDEX);
+  fs.writeFile("BOOKS_INDEX.json", jsonData, function(err) {
       if(err) {
           return console.log(err);
       }
@@ -26,8 +28,6 @@ function saveLibrairy(){
 //----------------------------------------------------------------------
 
 var book = {}
-var libraryPath = "./"
-var libraryBooksPath = "./library/"
 
 const Exts = [
   "jpeg",
@@ -80,7 +80,7 @@ ipcMain.on('walkonBook',(event,arg) => {
 
   book={
     name:arg.name,
-    path:libraryBooksPath+arg.name+'/',
+    path:BOOKS_PATH+arg.name+'/',
     originalPath: arg.path,
     pages:[
 
@@ -98,7 +98,7 @@ ipcMain.on('walkonBook',(event,arg) => {
     })
     .on('end', () => {
       console.dir(pages)
-      library.books.push(book)
+      BOOKS_INDEX.books.push(book)
       saveLibrairy()
       event.sender.send('receiveNewBook',null)
     })
@@ -146,8 +146,8 @@ ipcMain.on('stripMoved',(event,arg) => {
 
 ipcMain.on('getLibrary',(event,arg) => {
 
-  console.log('ask for library');
-  event.sender.send('receiveLibrary',library)
+  console.log('ask for Librairy');
+  event.sender.send('receiveLibrary',BOOKS_INDEX)
 
 })
 
