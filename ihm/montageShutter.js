@@ -4,6 +4,32 @@ var svgCanvas = {}
 var size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 var montage_data;
 
+function saveMontage(montage){
+  console.log(montage)
+  fs.writeFile(montage.src, svgCanvas[montage.name].svg(), function(err) {
+  if(err) {
+      return console.log(err);
+  }
+  console.log("The file was saved!");
+  });
+}
+
+function saveMontages(){
+  for (var i = 0; i < montages.length; i++) {
+    saveMontage(montages[i]);
+  }
+}
+
+function attachAutomaticSaving(montage){
+  svgCanvas[montage.name].touchend(function(){
+    saveMontage(montage);
+  })
+  svgCanvas[montage.name].mouseup(function(){
+    saveMontage(montage);
+  })
+}
+
+
 //
 // MontageShutter
 //
@@ -191,7 +217,10 @@ ipcRenderer.on('sync_montages', (event, arg) => {
 ipcRenderer.on('new_montage_added', (event, arg) => {
   montages = remote.getGlobal('montages');
   montageShutter.montages = montages;
-  window.setTimeout(function() { svgCanvas[arg.name] = SVG(arg.name).size(size,size);},200);
+  window.setTimeout(function() {
+    svgCanvas[arg.name] = SVG(arg.name).size(size,size);
+    attachAutomaticSaving(arg);
+  },200);
 });
 
 
@@ -213,19 +242,9 @@ for (var i = 0; i < montages.length; i++) {
           maxY:size
         });
       },true)
+      attachAutomaticSaving(montage);
     }
 });
-}
-
-function saveSVG(){
-  for (var i = 0; i < montages.length; i++) {
-    fs.writeFile(montages[i].src, svgCanvas[montages[i].name].svg(), function(err) {
-    if(err) {
-        return console.log(err);
-    }
-    console.log("The file was saved!");
-    });
-  }
 }
 
 montageShutter.style['padding-left'] = 'auto';
