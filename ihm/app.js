@@ -1,6 +1,44 @@
 const {ipcRenderer} = require('electron');
 const {remote} = require('electron');
+const path = require('path');
+var fs = require('fs');
 
+// closed
+
+function beforeClosing(){
+  var toCall = function() {};
+  for (var i = 0; i < close.length; i++) {
+    toCall = onClosed[i];
+    toCall();
+  }
+}
+
+var onClosed = [];
+
+ipcRenderer.on('unload', (event, arg) => {
+    beforeClosing()
+    ipcRenderer.send('closed',null);
+});
+
+remote.getCurrentWindow().on('close', () => {
+  beforeClosing()
+})
+
+/*window.addEventListener('unload', function(event) {
+  beforeClosing()
+})
+
+window.addEventListener('beforeunload', function(event) {
+  beforeClosing()
+})
+
+window.addEventListener('close', function(event) {
+  beforeClosing()
+})
+
+window.addEventListener('closed', function(event) {
+  beforeClosing()
+})*/
 
 ///DEBUG
 //console.log('app:launch');

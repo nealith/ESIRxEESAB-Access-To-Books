@@ -13,7 +13,7 @@ montageShutter = new Vue({
   el: '#montageShutter',
   data:{
     div:document.getElementById('montageShutter'),
-    montages:montages,
+    montages:remote.getGlobal('montages'),
     down:false,
     style:{
       height : frame.h+'px',
@@ -46,6 +46,10 @@ montageShutter = new Vue({
       this.style['padding-right'] = 'auto';
 
       this.styleMontage.margin = size/8.0+'px auto '+size/8.0+'px auto';
+
+      for (var i = 0; i < montages.length; i++) {
+        svgCanvas[montages[i].name].size(size,size);
+      }
 
     },
     onWheel:function(e){
@@ -168,16 +172,60 @@ montageShutter = new Vue({
 
     },
     newMontage:function(name){
-      montages.push({
-        name:name
+      ipcRenderer.send('new_montage',{
+        name:name,
+        src:path.normalize(remote.getGlobal('montages_path')+'/'+name+'.svg')
       })
-      window.setTimeout(function() { svgCanvas[name] = SVG(name);},200);
+    },
+    printSVG:function(name){
+      console.log(svgCanvas[name].svg());
     }
   }
 });
 
+ipcRenderer.on('sync_montages', (event, arg) => {
+  montages = remote.getGlobal('montages');
+  montageShutter.montages = montages;
+});
+
+ipcRenderer.on('new_montage_added', (event, arg) => {
+  montages = remote.getGlobal('montages');
+  montageShutter.montages = montages;
+  window.setTimeout(function() { svgCanvas[arg.name] = SVG(arg.name).size(size,size);},200);
+});
+
+
+
 for (var i = 0; i < montages.length; i++) {
-  svgCanvas[montages[i].name] = SVG(montages[i].name);
+  console.log(montages[i])
+  var montage = montages[i];
+  fs.readFile(montage.src, {encoding: 'utf-8'}, function(err,data) {
+    if(err) {
+      return console.log(err);
+    } else {
+      svgCanvas[montage.name] = SVG(montage.name);
+      svgCanvas[montage.name].svg(data);
+      svgCanvas[montage.name].each(function(i, children) {
+        this.draggable({
+          minX:0,
+          minY:0,
+          maxX:size,
+          maxY:size
+        });
+      },true)
+    }
+});
+}
+
+function saveSVG(){
+  for (var i = 0; i < montages.length; i++) {
+    fs.writeFile(montages[i].src, svgCanvas[montages[i].name].svg(), function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("The file was saved!");
+    });
+  }
 }
 
 montageShutter.style['padding-left'] = 'auto';

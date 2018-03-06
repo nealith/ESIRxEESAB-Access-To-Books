@@ -9,16 +9,14 @@ const klaw = require('klaw')
 const through2 = require('through2')
 
 const CONFIG = require('./config.json')
-var BOOKS_INDEX = require(CONFIG.books.index)
-var MONTAGES_INDEX = require(CONFIG.montages.index)
-const BOOKS_PATH = CONFIG.books.path
-const MONTAGES_PATH = CONFIG.montages.path
-global.books = BOOKS_INDEX
-global.montages = MONTAGES_INDEX
+global.books = require(CONFIG.books.index)
+global.montages = require(CONFIG.montages.index)
+global.books_path = CONFIG.montages.path
+global.montages_path = CONFIG.montages.path
 
 function saveBooksIndex(){
-  var jsonData = JSON.stringify(BOOKS_INDEX);
-  fs.writeFile("BOOKS_INDEX.json", jsonData, function(err) {
+  var jsonData = JSON.stringify(global.books);
+  fs.writeFile(CONFIG.books.index, jsonData, function(err) {
       if(err) {
           return console.log(err);
       }
@@ -26,8 +24,8 @@ function saveBooksIndex(){
 }
 
 function saveMontagesIndex(){
-  var jsonData = JSON.stringify(BOOKS_INDEX);
-  fs.writeFile("MONTAGES_INDEX.json", jsonData, function(err) {
+  var jsonData = JSON.stringify(global.montages);
+  fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
       if(err) {
           return console.log(err);
       }
@@ -109,7 +107,7 @@ ipcMain.on('walkonBook',(event,arg) => {
     })
     .on('end', () => {
       console.dir(pages)
-      BOOKS_INDEX.push(book)
+      global.books.push(book)
       saveBooksIndex()
       event.sender.send('receiveNewBook',null)
     })
@@ -155,6 +153,16 @@ ipcMain.on('stripMoved',(event,arg) => {
   console.log(arg)
 })
 
+ipcMain.on('test',(event,arg) => {
+  console.log(global.montages)
+})
+
+ipcMain.on('new_montage',(event,arg) => {
+  global.montages.push(arg)
+  //event.sender.send('sync_montages',null)
+  event.sender.send('new_montage_added',arg)
+})
+
 //----------------------------------------------------------------------
 // window
 //----------------------------------------------------------------------
@@ -162,6 +170,10 @@ ipcMain.on('stripMoved',(event,arg) => {
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+
+ipcMain.on('closed',(event,arg) => {
+  win = null
+})
 
 function createWindow () {
   // Create the browser window.
@@ -178,7 +190,14 @@ function createWindow () {
 
 
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
+
+  win.on('close', () => {
+    //event.preventDefault()
+    saveBooksIndex()
+    saveMontagesIndex()
+    //win.webContents.send('unload', null);
+  })
 
   // Emitted when the window is closed.
   win.on('closed', () => {
