@@ -21,6 +21,7 @@ function saveMontages(){
 }
 
 function attachAutomaticSaving(montage){
+  console.log(montage)
   svgCanvas[montage.name].touchend(function(){
     saveMontage(montage);
   })
@@ -189,6 +190,7 @@ montageShutter = new Vue({
           maxY:size
         });
         img.mousedown = montageShutter.mouseDownPage;
+        saveMontage(montages[k]);
         //img.touchstart(montageShutter.touchPage);
         console.log("pass in a canvas, src:"+e.dataTransfer.getData('text'));
       }
@@ -220,18 +222,16 @@ ipcRenderer.on('new_montage_added', (event, arg) => {
   window.setTimeout(function() {
     svgCanvas[arg.name] = SVG(arg.name).size(size,size);
     attachAutomaticSaving(arg);
+    saveMontage(arg);
   },200);
 });
 
-
-
-for (var i = 0; i < montages.length; i++) {
-  console.log(montages[i])
-  var montage = montages[i];
+function loadMontage(montage){
   fs.readFile(montage.src, {encoding: 'utf-8'}, function(err,data) {
     if(err) {
       return console.log(err);
     } else {
+      console.log(montage.name);
       svgCanvas[montage.name] = SVG(montage.name);
       svgCanvas[montage.name].svg(data);
       svgCanvas[montage.name].each(function(i, children) {
@@ -244,7 +244,12 @@ for (var i = 0; i < montages.length; i++) {
       },true)
       attachAutomaticSaving(montage);
     }
-});
+  });
+}
+
+for (var i = 0; i < montages.length; i++) {
+  loadMontage(montages[i]);
+
 }
 
 montageShutter.style['padding-left'] = 'auto';
