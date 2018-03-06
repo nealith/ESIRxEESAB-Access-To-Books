@@ -4,29 +4,6 @@ var svgCanvas = {}
 var size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 var montage_data;
 
-var offset = {
-  x:0,
-  y:0
-}
-
-//-
-// Raphael
-//
-
-start = function () {
-        // storing original coordinates
-        this.ox = this.attr("x");
-        this.oy = this.attr("y");
-},
-move = function (dx, dy) {
-
-    this.attr({x: this.ox + dx, y: this.oy + dy});
-
-}
-up = function () {
-
-};
-
 //
 // MontageShutter
 //
@@ -181,20 +158,8 @@ montageShutter = new Vue({
           maxX:size,
           maxY:size
         });
-        /*img.draggable().on('beforedrag', function(e){
-          e.preventDefault()
-          // no other events are bound
-          // drag was completely prevented
-        })
-        img.draggable().on('dragmove', function(e){
-          e.preventDefault()
-          this.move(e.detail.p.x, e.detail.p.y)
-          // events are still bound e.g. dragend will fire anyway
-        })*/
-        //img.drag(move,start,up);
         img.mousedown = montageShutter.mouseDownPage;
         //img.touchstart(montageShutter.touchPage);
-        //img.show();
         console.log("pass in a canvas, src:"+e.dataTransfer.getData('text'));
       }
 
