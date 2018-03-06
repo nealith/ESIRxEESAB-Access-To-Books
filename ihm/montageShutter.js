@@ -1,8 +1,13 @@
 var montages = remote.getGlobal('montages');
-var raphaels = {}
+var svgCanvas = {}
 
 var size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 var montage_data;
+
+var offset = {
+  x:0,
+  y:0
+}
 
 //-
 // Raphael
@@ -64,10 +69,6 @@ montageShutter = new Vue({
       this.style['padding-right'] = 'auto';
 
       this.styleMontage.margin = size/8.0+'px auto '+size/8.0+'px auto';
-
-      for (var i = 0; i < montages.length; i++) {
-        raphaels[montages[i].name].setSize(size,size);
-      }
 
     },
     onWheel:function(e){
@@ -173,10 +174,26 @@ montageShutter = new Vue({
         var b = data.width;
         var x = (e.clientX - rect.left) - data.offsetx;
         var y = (e.clientY - rect.top) - data.offsety;
-        var img = raphaels[montages[k].name].image(data.src,x,y,b,a);
-        img.drag(move,start,up);
-        img.mousedown(montageShutter.mouseDownPage);
-        img.touchstart(montageShutter.touchPage);
+        var img = svgCanvas[montages[k].name].image(data.src,b,a).move(x,y);
+        img.draggable({
+          minX:0,
+          minY:0,
+          maxX:size,
+          maxY:size
+        });
+        /*img.draggable().on('beforedrag', function(e){
+          e.preventDefault()
+          // no other events are bound
+          // drag was completely prevented
+        })
+        img.draggable().on('dragmove', function(e){
+          e.preventDefault()
+          this.move(e.detail.p.x, e.detail.p.y)
+          // events are still bound e.g. dragend will fire anyway
+        })*/
+        //img.drag(move,start,up);
+        img.mousedown = montageShutter.mouseDownPage;
+        //img.touchstart(montageShutter.touchPage);
         //img.show();
         console.log("pass in a canvas, src:"+e.dataTransfer.getData('text'));
       }
@@ -189,13 +206,13 @@ montageShutter = new Vue({
       montages.push({
         name:name
       })
-      window.setTimeout(function() { raphaels[name] = Raphael(name,size,size);},200);
+      window.setTimeout(function() { svgCanvas[name] = SVG(name);},200);
     }
   }
 });
 
 for (var i = 0; i < montages.length; i++) {
-  raphaels[montages[i].name] = Raphael(montages[i].name,size,size);
+  svgCanvas[montages[i].name] = SVG(montages[i].name);
 }
 
 montageShutter.style['padding-left'] = 'auto';
