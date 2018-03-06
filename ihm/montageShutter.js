@@ -1,4 +1,5 @@
 var montages = remote.getGlobal('montages');
+var raphaels = {}
 
 var size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 var montage_data;
@@ -25,9 +26,6 @@ up = function () {
 // MontageShutter
 //
 
-for (var i = 0; i < montages.length; i++) {
-  montages[i].raphael = {};
-}
 
 montageShutter = new Vue({
   el: '#montageShutter',
@@ -68,7 +66,7 @@ montageShutter = new Vue({
       this.styleMontage.margin = size/8.0+'px auto '+size/8.0+'px auto';
 
       for (var i = 0; i < montages.length; i++) {
-        montages[i].raphael.setSize(size,size);
+        raphaels[montages[i].name].setSize(size,size);
       }
 
     },
@@ -175,7 +173,7 @@ montageShutter = new Vue({
         var b = data.width;
         var x = (e.clientX - rect.left) - data.offsetx;
         var y = (e.clientY - rect.top) - data.offsety;
-        var img = montages[k].raphael.image(data.src,x,y,b,a);
+        var img = raphaels[montages[k].name].image(data.src,x,y,b,a);
         img.drag(move,start,up);
         img.mousedown(montageShutter.mouseDownPage);
         img.touchstart(montageShutter.touchPage);
@@ -186,12 +184,18 @@ montageShutter = new Vue({
       console.log("pass in dropImg");
       console.log("target element : "+e.currentTarget.id);
 
+    },
+    newMontage:function(name){
+      montages.push({
+        name:name
+      })
+      window.setTimeout(function() { raphaels[name] = Raphael(name,size,size);},200);
     }
   }
 });
 
 for (var i = 0; i < montages.length; i++) {
-  montages[i].raphael = Raphael(montages[i].name,size,size);
+  raphaels[montages[i].name] = Raphael(montages[i].name,size,size);
 }
 
 montageShutter.style['padding-left'] = 'auto';
