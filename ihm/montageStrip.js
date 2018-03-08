@@ -1,5 +1,5 @@
-var montageSize = 0;
 var montages = remote.getGlobal('montages');
+var montageSize = Math.min(frame.h*0.8,((frame.w-sizePourcent*frame.w)-((sizePourcent*frame.w)+(sizePourcent*frame.w)))*0.8);
 
 montageStrip = new Vue({
   el: '#montageStrip',

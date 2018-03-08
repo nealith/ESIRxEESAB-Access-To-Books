@@ -1,6 +1,5 @@
 var svgCanvas = {}
 
-montageSize = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 var montage_data;
 
 function saveMontage(montage){

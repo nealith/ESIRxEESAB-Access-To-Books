@@ -49,6 +49,13 @@
     </div>
 
     <div id="libraryStrip"v-on:click="click" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-bind:style="style">
+      <template v-for="book in books">
+        <div v-bind:style="bookNameStyle">
+          <div class="verticalText">
+            <p>{{book.name}}</p>
+          </div>
+        </div>
+      </template>
     </div>
 
     <div id="libraryShutter" v-bind:style="style">

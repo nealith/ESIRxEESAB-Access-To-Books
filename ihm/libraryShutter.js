@@ -4,11 +4,6 @@
 
 let pressTimer;
 
-const pagePadding = 0.05;
-
-var books = remote.getGlobal('books');
-var booksLength = books.length;
-
 libraryShutter = new Vue({
   el: '#libraryShutter',
   data:{
@@ -23,7 +18,7 @@ libraryShutter = new Vue({
       overflow: 'hidden'
     },
     styleBook:{
-      height:(frame.h/booksLength)+14+'px',
+      height:(frame.h/booksLength)+'px',
       width:'auto',
       overflow:'hidden'
     },
@@ -45,7 +40,7 @@ libraryShutter = new Vue({
       this.style.height = frame.h+'px';
       this.style.width = frame.w - (strToFloat(libraryStrip.style.left)+strToFloat(libraryStrip.style.width))+'px';
 
-      this.styleBook.height = (frame.h/booksLength)+14+'px';
+      this.styleBook.height = (frame.h/booksLength)+'px';
       //this.styleBook.width = this.style.width;
 
       var pageHeight = frame.h/booksLength;

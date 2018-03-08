@@ -1,3 +1,7 @@
+var books = remote.getGlobal('books');
+var booksLength = books.length;
+const pagePadding = 0.05;
+
 libraryStrip = new Vue({
   el: '#libraryStrip',
   data:{
@@ -10,7 +14,16 @@ libraryStrip = new Vue({
       top : '0px',
       left : (frame.w-sizePourcent*frame.w)+'px',
       width : (sizePourcent*frame.w)+'px'
-    }
+    },
+    bookNameStyle:{
+      height : frame.h/booksLength+'px',
+      color: "white",
+      padding: '0px 0px 0px 0px',
+      margin: '0px 0px',
+      position: 'relative',
+      left: '0%'
+    },
+    books:books
 
   },
   methods:{
@@ -24,10 +37,11 @@ libraryStrip = new Vue({
       var realNewLeft = realNewFrameWidth * realOldLeft / realOldFrameWidth;
       var newLeft = realNewLeft + newWidth;
 
-
       this.style.left =   newLeft+'px';
       this.style.height = frame.h+'px';
       this.style.width = newWidth+'px';
+
+      this.bookNameStyle.height = frame.h/booksLength+'px';
     },
     click:function(e){
       ///DEBUG
@@ -92,3 +106,6 @@ libraryStrip = new Vue({
 
   }
 });
+
+libraryStrip.style['line-height'] = 1;
+libraryStrip.bookNameStyle['line-height'] = 1;
