@@ -1,7 +1,6 @@
-var montages = remote.getGlobal('montages');
 var svgCanvas = {}
 
-var size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
+montageSize = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 var montage_data;
 
 function saveMontage(montage){
@@ -44,7 +43,6 @@ montageShutter = new Vue({
     down:false,
     style:{
       height : frame.h+'px',
-      background : 'orange',
       position : 'absolute',
       top : '0px',
       left : (sizePourcent*frame.w*2)+'px',
@@ -52,10 +50,9 @@ montageShutter = new Vue({
       overflow : 'hidden'
     },
     styleMontage:{
-      height : size+'px',
-      background : 'pink',
-      width : size+'px',
-      margin : size/8.0+'px auto '+size/8.0+'px auto'
+      height : montageSize+'px',
+      width : montageSize+'px',
+      margin : montageSize/8.0+'px auto '
     }
   },
   methods:{
@@ -64,24 +61,33 @@ montageShutter = new Vue({
       this.style.height = frame.h+'px';
       this.style.width = (strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left))) +'px';
 
-      size = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
+      montageSize = Math.min(frame.h*0.8,(strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left)))*0.8);
 
-      this.styleMontage.height = size+'px';
-      this.styleMontage.width = size+'px';
+      this.styleMontage.height = montageSize+'px';
+      this.styleMontage.width = montageSize+'px';
 
       this.style['padding-left'] = 'auto';
       this.style['padding-right'] = 'auto';
 
-      this.styleMontage.margin = size/8.0+'px auto '+size/8.0+'px auto';
+      this.styleMontage.margin = montageSize/8.0+'px auto '+montageSize/8.0+'px auto';
 
       for (var i = 0; i < montages.length; i++) {
-        svgCanvas[montages[i].name].size(size,size);
+        //svgCanvas[montages[i].name].size(montageSize,montageSize);
+        svgCanvas[montages[i].name].each(function(i, children) {
+          this.draggable({
+            minX:0,
+            minY:0,
+            maxX:montageSize,
+            maxY:montageSize
+          });
+        },true)
       }
 
     },
     onWheel:function(e){
       var delta = Math.max(-1, Math.min(1, e.deltaY));
       document.getElementById(e.currentTarget.id).scrollTop += (delta*40); // Multiplied by 40
+      document.getElementById("montageStrip").scrollTop += (delta*40); // Multiplied by 40
       var t = document.getElementById(e.currentTarget.id);
 
       e.preventDefault();
@@ -105,6 +111,7 @@ montageShutter = new Vue({
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementY));
         document.getElementById(e.currentTarget.id).scrollTop -= (delta*40); // Multiplied by 40
+        document.getElementById("montageStrip").scrollTop += (delta*40); // Multiplied by 40
         var t = document.getElementById(e.currentTarget.id);
         e.preventDefault();
         //DEBUG
@@ -186,8 +193,8 @@ montageShutter = new Vue({
         img.draggable({
           minX:0,
           minY:0,
-          maxX:size,
-          maxY:size
+          maxX:montageSize,
+          maxY:montageSize
         });
         img.mousedown = montageShutter.mouseDownPage;
         saveMontage(montages[k]);
@@ -214,13 +221,15 @@ montageShutter = new Vue({
 ipcRenderer.on('sync_montages', (event, arg) => {
   montages = remote.getGlobal('montages');
   montageShutter.montages = montages;
+  montageStrip.montages = montages;
 });
 
 ipcRenderer.on('new_montage_added', (event, arg) => {
   montages = remote.getGlobal('montages');
   montageShutter.montages = montages;
+  montageStrip.montages = montages;
   window.setTimeout(function() {
-    svgCanvas[arg.name] = SVG(arg.name).size(size,size);
+    svgCanvas[arg.name] = SVG(arg.name);//.size(montageSize,montageSize);
     attachAutomaticSaving(arg);
     saveMontage(arg);
   },200);
@@ -238,8 +247,8 @@ function loadMontage(montage){
         this.draggable({
           minX:0,
           minY:0,
-          maxX:size,
-          maxY:size
+          maxX:montageSize,
+          maxY:montageSize
         });
       },true)
       attachAutomaticSaving(montage);

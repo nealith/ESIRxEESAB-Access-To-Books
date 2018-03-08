@@ -1,21 +1,72 @@
 #mainStrip{
-
+  background: white;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 
 }
 #montageStrip{
-
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
 
 }
 #montageShutter{
-
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 
 }
 #libraryStrip{
-
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
 
 }
 #libraryShutter{
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 
+}
+
+#montage{
+  background-image: url(./montage.svg), none;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#notes{
+  background-image: url(./notes.svg), none;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#vocal{
+  background-image: url(./vocal.svg), none;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.verticalText{
+	transform-origin: left bottom 0;
+  text-align: center;
+  position: relative;
+    top: 50%;
+    left:50%;
+    transform: translateY(-50%);
+    transform: translateX(-50%);
+
+  transform-origin: 0% 50% 0;
+  transform: rotate(90deg);
 
 }
 

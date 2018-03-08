@@ -17,9 +17,28 @@
   <body>
 
     <div id="mainStrip" v-bind:style="style">
+      <div v-bind:style="whiteSpace">
+
+      </div>
+      <div id="montage" v-bind:style="buttonStyle" v-on:click="onmontage">
+
+      </div>
+      <div id="notes" v-bind:style="buttonStyle" v-on:click="onnotes">
+
+      </div>
+      <div id="vocal" v-bind:style="buttonStyle" v-on:click="onvocal">
+
+      </div>
     </div>
 
     <div id="montageStrip" v-bind:style="style">
+      <template v-for="montage in montages">
+        <div v-bind:style="montageNameStyle">
+          <div class="verticalText">
+            <p>{{montage.name}}</p>
+          </div>
+        </div>
+      </template>
     </div>
 
     <div id="montageShutter" v-bind:style="style" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">

@@ -16,7 +16,6 @@ libraryShutter = new Vue({
     books:books,
     style:{
       height : frame.h+'px',
-      background : 'purple',
       position : 'absolute',
       top : '0px',
       right : '0px',
@@ -26,7 +25,6 @@ libraryShutter = new Vue({
     styleBook:{
       height:(frame.h/booksLength)+14+'px',
       width:'auto',
-      background:'black',
       overflow:'hidden'
     },
     stylePage:{
@@ -36,7 +34,6 @@ libraryShutter = new Vue({
       padding: pagePadding*(frame.h/booksLength)+'px '+pagePadding*(frame.h/booksLength)+'px '+pagePadding*(frame.h/booksLength)+'px '+pagePadding*(frame.h/booksLength)+'px'
     },
     styleImage:{
-      background:'pink',
       display:'block',
       height:(frame.h/booksLength - 2*pagePadding*(frame.h/booksLength))+'px',
       //width:(frame.h/booksLength - 2*pagePadding*(frame.h/booksLength))/Math.sqrt(2)+'px',

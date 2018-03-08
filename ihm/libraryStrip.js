@@ -6,7 +6,6 @@ libraryStrip = new Vue({
     div:document.getElementById('libraryStrip'),
     style:{
       height : frame.h+'px',
-      background : 'blue',
       position : 'absolute',
       top : '0px',
       left : (frame.w-sizePourcent*frame.w)+'px',
