@@ -19,7 +19,10 @@
     <div id="keyboard" v-bind:style="style"  v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
       <template v-for="key in keys">
         <div class="key" v-bind:style="styleKey" v-bind:id="key.label" v-on:click="onclick">
-          <p>{{key.letter}}</p>
+          <div>
+            <p>{{key.letter}}</p>
+          </div>
+
         </div>
       </template>
     </div>

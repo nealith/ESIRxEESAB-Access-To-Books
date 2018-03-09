@@ -78,6 +78,8 @@ p{
 
 #keyboard{
   background: #231f20;
+  margin: 0px;
+  padding: 0px;
 }
 
 .key{
@@ -87,17 +89,22 @@ p{
     -webkit-box-sizing: border-box;
   border: 2px solid white;
   color:white;
+  padding: 0px;
+}
+
+.key div{
+  margin: 0px;
+  padding: 0px;
+  transform-origin: top left 0;
+  position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .key p {
+  font-size: 1.2em;
+  font-weight: bold;
   text-align: center;
-  vertical-align: center;
-  transform-origin: 50% 50% 0;
-  position: relative;
-    top: 50%;
-    left:50%;
-    transform: translateY(-50%);
-    transform: translateX(-50%);
 }
 
 .verticalText p {
