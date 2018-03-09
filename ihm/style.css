@@ -76,6 +76,34 @@ p{
   margin: 0px;
 }
 
+#keyboard{
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+  border: 2px solid white;
+}
+
+.key{
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+  border: 2px solid white;
+  color:white;
+}
+
+.key p {
+  text-align: center;
+  vertical-align: center;
+  transform-origin: 50% 50% 0;
+  position: relative;
+    top: 50%;
+    left:50%;
+    transform: translateY(-50%);
+    transform: translateX(-50%);
+}
+
 .verticalText p {
   transform-origin: 50% 50% 0;
   transform: rotate(90deg);

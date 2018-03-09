@@ -70,6 +70,7 @@ function strToFloat(s){
   return parseFloat(ss);
 }
 
+var keyboard;
 var mainStrip;
 var montageStrip;
 var libraryStrip;
