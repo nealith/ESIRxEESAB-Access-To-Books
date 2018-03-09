@@ -135,6 +135,10 @@ keys = [
     label:'keyC'
   },
   {
+    letter:'v',
+    label:'keyV'
+  },
+  {
     letter:'b',
     label:'keyB'
   },
@@ -171,11 +175,11 @@ keyboard = new Vue({
     toUpper:false,
     keySize: sizePourcent*frame.w,
     keyMargin: sizePourcent*frame.w*0.1,
-    keyBoardSizeX: sizePourcent*frame.w*10+sizePourcent*frame.w*0.1*20+4,
-    keyBoardSizeY: sizePourcent*frame.w*4+sizePourcent*frame.w*0.1*8+4,
+    keyBoardSizeX: sizePourcent*frame.w*10+sizePourcent*frame.w*0.1*20,
+    keyBoardSizeY: sizePourcent*frame.w*4+sizePourcent*frame.w*0.1*8,
     style:{
-      width:sizePourcent*frame.w*10+sizePourcent*frame.w*0.1*20+4+'px',
-      height:sizePourcent*frame.w*4+sizePourcent*frame.w*0.1*8+4+'px',
+      width:sizePourcent*frame.w*10+sizePourcent*frame.w*0.1*20+'px',
+      height:sizePourcent*frame.w*4+sizePourcent*frame.w*0.1*8+'px',
       display:'none',
       position:'absolute',
       right:'0px',
@@ -192,8 +196,8 @@ keyboard = new Vue({
     resize:function(){
       this.keySize = sizePourcent*frame.w;
       this.keyMargin = sizePourcent*frame.w*0.1;
-      this.keyBoardSizeX = this.keySize*10+this.keyMargin*20+4;
-      this.keyBoardSizeY = this.keySize*4+this.keyMargin*8+4;
+      this.keyBoardSizeX = this.keySize*10+this.keyMargin*20;
+      this.keyBoardSizeY = this.keySize*4+this.keyMargin*8;
 
       this.style.width = this.keyBoardSizeX+'px';
       this.style.height = this.keyBoardSizeY+'px';
