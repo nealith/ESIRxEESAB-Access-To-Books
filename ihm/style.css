@@ -82,6 +82,20 @@ p{
   padding: 0px;
 }
 
+.full-border{
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+  border: 2px solid white;
+  color:white;
+  padding: 0px;
+}
+
+.two-button{
+  float:left;
+}
+
 .key{
   background: #231f20;
   box-sizing: border-box;

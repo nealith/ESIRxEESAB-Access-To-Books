@@ -71,6 +71,7 @@ function strToFloat(s){
 }
 
 var keyboard;
+var montageDialogue;
 var mainStrip;
 var montageStrip;
 var libraryStrip;

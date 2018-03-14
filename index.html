@@ -16,6 +16,17 @@
   </head>
   <body>
 
+    <div id="montageDialogue" v-bind:style="style" class="full-border" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
+      <div>
+        <input autofocus="true" id="montageName" class="full-border" v-model="name" type="text" placeholder="Titre pour le nouveau montage">
+      </div>
+      <div>
+        <button class="full-border two-button" type="submit" v-on:click="ok">Créer</button>
+        <button class="full-border two-button" type="submit" v-on:click="cancel">Annuler</button>
+      </div>
+
+    </div>
+
     <div id="keyboard" v-bind:style="style"  v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
       <template v-for="key in keys">
         <div class="key" v-bind:style="styleKey" v-bind:id="key.label" v-on:click="onclick">
@@ -84,6 +95,7 @@
 
     <script type="text/javascript" src="./ihm/app.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/keyboard.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/montageDialogue.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/mainStrip.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/montageStrip.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/libraryStrip.js" charset="utf-8"></script>

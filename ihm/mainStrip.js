@@ -30,6 +30,7 @@ mainStrip = new Vue({
     },
     onmontage:function(e){
       console.log('onmontage');
+      montageDialogue.ontoggle();
     },
     onnotes:function(e){
       console.log('onnotes');

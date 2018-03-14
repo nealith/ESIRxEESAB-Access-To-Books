@@ -190,7 +190,8 @@ keyboard = new Vue({
       width:sizePourcent*frame.w+'px',
       margin:sizePourcent*frame.w*0.1+'px',
       float:'left'
-    }
+    },
+    listener:[]
   },
   methods:{
     resize:function(){
@@ -205,6 +206,16 @@ keyboard = new Vue({
       this.styleKey.width = this.keySize+'px';
       this.styleKey.height = this.keySize+'px';
       this.styleKey.margin = this.keyMargin+'px';
+    },
+    addListener:function(id){
+      this.listener.push(id)
+    },
+    removeListener:function(id){
+      for (var i = 0; i < this.listener.length; i++) {
+        this.listener[i] == id;
+        this.listener.splice(i, 1);
+        break;
+      }
     },
     ontoggle:function(){
       if (this.style.display == 'none') {
@@ -259,6 +270,11 @@ keyboard = new Vue({
             key:9166
           });
         }
+        for (var i = 0; i < this.listener.length; i++) {
+          document.getElementById(this.listener[i]).dispatchEvent(event);
+        }
+
+
         window.dispatchEvent(event);
 
       } else {
