@@ -15,21 +15,30 @@ global.books_path = CONFIG.montages.path
 global.montages_path = CONFIG.montages.path
 
 function saveBooksIndex(){
-  var jsonData = JSON.stringify(global.books);
-  fs.writeFile(CONFIG.books.index, jsonData, function(err) {
-      if(err) {
-          return console.log(err);
-      }
-  });
+  if (global.books != undefined) {
+    var jsonData = JSON.stringify(global.books);
+    if(jsonData != ""){
+      fs.writeFile(CONFIG.books.index, jsonData, function(err) {
+          if(err) {
+              return console.log(err);
+          }
+      });
+    }
+  }
+
 }
 
 function saveMontagesIndex(){
-  var jsonData = JSON.stringify(global.montages);
-  fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
-      if(err) {
-          return console.log(err);
-      }
-  });
+  if (global.montages != undefined) {
+    var jsonData = JSON.stringify(global.montages);
+    if (jsonData != "") {
+      fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
+          if(err) {
+              return console.log(err);
+          }
+      });
+    }
+  }
 }
 
 //----------------------------------------------------------------------
