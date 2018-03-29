@@ -1,7 +1,7 @@
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
-const {ipcMain} = require('electron') 
+const {ipcMain} = require('electron')
 
 
 const fs = require('fs')
@@ -210,7 +210,24 @@ ipcMain.on('test',(event,arg) => {
 })
 
 ipcMain.on('new_montage',(event,arg) => {
-  global.montages.push(arg)
+  date = new Date();
+  arg.day = data.getDate();
+  arg.month = date.getMonth();
+  arg.year = date.getFullYear();
+
+  pushed = false;
+  for (var i = 0; i < global.montages.length; i++) {
+    it = global.montages[i]
+    if (it.year >= arg.year && it.month >= arg.month && it.day >= arg.day && it.name >= arg.name) {
+      global.montages.splice(i,0,arg);
+      pushed = true;
+      break;
+    }
+  }
+  if (!pushed) {
+      global.montages.push(arg)
+  }
+
   //event.sender.send('sync_montages',null)
   event.sender.send('new_montage_added',arg)
 })
