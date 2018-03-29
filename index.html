@@ -15,86 +15,103 @@
 
   </head>
   <body>
+    <div id="rotationWrap">
+      <div id="montageDialogue" v-bind:style="style" class="full-border" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
+        <div>
+          <input autofocus="true" id="montageName" class="full-border" v-model="name" type="text" placeholder="Titre pour le nouveau montage">
+        </div>
+        <div>
+          <button class="full-border two-button" type="submit" v-on:click="ok">Créer</button>
+          <button class="full-border two-button" type="submit" v-on:click="cancel">Annuler</button>
+        </div>
 
-    <div id="montageDialogue" v-bind:style="style" class="full-border" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
-      <div>
-        <input autofocus="true" id="montageName" class="full-border" v-model="name" type="text" placeholder="Titre pour le nouveau montage">
       </div>
-      <div>
-        <button class="full-border two-button" type="submit" v-on:click="ok">Créer</button>
-        <button class="full-border two-button" type="submit" v-on:click="cancel">Annuler</button>
-      </div>
 
-    </div>
-
-    <div id="keyboard" v-bind:style="style"  v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
-      <template v-for="key in keys">
-        <div class="key" v-bind:style="styleKey" v-bind:id="key.label" v-on:click="onclick">
-          <div>
-            <p>{{key.letter}}</p>
-          </div>
+      <div id="rotationButtons" v-bind:style="style">
+        <div class="rotationButton" id="rotationButtonTopLeft" v-bind:style="buttonStyleTopLeft" v-on:click="rotate">
 
         </div>
-      </template>
-    </div>
+        <div class="rotationButton" id="rotationButtonTopRight" v-bind:style="buttonStyleTopRight" v-on:click="rotate">
 
-    <div id="mainStrip" v-bind:style="style">
-      <div v-bind:style="whiteSpace">
-
-      </div>
-      <div id="montage" v-bind:style="buttonStyle" v-on:click="onmontage">
-
-      </div>
-      <div id="notes" v-bind:style="buttonStyle" v-on:click="onnotes">
-
-      </div>
-      <div id="vocal" v-bind:style="buttonStyle" v-on:click="onvocal">
-
-      </div>
-    </div>
-
-    <div id="montageStrip" v-bind:style="style">
-      <template v-for="montage in montages">
-        <div v-bind:style="montageNameStyle">
-          <div class="verticalText">
-            <p>{{montage.name}}</p>
-          </div>
         </div>
-      </template>
-    </div>
+        <div class="rotationButton" id="rotationButtonBottomLeft" v-bind:style="buttonStyleBottomLeft" v-on:click="rotate">
 
-    <div id="montageShutter" v-bind:style="style" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
-      <template v-for="montage in montages">
-        <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage">
         </div>
-      </template>
-    </div>
+        <div class="rotationButton" id="rotationButtonBottomRight" v-bind:style="buttonStyleBottomRight" v-on:click="rotate">
 
-    <div id="libraryStrip"v-on:click="click" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-bind:style="style">
-      <template v-for="book in books">
-        <div v-bind:style="bookNameStyle">
-          <div class="verticalText">
-            <p>{{book.name}}</p>
-          </div>
         </div>
-      </template>
-    </div>
+      </div>
 
-    <div id="libraryShutter" v-bind:style="style">
-      <template v-for="book in books">
-        <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
-          <template v-for="page in book.pages">
-            <div v-bind:style="stylePage" >
-              <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
+      <div id="keyboard" v-bind:style="style"  v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
+        <template v-for="key in keys">
+          <div class="key" v-bind:style="styleKey" v-bind:id="key.label" v-on:click="onclick">
+            <div>
+              <p>{{key.letter}}</p>
             </div>
-          </template>
+
+          </div>
+        </template>
+      </div>
+
+      <div id="mainStrip" v-bind:style="style">
+        <div v-bind:style="whiteSpace">
+
         </div>
-      </template>
+        <div id="montage" v-bind:style="buttonStyle" v-on:click="onmontage">
+
+        </div>
+        <div id="notes" v-bind:style="buttonStyle" v-on:click="onnotes">
+
+        </div>
+        <div id="vocal" v-bind:style="buttonStyle" v-on:click="onvocal">
+
+        </div>
+      </div>
+
+      <div id="montageStrip" v-bind:style="style">
+        <template v-for="montage in montages">
+          <div v-bind:style="montageNameStyle">
+            <div class="verticalText">
+              <p>{{montage.name}}</p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div id="montageShutter" v-bind:style="style" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
+        <template v-for="montage in montages">
+          <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage">
+          </div>
+        </template>
+      </div>
+
+      <div id="libraryStrip"v-on:click="click" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-bind:style="style">
+        <template v-for="book in books">
+          <div v-bind:style="bookNameStyle">
+            <div class="verticalText">
+              <p>{{book.name}}</p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div id="libraryShutter" v-bind:style="style">
+        <template v-for="book in books">
+          <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
+            <template v-for="page in book.pages">
+              <div v-bind:style="stylePage" >
+                <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
     </div>
 
 
     <script type="text/javascript" src="./ihm/app.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/keyboard.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/rotationButtons.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/montageDialogue.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/mainStrip.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/montageStrip.js" charset="utf-8"></script>

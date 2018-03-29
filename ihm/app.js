@@ -70,6 +70,7 @@ function strToFloat(s){
   return parseFloat(ss);
 }
 
+var rotationButtons;
 var keyboard;
 var montageDialogue;
 var mainStrip;
@@ -90,6 +91,9 @@ window.onresize = function(e){
     libraryStrip.resize();
     montageShutter.resize();
     libraryShutter.resize();
+    keyboard.resize();
+    montageDialogue.resize();
+    rotationButtons.resize();
 }
 
 shutterController = {

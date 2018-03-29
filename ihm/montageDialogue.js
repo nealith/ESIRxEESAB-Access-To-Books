@@ -30,9 +30,18 @@ montageDialogue = new Vue({
       }
     },
     ok:function(){
-      var name = this.name;
-      this.ontoggle();
-      montageShutter.newMontage(name);
+      alreadyexist = false;
+      for (var i = 0; i < this.montages.length; i++) {
+        if (this.montages[i].name == this.name) {
+          alreadyexist = true;
+          break;
+        }
+      }
+      if (!alreadyexist) {
+        var name = this.name;
+        this.ontoggle();
+        montageShutter.newMontage(name);
+      }
     },
     cancel:function(){
       this.ontoggle();

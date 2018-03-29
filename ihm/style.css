@@ -43,6 +43,11 @@ body{
 
 }
 
+.rotated{
+  transform-origin: 50% 50% 0;
+  transform: rotate(180deg);
+}
+
 #montage{
   background-image: url(./montage.svg), none;
   background-repeat: no-repeat;
@@ -59,6 +64,19 @@ body{
   background-image: url(./vocal.svg), none;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+#rotationButtons{
+  z-index:20;
+  pointer-events:none;
+}
+
+.rotationButton{
+  background-image: url(./turn.svg), none;
+  background-repeat: no-repeat;
+  background-position: center;
+    z-index:20;
+    pointer-events:all;
 }
 
 .verticalText{
@@ -124,6 +142,27 @@ p{
 .verticalText p {
   transform-origin: 50% 50% 0;
   transform: rotate(90deg);
+}
+
+#LibraryShutter {
+  /*CSS transitions*/
+-o-transition-property: none !important;
+-moz-transition-property: none !important;
+-ms-transition-property: none !important;
+-webkit-transition-property: none !important;
+transition-property: none !important;
+/*CSS transforms*/
+-o-transform: none !important;
+-moz-transform: none !important;
+-ms-transform: none !important;
+-webkit-transform: none !important;
+transform: none !important;
+/*CSS animations*/
+-webkit-animation: none !important;
+-moz-animation: none !important;
+-o-animation: none !important;
+-ms-animation: none !important;
+animation: none !important;
 }
 
 .mainVueComponant{

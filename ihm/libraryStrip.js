@@ -68,8 +68,9 @@ libraryStrip = new Vue({
         strToFloat(this.style.left) + e.movementX >= strToFloat(montageStrip.style.left) + strToFloat(montageStrip.style.width)) {
         shutterController.onLibraryStripMove(e.movementX);
         this.style.left  = (strToFloat(this.style.left) + e.movementX) + 'px';
+
         ///DEBUG
-        //console.log('libraryStrip:mouseMove:new position:'+this.style.left);
+        console.log('libraryStrip:mouseMove:new position:'+this.style.left);
 
       }
     },
