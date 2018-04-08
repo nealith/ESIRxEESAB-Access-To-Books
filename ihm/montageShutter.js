@@ -4,11 +4,16 @@ var montage_data;
 
 function saveMontage(montage){
   console.log(montage)
+  //svgCanvas[montage.name].size(montageSize,montageSize);
+
+
+
   fs.writeFile(montage.src, svgCanvas[montage.name].svg(), function(err) {
-  if(err) {
-      return console.log(err);
-  }
-  console.log("The file was saved!");
+    if(err) {
+        return console.log(err);
+    } else {
+        console.log("The file was saved!");
+    }
   });
 }
 
@@ -229,7 +234,7 @@ ipcRenderer.on('new_montage_added', (event, arg) => {
   montageShutter.montages = montages;
   montageStrip.montages = montages;
   window.setTimeout(function() {
-    svgCanvas[arg.name] = SVG(arg.name);//.size(montageSize,montageSize);
+    svgCanvas[arg.name] = SVG(arg.name).size(montageSize,montageSize);
     attachAutomaticSaving(arg);
     saveMontage(arg);
   },200);
@@ -241,8 +246,36 @@ function loadMontage(montage){
       return console.log(err);
     } else {
       console.log(montage.name);
-      svgCanvas[montage.name] = SVG(montage.name);
-      svgCanvas[montage.name].svg(data);
+
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(data, "image/svg+xml");
+      var root = doc.getElementsByTagName('svg')[0];
+      var ratio = montageSize/root.width.baseVal.value;
+      root.width = montageSize;
+      root.height = montageSize;
+
+      console.log(ratio);
+
+      var images = doc.getElementsByTagName('image');
+
+      svgCanvas[montage.name] = SVG(montage.name).size(montageSize,montageSize);
+
+      for (var i = 0; i < images.length; i++) {
+        //console.log(images[i]);
+        var width = images[i].width.baseVal.value*ratio;
+        var height = images[i].height.baseVal.value*ratio;
+        var x = images[i].x.baseVal.value*ratio;
+        var y = images[i].y.baseVal.value*ratio;
+        //console.log(images[i]);
+        console.log(x,y)
+        var img = svgCanvas[montage.name].image(images[i]['href'].baseVal, width, height).move(x,y);
+      }
+
+      var XMLS = new XMLSerializer();
+      data = XMLS.serializeToString(doc);
+
+      //svgCanvas[montage.name] = SVG(arg.name).size(montageSize,montageSize);
+      //svgCanvas[montage.name].svg(data);
       svgCanvas[montage.name].each(function(i, children) {
         this.draggable({
           minX:0,
