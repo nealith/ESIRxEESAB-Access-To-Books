@@ -5,6 +5,7 @@ const pagePadding = 0.05;
 libraryStrip = new Vue({
   el: '#libraryStrip',
   data:{
+    moveX:0,
     offsetX:0,
     down:false,
     div:document.getElementById('libraryStrip'),
@@ -54,11 +55,17 @@ libraryStrip = new Vue({
       ///DEBUG
       //console.log('libraryStrip:mouseMove:new offsetX:'+this.offsetX);
       this.down = true;
+      montageShutter.style.display='none';
+      libraryShutter.style.display='none';
     },
     mouseUp:function(e){
       ///DEBUG
       //console.log('libraryStrip:mouseUp');
       this.down = false;
+      shutterController.onLibraryStripMove(this.moveX);
+      this.moveX = 0;
+      montageShutter.style.display='block';
+      libraryShutter.style.display='block';
     },
     mouseMove:function(e){
       ///DEBUG
@@ -66,8 +73,9 @@ libraryStrip = new Vue({
       if (this.down == true &&
         strToFloat(this.style.left) + strToFloat(this.style.width) + e.movementX <= frame.w &&
         strToFloat(this.style.left) + e.movementX >= strToFloat(montageStrip.style.left) + strToFloat(montageStrip.style.width)) {
-        shutterController.onLibraryStripMove(e.movementX);
+
         this.style.left  = (strToFloat(this.style.left) + e.movementX) + 'px';
+        this.moveX += e.movementX;
 
         ///DEBUG
         console.log('libraryStrip:mouseMove:new position:'+this.style.left);
@@ -107,6 +115,6 @@ libraryStrip = new Vue({
 
   }
 });
-
+libraryStrip.style['z-index'] = 2;
 libraryStrip.style['line-height'] = 1;
 libraryStrip.bookNameStyle['line-height'] = 1;

@@ -52,15 +52,15 @@ function processVoiceMessage (message) {
 }
 
 const CONFIG = require('./config.json')
-global.books = require(CONFIG.books.index)
-global.montages = require(CONFIG.montages.index)
+global.books = JSON.parse(fs.readFileSync(CONFIG.books.index))
+global.montages = JSON.parse(fs.readFileSync(CONFIG.montages.index))
 global.books_path = CONFIG.montages.path
 global.montages_path = CONFIG.montages.path
 
 function saveBooksIndex(){
   if (global.books != undefined) {
     var jsonData = JSON.stringify(global.books);
-    if(jsonData != ""){
+    if(jsonData.length != 0){
       fs.writeFile(CONFIG.books.index, jsonData, function(err) {
           if(err) {
               return console.log(err);
@@ -74,7 +74,7 @@ function saveBooksIndex(){
 function saveMontagesIndex(){
   if (global.montages != undefined) {
     var jsonData = JSON.stringify(global.montages);
-    if (jsonData != "") {
+    if (jsonData.length != 0) {
       fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
           if(err) {
               return console.log(err);

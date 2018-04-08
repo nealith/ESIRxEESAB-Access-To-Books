@@ -46,7 +46,8 @@ montageShutter = new Vue({
       top : '0px',
       left : (sizePourcent*frame.w*2)+'px',
       width : (frame.w - sizePourcent*frame.w*3)+'px',
-      overflow : 'hidden'
+      overflow : 'hidden',
+      display:'block'
     },
     styleMontage:{
       height : montageSize+'px',

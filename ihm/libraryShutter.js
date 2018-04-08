@@ -15,7 +15,8 @@ libraryShutter = new Vue({
       top : '0px',
       right : '0px',
       width : '0px',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      display:'block'
     },
     styleBook:{
       height:(frame.h/booksLength)+'px',
