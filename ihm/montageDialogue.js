@@ -31,8 +31,9 @@ montageDialogue = new Vue({
     },
     ok:function(){
       alreadyexist = false;
-      for (var i = 0; i < this.montages.length; i++) {
-        if (this.montages[i].name == this.name) {
+      console.log(this.name);
+      for (var i = 0; i < montageShutter.montages.length; i++) {
+        if (montageShutter.montages[i].name == this.name) {
           alreadyexist = true;
           break;
         }
@@ -105,7 +106,12 @@ montageDialogue = new Vue({
 });
 
 document.getElementById('montageName').addEventListener('keypress', (e) => {
-  e.target.value += String.fromCharCode(e.key);
+  if (e.key == 9166) {
+    montageDialogue.ok();
+  } else {
+    montageDialogue.name += String.fromCharCode(e.key);
+  }
+  console.log(e.target.value);
 });
 
 

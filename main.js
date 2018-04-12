@@ -60,8 +60,10 @@ global.montages_path = CONFIG.montages.path
 function saveBooksIndex(){
   if (global.books != undefined) {
     var jsonData = JSON.stringify(global.books);
-    if(jsonData.length != 0){
+    if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '{' && jsonData[jsonData.length-1] == '}'){
       fs.writeFile(CONFIG.books.index, jsonData, function(err) {
+          console.log('saving of BooksIndex')
+          console.log(jsonData)
           if(err) {
               return console.log(err);
           }
@@ -74,8 +76,10 @@ function saveBooksIndex(){
 function saveMontagesIndex(){
   if (global.montages != undefined) {
     var jsonData = JSON.stringify(global.montages);
-    if (jsonData.length != 0) {
+    if (jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '{' && jsonData[jsonData.length-1] == '}') {
       fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
+          console.log('saving of MontagesIndex')
+          console.log(jsonData)
           if(err) {
               return console.log(err);
           }
@@ -211,8 +215,8 @@ ipcMain.on('test',(event,arg) => {
 
 ipcMain.on('new_montage',(event,arg) => {
   date = new Date();
-  arg.day = data.getDate();
-  arg.month = date.getMonth();
+  arg.day = date.getDate();
+  arg.month = date.getMonth()+1;
   arg.year = date.getFullYear();
 
   pushed = false;
@@ -227,6 +231,9 @@ ipcMain.on('new_montage',(event,arg) => {
   if (!pushed) {
       global.montages.push(arg)
   }
+
+  console.log('add montage : ')
+  console.log(arg);
 
   //event.sender.send('sync_montages',null)
   event.sender.send('new_montage_added',arg)

@@ -234,6 +234,8 @@ ipcRenderer.on('new_montage_added', (event, arg) => {
   montageShutter.montages = montages;
   montageStrip.montages = montages;
   window.setTimeout(function() {
+    console.log(montageSize);
+    console.log(arg.name)
     svgCanvas[arg.name] = SVG(arg.name).size(montageSize,montageSize);
     attachAutomaticSaving(arg);
     saveMontage(arg);

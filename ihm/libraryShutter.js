@@ -4,6 +4,8 @@
 
 let pressTimer;
 
+var numberOfBooksVisible = 3;
+
 libraryShutter = new Vue({
   el: '#libraryShutter',
   data:{
@@ -19,20 +21,20 @@ libraryShutter = new Vue({
       display:'block'
     },
     styleBook:{
-      height:(frame.h/booksLength)+'px',
+      height:(frame.h/numberOfBooksVisible)+'px',
       width:'auto',
       overflow:'hidden'
     },
     stylePage:{
       display:'inline-block',
-      height:(frame.h/booksLength)+'px',
-      width:(frame.h/booksLength)/Math.sqrt(2)+'px',
-      padding: pagePadding*(frame.h/booksLength)+'px '+pagePadding*(frame.h/booksLength)+'px '+pagePadding*(frame.h/booksLength)+'px '+pagePadding*(frame.h/booksLength)+'px'
+      height:(frame.h/numberOfBooksVisible)+'px',
+      width:(frame.h/numberOfBooksVisible)/Math.sqrt(2)+'px',
+      padding: pagePadding*(frame.h/numberOfBooksVisible)+'px '+pagePadding*(frame.h/numberOfBooksVisible)+'px '+pagePadding*(frame.h/numberOfBooksVisible)+'px '+pagePadding*(frame.h/numberOfBooksVisible)+'px'
     },
     styleImage:{
       display:'block',
-      height:(frame.h/booksLength - 2*pagePadding*(frame.h/booksLength))+'px',
-      //width:(frame.h/booksLength - 2*pagePadding*(frame.h/booksLength))/Math.sqrt(2)+'px',
+      height:(frame.h/numberOfBooksVisible - 2*pagePadding*(frame.h/numberOfBooksVisible))+'px',
+      //width:(frame.h/numberOfBooksVisible - 2*pagePadding*(frame.h/numberOfBooksVisible))/Math.sqrt(2)+'px',
       overflow:'hidden'
     }
   },
@@ -41,10 +43,10 @@ libraryShutter = new Vue({
       this.style.height = frame.h+'px';
       this.style.width = frame.w - (strToFloat(libraryStrip.style.left)+strToFloat(libraryStrip.style.width))+'px';
 
-      this.styleBook.height = (frame.h/booksLength)+'px';
+      this.styleBook.height = (frame.h/numberOfBooksVisible)+'px';
       //this.styleBook.width = this.style.width;
 
-      var pageHeight = frame.h/booksLength;
+      var pageHeight = frame.h/numberOfBooksVisible;
       this.stylePage.height = pageHeight+'px';
       this.stylePage.width = pageHeight/Math.sqrt(2);
       this.stylePage.padding = pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px';
@@ -53,35 +55,61 @@ libraryShutter = new Vue({
       //this.styleImage.width = (pageHeight - 2*pagePadding*(pageHeight))/Math.sqrt(2)+'px';
 
     },
-    onWheel:function(e){
+    onWheelBooks:function(e){
+      var delta = Math.max(-1, Math.min(1, e.deltaY));
+      document.getElementById(e.currentTarget.id).scrollTop += (delta*40); // Multiplied by 40
+      e.preventDefault();
+    },
+    mouseDownBooks:function(e){
+      //DEBUG
+      //console.log('libraryShutter:mouseDownBooks');
+      this.down = true;
+    },
+    mouseUpBooks:function(e){
+      //DEBUG
+      //console.log('libraryShutter:mouseUpBooks');
+      this.down = false;
+    },
+    mouseMoveBooks:function(e){
+      //DEBUG
+      //console.log('libraryShutter:mouseMoveBooks');
+      if (this.down == true) {
+        var delta = Math.max(-1, Math.min(1, e.movementY));
+        document.getElementById(e.currentTarget.id).scrollTop -= (delta*10); // Multiplied by 40
+        e.preventDefault();
+        //DEBUG
+        //console.log('libraryShutter:mouseMove:true');
+
+      }
+    },
+    onWheelBook:function(e){
       var delta = Math.max(-1, Math.min(1, e.deltaY));
       document.getElementById(e.currentTarget.id).scrollLeft += (delta*40); // Multiplied by 40
       e.preventDefault();
     },
-    mouseDown:function(e){
+    mouseDownBook:function(e){
       //DEBUG
-      //console.log('libraryShutter:mouseDown');
+      //console.log('libraryShutter:mouseDownBooks');
       this.down = true;
     },
     mouseDownPage:function(e){
       this.down = true;
       pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
     },
-    mouseUp:function(e){
+    mouseUpBook:function(e){
       //DEBUG
-      //console.log('libraryShutter:mouseUp');
+      //console.log('libraryShutter:mouseUpBooks');
       this.down = false;
     },
-    mouseMove:function(e){
+    mouseMoveBook:function(e){
       //DEBUG
-      //console.log('libraryShutter:mouseMove');
+      //console.log('libraryShutter:mouseMoveBooks');
       if (pressTimer) {
         clearTimeout(pressTimer);
       }
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementX));
         document.getElementById(e.currentTarget.id).scrollLeft -= (delta*10); // Multiplied by 40
-        var t = document.getElementById(e.currentTarget.id);
         e.preventDefault();
         //DEBUG
         //console.log('libraryShutter:mouseMove:true');
