@@ -3,11 +3,6 @@ var svgCanvas = {}
 var montage_data;
 
 function saveMontage(montage){
-  console.log(montage)
-  //svgCanvas[montage.name].size(montageSize,montageSize);
-
-
-
   fs.writeFile(montage.src, svgCanvas[montage.name].svg(), function(err) {
     if(err) {
         return console.log(err);
@@ -24,7 +19,6 @@ function saveMontages(){
 }
 
 function attachAutomaticSaving(montage){
-  console.log(montage)
   svgCanvas[montage.name].touchend(function(){
     saveMontage(montage);
   })
@@ -242,12 +236,13 @@ ipcRenderer.on('new_montage_added', (event, arg) => {
   },200);
 });
 
+
+// Import a montage with some necessary "cleaning" in svg/xml code to avoid huge recursivity in xml
 function loadMontage(montage){
   fs.readFile(montage.src, {encoding: 'utf-8'}, function(err,data) {
     if(err) {
       return console.log(err);
     } else {
-      console.log(montage.name);
 
       var parser = new DOMParser();
       var doc = parser.parseFromString(data, "image/svg+xml");
@@ -256,19 +251,15 @@ function loadMontage(montage){
       root.width = montageSize;
       root.height = montageSize;
 
-      console.log(ratio);
-
       var images = doc.getElementsByTagName('image');
 
       svgCanvas[montage.name] = SVG(montage.name).size(montageSize,montageSize);
 
       for (var i = 0; i < images.length; i++) {
-        //console.log(images[i]);
         var width = images[i].width.baseVal.value*ratio;
         var height = images[i].height.baseVal.value*ratio;
         var x = images[i].x.baseVal.value*ratio;
         var y = images[i].y.baseVal.value*ratio;
-        //console.log(images[i]);
         console.log(x,y)
         var img = svgCanvas[montage.name].image(images[i]['href'].baseVal, width, height).move(x,y);
       }
@@ -276,8 +267,7 @@ function loadMontage(montage){
       var XMLS = new XMLSerializer();
       data = XMLS.serializeToString(doc);
 
-      //svgCanvas[montage.name] = SVG(arg.name).size(montageSize,montageSize);
-      //svgCanvas[montage.name].svg(data);
+      // Make image draggable
       svgCanvas[montage.name].each(function(i, children) {
         this.draggable({
           minX:0,
@@ -286,6 +276,8 @@ function loadMontage(montage){
           maxY:montageSize
         });
       },true)
+
+
       attachAutomaticSaving(montage);
     }
   });

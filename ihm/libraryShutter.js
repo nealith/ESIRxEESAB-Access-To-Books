@@ -153,6 +153,8 @@ libraryShutter = new Vue({
       }
     },
     dragPage:function(e){
+      // DEBUG:
+      console.log("start drag on page");
       var src = '';
       for (var i = 0; i < books.length; i++) {
         for (var j = 0; j < books[i].pages.length; j++) {

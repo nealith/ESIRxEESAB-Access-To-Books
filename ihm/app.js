@@ -3,45 +3,23 @@ const {remote} = require('electron');
 const path = require('path');
 var fs = require('fs');
 
-// closed
+Vue.use(AlloyFingerVue);
 
-function beforeClosing(){
-  var toCall = function() {};
-  for (var i = 0; i < close.length; i++) {
-    toCall = onClosed[i];
-    toCall();
-  }
-}
+/*
+var socket = io('http://localhost:3000');
+socket.on('connect', function(){});
+socket.on('test', function(data){console.log(data);});
+socket.on('disconnect', function(){});
+socket.emit('test',{msg:'test'});*/ // USED TO TEST SOCKETIO
 
-var onClosed = [];
 
-ipcRenderer.on('unload', (event, arg) => {
-    beforeClosing()
-    ipcRenderer.send('closed',null);
+
+window.client = new Caress.Client({
+    host: 'localhost',
+    port: 5000
 });
+client.connect();
 
-remote.getCurrentWindow().on('close', () => {
-  beforeClosing()
-})
-
-/*window.addEventListener('unload', function(event) {
-  beforeClosing()
-})
-
-window.addEventListener('beforeunload', function(event) {
-  beforeClosing()
-})
-
-window.addEventListener('close', function(event) {
-  beforeClosing()
-})
-
-window.addEventListener('closed', function(event) {
-  beforeClosing()
-})*/
-
-///DEBUG
-//console.log('app:launch');
 
 var frame = {
   h:window.innerHeight,
@@ -64,8 +42,6 @@ window.addEventListener('mousemove',function(e){
 });
 
 function strToFloat(s){
-  //DEBUG
-  //console.log('strToFloat:'+s);
   ss = s.substr(0,s.length-2);
   return parseFloat(ss);
 }
@@ -80,8 +56,6 @@ var montageShutter;
 var libraryShutter;
 
 window.onresize = function(e){
-    //DEBUG
-    //console.log('screen:resize');
     frame.oldH = frame.h;
     frame.oldW = frame.w;
     frame.h = window.innerHeight;
@@ -98,12 +72,8 @@ window.onresize = function(e){
 
 shutterController = {
   onLibraryStripMove:function(x){
-    //DEBUG
-    //console.log('shutterController:onLibraryStripMove:'+x);
     libraryShutter.style.width  = (strToFloat(libraryShutter.style.width) - x ) + 'px';
     montageShutter.style.width  = (strToFloat(montageShutter.style.width) + x ) + 'px';
-
-    //ipcRenderer.send('stripMoved',{libraryShutterWidth:libraryShutter.style.width,montageShutterWidth:montageShutter.style.width});
   }
 }
 

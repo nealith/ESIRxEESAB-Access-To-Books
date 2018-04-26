@@ -45,30 +45,30 @@ libraryStrip = new Vue({
       this.bookNameStyle.height = frame.h/booksLength+'px';
     },
     click:function(e){
-      ///DEBUG
+      //DEBUG
       //console.log('libraryStrip:click');
     },
     mouseDown:function(e){
-      ///DEBUG
+      //DEBUG
       //console.log('libraryStrip:mouseDown');
       this.offsetX = strToFloat(this.style.left) - e.clientX;
-      ///DEBUG
+      //DEBUG
       //console.log('libraryStrip:mouseMove:new offsetX:'+this.offsetX);
       this.down = true;
-      montageShutter.style.display='none';
-      libraryShutter.style.display='none';
+      //montageShutter.style.display='none';
+      //libraryShutter.style.display='none';
     },
     mouseUp:function(e){
-      ///DEBUG
+      //DEBUG
       //console.log('libraryStrip:mouseUp');
       this.down = false;
       shutterController.onLibraryStripMove(this.moveX);
       this.moveX = 0;
-      montageShutter.style.display='block';
-      libraryShutter.style.display='block';
+      //montageShutter.style.display='block';
+      //libraryShutter.style.display='block';
     },
     mouseMove:function(e){
-      ///DEBUG
+      //DEBUG
       //console.log('libraryStrip:mouseMove:'+e.clientX);
       if (this.down == true &&
         strToFloat(this.style.left) + strToFloat(this.style.width) + e.movementX <= frame.w &&
@@ -77,12 +77,19 @@ libraryStrip = new Vue({
         this.style.left  = (strToFloat(this.style.left) + e.movementX) + 'px';
         this.moveX += e.movementX;
 
-        ///DEBUG
-        console.log('libraryStrip:mouseMove:new position:'+this.style.left);
+        //DEBUG
+        //console.log('libraryStrip:mouseMove:new position:'+this.style.left);
 
       }
     },
+    tap:function(e){
+      console.log("tesstttteeee1");
+    },
+    tap2:function(e){
+      console.log("tesstttteeee2");
+    },
     touch:function(e){
+      console.log("teeeeeeee");
       switch (e.type) {
         case "touchstart":
           //DEBUG
@@ -100,7 +107,7 @@ libraryStrip = new Vue({
             strToFloat(this.style.left) + e.movementX >= strToFloat(montageStrip.style.left) + strToFloat(montageStrip.style.width)) {
             shutterController.onLibraryStripMove(e.movementX);
             this.style.left  = (strToFloat(this.style.left) + e.movementX) + 'px';
-            ///DEBUG
+            //DEBUG
             //console.log('libraryStrip:touchmove:new position:'+this.style.left);
 
           }

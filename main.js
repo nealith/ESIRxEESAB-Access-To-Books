@@ -3,10 +3,15 @@ const path = require('path')
 const url = require('url')
 const {ipcMain} = require('electron')
 
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let win
+
 
 const fs = require('fs')
 const klaw = require('klaw')
 const through2 = require('through2')
+//const sharp = require('sharp')
 
 const mqtt = require('mqtt')
 const client = mqtt.connect('mqtt://192.168.38.1')
@@ -62,8 +67,6 @@ function saveBooksIndex(){
     var jsonData = JSON.stringify(global.books);
     if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '{' && jsonData[jsonData.length-1] == '}'){
       fs.writeFile(CONFIG.books.index, jsonData, function(err) {
-          console.log('saving of BooksIndex')
-          console.log(jsonData)
           if(err) {
               return console.log(err);
           }
@@ -78,8 +81,6 @@ function saveMontagesIndex(){
     var jsonData = JSON.stringify(global.montages);
     if (jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '{' && jsonData[jsonData.length-1] == '}') {
       fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
-          console.log('saving of MontagesIndex')
-          console.log(jsonData)
           if(err) {
               return console.log(err);
           }
@@ -95,13 +96,13 @@ function saveMontagesIndex(){
 var book = {}
 
 const Exts = [
-  "jpeg",
-  "jpg",
-  "png",
-  "webp",
-  "tiff",
-  "gif",
-  "svg"
+  'jpeg',
+  'jpg',
+  'png',
+  'webp',
+  'tiff',
+  'gif',
+  'svg'
 ]
 
 function checkExt(ext){
@@ -117,24 +118,43 @@ const addPage = through2.obj(function (item, enc, next) {
   if (!item.stats.isDirectory() && checkExt(path.extname(item.path))) {
     this.push(item)
 
-//     sharp(item.path)
-//     .resize(560, 360, {
-//       kernel: sharp.kernel.lanczos3
-//     })
-//     .max()
-//     .toFile(book.path+"page_"+book.page.length+".png",function(err){
-//       if (err === undefined) {
-//         book.pages.push({
-//           originalPath:item.path,
-//           description:"page "+book.page.length,
-//           src:book.path+"page_"+book.page.length+".png",
-//           id:book.name+'_'+book.page.length
-//         })
-//         next()
-//       } else {
-//         console.log(err)
-//       }
-//     })
+    var page = {
+      originalPath:item.path,
+      description:'page n°'+book.page.length,
+      id:book.name+'_'+book.page.length,
+      thumbnail:book.path+'thumbnail/'+'page_'+book.page.length+'.png',
+      dzi:book.path+'dzi/'+'page_'+book.page.length+'.dzi'
+    }
+
+    book.pages[page.id] = page
+      /*
+     sharp(item.path)
+     .resize(560, 360, {
+       kernel: sharp.kernel.lanczos3
+     })
+     .max()
+     .toFile(page.thumbnail,function(err){
+       if (err === undefined) {
+         sharp(item.path)
+         .max()
+         .toFile(page.dzi,function(err){
+           if (err === undefined) {
+             book.pages.push(page);
+             next()
+           } else {
+             console.log(err)
+             page.err = error
+             book.pages.push(page);
+           }
+         })
+       } else {
+         console.log(err)
+         page.err = error
+         book.pages.push(page);
+         next()
+       }
+     })*/
+    next()
   } else {
     next()
   }
@@ -147,12 +167,22 @@ ipcMain.on('walkonBook',(event,arg) => {
     name:arg.name,
     path:BOOKS_PATH+arg.name+'/',
     originalPath: arg.path,
-    pages:[
-
-    ]
+    pages:[]
   }
 
   var pages = []
+
+  if (!fs.existsSync(book.path)){
+    fs.mkdirSync(book.path);
+  }
+
+  if (!fs.existsSync(book.path+'dzi/')){
+    fs.mkdirSync(book.path+'dzi/');
+  }
+
+  if (!fs.existsSync(book.path+'thumbnail/')){
+    fs.mkdirSync(book.path+'thumbnail/');
+  }
 
   klaw(arg.path)
     .pipe(addPage)
@@ -202,6 +232,103 @@ ipcMain.on('walkon',(event,arg) => {
 })
 
 //----------------------------------------------------------------------
+// tuio - CaressServer
+//----------------------------------------------------------------------
+
+var server = require('http').createServer();
+var io = require('socket.io')(server);
+var CaressServer = require('caress-server');
+var caress = new CaressServer('0.0.0.0', 3333, {json: true});
+
+caress.on('tuio', function(msg){
+  console.log(msg);
+});
+
+/*io.enable("browser client minification");
+io.enable("browser client etag");
+io.enable("browser client gzip");
+io.set("log level", 1);
+io.set("transports", [
+    "websocket",
+    "flashsocket",
+    "htmlfile",
+    "xhr-polling",
+    "jsonp-polling"
+]);*/
+io.sockets.on("connection", onSocketConnect);
+
+function onSocketConnect(socket) {
+    console.log("Socket.io Client Connected");
+
+    caress.on('tuio', function(msg){
+      socket.emit('tuio', msg);
+    });
+
+    socket.on("disconnect", function(){
+      console.log("Socket.io Client Disconnected");
+    });
+}
+
+
+server.listen(5000);
+
+/*
+//----------------------------------------------------------------------
+// tuio
+//----------------------------------------------------------------------
+
+var Tuio = require('tuio-nw');
+var tuioClient = new Tuio.Client({
+  host: '127.0.0.1',
+  port: 3333
+});
+
+var onAddTuioCursor = function (addCursor) {
+  console.log(addCursor);
+  //win.webContents.send('addTuioCursor' ,addCursor);
+},
+
+onUpdateTuioCursor = function (updateCursor) {
+  console.log(updateCursor);
+  //win.webContents.send('updateTuioCursor' ,updateCursor);
+},
+
+onRemoveTuioCursor = function (removeCursor) {
+  console.log(removeCursor);
+  //win.webContents.send('removeTuioCursor' ,removeCursor);
+},
+
+onAddTuioObject = function (addObject) {
+  console.log(addObject);
+  //win.webContents.send('addTuioObject' ,addObject);
+},
+
+onUpdateTuioObject = function (updateObject) {
+  console.log(updateObject);
+  //win.webContents.send('updateTuioObject' ,updateObject);
+},
+
+onRemoveTuioObject = function (removeObject) {
+  console.log(removeObject);
+  //win.webContents.send('removeTuioObject' ,removeObject);
+},
+
+onRefresh = function (time) {
+  console.log(time);
+  //win.webContents.send('refresh' ,time);
+};
+
+tuioClient.on('addTuioCursor', onAddTuioCursor);
+tuioClient.on('updateTuioCursor', onUpdateTuioCursor);
+tuioClient.on('removeTuioCursor', onRemoveTuioCursor);
+tuioClient.on('addTuioObject', onAddTuioObject);
+tuioClient.on('updateTuioObject', onUpdateTuioObject);
+tuioClient.on('removeTuioObject', onRemoveTuioObject);
+tuioClient.on('refresh', onRefresh);
+
+tuioClient.listen();*/
+
+//----------------------------------------------------------------------
 // ipc
 //----------------------------------------------------------------------
 
@@ -242,10 +369,6 @@ ipcMain.on('new_montage',(event,arg) => {
 //----------------------------------------------------------------------
 // window
 //----------------------------------------------------------------------
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let win
 
 ipcMain.on('closed',(event,arg) => {
   win = null

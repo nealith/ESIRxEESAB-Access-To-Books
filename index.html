@@ -8,9 +8,16 @@
     <link rel="stylesheet" href="./ihm/style.css">
 
     <!-- Javascript -->
+    <script type="text/javascript" src="./libs/socket.io.slim.js" charset="utf-8"></script>
     <script type="text/javascript" src="./libs/vue.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./libs/jquery.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="./libs/svg.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="./libs/svg.draggable.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="./libs/caress-0.1.0.min.js"></script>
+
+    <script type="text/javascript" src="./libs/alloy_finger.js"></script>
+    <script type="text/javascript" src="./libs/alloy_finger.vue.js"></script>
 
 
   </head>
@@ -85,7 +92,7 @@
         </template>
       </div>
 
-      <div id="libraryStrip"v-on:click="click" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-bind:style="style">
+      <div id="libraryStrip" v-finger:tap="tap" v-finger:touch-start="tap2" v-on:click="click" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-bind:style="style">
         <template v-for="book in books">
           <div v-bind:style="bookNameStyle">
             <div class="verticalText">
@@ -95,9 +102,9 @@
         </template>
       </div>
 
-      <div id="libraryShutter" v-bind:style="style" v-on:wheel="onWheelOnBooks" v-on:mousedown.left="mouseDownOnBooks" v-on:mouseup.left="mouseUpOnBooks" v-on:mousemove.left="mouseMoveOnBooks">
+      <div id="libraryShutter" v-bind:style="style" v-on:wheel="onWheelBooks" v-on:mousedown.left="mouseDownBooks" v-on:mouseup.left="mouseUpBooks" v-on:mousemove.left="mouseMoveBooks">
         <template v-for="book in books">
-          <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheelOnBook" v-on:mousedown.left="mouseDownOnBook" v-on:mouseup.left="mouseUpOnBook" v-on:mousemove.left="mouseMoveOnBook">
+          <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheelBook" v-on:mousedown.left="mouseDownBook" v-on:mouseup.left="mouseUpBook" v-on:mousemove.left="mouseMoveBook">
             <template v-for="page in book.pages">
               <div v-bind:style="stylePage" >
                 <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
