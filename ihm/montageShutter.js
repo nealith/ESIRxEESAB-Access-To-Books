@@ -83,34 +83,35 @@ montageShutter = new Vue({
       }
 
     },
-    onWheel:function(e){
+    wheel:function(e){
       var delta = Math.max(-1, Math.min(1, e.deltaY));
-      document.getElementById(e.currentTarget.id).scrollTop += (delta*40); // Multiplied by 40
-      document.getElementById("montageStrip").scrollTop += (delta*40); // Multiplied by 40
+      document.getElementById("montageShutter").scrollTop += (delta*40); // Multiplied by 40
+      document.getElementById("montageStrip").scrollTop -= (delta*40); // Multiplied by 40
       var t = document.getElementById(e.currentTarget.id);
 
       e.preventDefault();
     },
-    mouseDown:function(e){
+    start:function(e){
       //DEBUG
       //console.log('montageShutter:mouseDown');
       this.down = true;
     },
-    mouseUp:function(e){
+    end:function(e){
       //DEBUG
       //console.log('montageShutter:mouseUp');
       this.down = false;
     },
-    mouseMove:function(e){
+    move:function(e){
       //DEBUG
       //console.log('montageShutter:mouseMove');
       if (pressTimer) {
         clearTimeout(pressTimer);
       }
+      e.movementY = e.movementY || e.deltaY;
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementY));
-        document.getElementById(e.currentTarget.id).scrollTop -= (delta*40); // Multiplied by 40
-        document.getElementById("montageStrip").scrollTop += (delta*40); // Multiplied by 40
+        document.getElementById("montageShutter").scrollTop -= (delta*40); // Multiplied by 40
+        document.getElementById("montageStrip").scrollTop -= (delta*40); // Multiplied by 40
         var t = document.getElementById(e.currentTarget.id);
         e.preventDefault();
         //DEBUG
@@ -118,37 +119,7 @@ montageShutter = new Vue({
 
       }
     },
-    touch:function(e){
-      switch (e.type) {
-        case "touchstart":
-          //DEBUG
-          //console.log('montageShutter:touchstart');
-          this.down = true;
-          break;
-        case "touchmove":
-          //DEBUG
-          //console.log('montageShutter:touchmove');
-          if (pressTimer) {
-            clearTimeout(pressTimer);
-          }
-          if (this.down == true) {
-            var delta = Math.max(-1, Math.min(1, e.movementY));
-            console.log(e.movementY);
-            document.getElementById(e.currentTarget.id).scrollTop -= (delta*40); // Multiplied by 40
-            var t = document.getElementById(e.currentTarget.id);
-            e.preventDefault();
-            //DEBUG
-            //console.log('montageShutter:touchmove:true');
 
-          }
-          break;
-        case "touchend":
-          //DEBUG
-          //console.log('montageShutter:touchend');
-          this.down = false;
-          break;
-      }
-    },
     mouseDownPage:function(e){
       this.down = true;
       pressTimer = window.setTimeout(function() { montageShutter.down = false;},200);

@@ -87,14 +87,31 @@
         </template>
       </div>
 
-      <div id="montageShutter" v-bind:style="style" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
+      <div  id="montageShutter"
+            v-bind:style="style"
+            v-on:wheel="wheel"
+            v-finger:touch-start="start"
+            v-finger:touch-end="end"
+            v-finger:touch-cancel="end"
+            v-finger:press-move="move"
+            v-on:mousedown.left="start"
+            v-on:mouseup.left="end"
+            v-on:mousemove.left="move">
         <template v-for="montage in montages">
           <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage" v-finger:touch-end="tap">
           </div>
         </template>
       </div>
 
-      <div id="libraryStrip" v-finger:touch-start="start" v-finger:touch-end="end"  v-finger:touch-cancel="end" v-on:click="click" v-on:touch="touch" v-on:mousedown.left="start" v-on:mouseup.left="end" v-on:mousemove.left="move" v-finger:press-move="move" v-bind:style="style">
+      <div  id="libraryStrip"
+            v-finger:touch-start="start"
+            v-finger:touch-end="end"
+            v-finger:touch-cancel="end"
+            v-finger:press-move="move"
+            v-on:mousedown.left="start"
+            v-on:mouseup.left="end"
+            v-on:mousemove.left="move"
+            v-bind:style="style">
         <template v-for="book in books">
           <div v-bind:style="bookNameStyle">
             <div class="verticalText">
@@ -104,9 +121,27 @@
         </template>
       </div>
 
-      <div id="libraryShutter" v-bind:style="style" v-on:wheel="onWheelBooks" v-on:mousedown.left="mouseDownBooks" v-on:mouseup.left="mouseUpBooks" v-on:mousemove.left="mouseMoveBooks">
+      <div  id="libraryShutter"
+            v-bind:style="style"
+            v-on:wheel="wheelOnBooks"
+            v-finger:touch-start="startOnBooks"
+            v-finger:touch-end="endOnBooks"
+            v-finger:touch-cancel="endOnBooks"
+            v-finger:press-move="moveOnBooks"
+            v-on:mousedown.left="startOnBooks"
+            v-on:mouseup.left="endOnBooks"
+            v-on:mousemove.left="moveOnBooks">
         <template v-for="book in books">
-          <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheelBook" v-on:mousedown.left="mouseDownBook" v-on:mouseup.left="mouseUpBook" v-on:mousemove.left="mouseMoveBook">
+          <div  v-bind:id="book.name"
+                v-bind:style="styleBook"
+                v-on:wheel="wheelOnBook"
+                v-finger:touch-start="startOnBook"
+                v-finger:touch-end="endOnBook"
+                v-finger:touch-cancel="endOnBook"
+                v-finger:press-move="moveOnBook"
+                v-on:mousedown.left="startOnBook"
+                v-on:mouseup.left="endOnBook"
+                v-on:mousemove.left="moveOnBook">
             <template v-for="page in book.pages">
               <div v-bind:style="stylePage" >
                 <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-finger:long-tap="longTap" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">

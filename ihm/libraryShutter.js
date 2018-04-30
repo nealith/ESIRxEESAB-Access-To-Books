@@ -55,24 +55,25 @@ libraryShutter = new Vue({
       //this.styleImage.width = (pageHeight - 2*pagePadding*(pageHeight))/Math.sqrt(2)+'px';
 
     },
-    onWheelBooks:function(e){
+    wheelOnBooks:function(e){
       var delta = Math.max(-1, Math.min(1, e.deltaY));
       document.getElementById(e.currentTarget.id).scrollTop += (delta*40); // Multiplied by 40
       e.preventDefault();
     },
-    mouseDownBooks:function(e){
+    startOnBooks:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseDownBooks');
       this.down = true;
     },
-    mouseUpBooks:function(e){
+    endOnBooks:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseUpBooks');
       this.down = false;
     },
-    mouseMoveBooks:function(e){
+    moveOnBooks:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseMoveBooks');
+      e.movementY = e.movementY || e.deltaY;
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementY));
         document.getElementById(e.currentTarget.id).scrollTop -= (delta*10); // Multiplied by 40
@@ -82,31 +83,28 @@ libraryShutter = new Vue({
 
       }
     },
-    onWheelBook:function(e){
+    wheelOnBook:function(e){
       var delta = Math.max(-1, Math.min(1, e.deltaY));
       document.getElementById(e.currentTarget.id).scrollLeft += (delta*40); // Multiplied by 40
       e.preventDefault();
     },
-    mouseDownBook:function(e){
+    startOnBook:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseDownBooks');
       this.down = true;
     },
-    mouseDownPage:function(e){
-      this.down = true;
-      pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
-    },
-    mouseUpBook:function(e){
+    endOnBook:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseUpBooks');
       this.down = false;
     },
-    mouseMoveBook:function(e){
+    moveOnBook:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseMoveBooks');
       if (pressTimer) {
         clearTimeout(pressTimer);
       }
+      e.movementX = e.movementX || e.deltaX;
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementX));
         document.getElementById(e.currentTarget.id).scrollLeft -= (delta*10); // Multiplied by 40
@@ -116,35 +114,9 @@ libraryShutter = new Vue({
 
       }
     },
-    touch:function(e){
-      switch (e.type) {
-        case "touchstart":
-          //DEBUG
-          //console.log('libraryShutter:touchstart');
-          this.down = true;
-          break;
-        case "touchmove":
-          //DEBUG
-          //console.log('libraryShutter:touchmove');
-          if (pressTimer) {
-            clearTimeout(pressTimer);
-          }
-          if (this.down == true) {
-            var delta = Math.max(-1, Math.min(1, e.movementX));
-            document.getElementById(e.currentTarget.id).scrollLeft -= (delta*10); // Multiplied by 40
-            var t = document.getElementById(e.currentTarget.id);
-            e.preventDefault();
-            //DEBUG
-            //console.log('libraryShutter:touchmove:true');
-
-          }
-          break;
-        case "touchend":
-          //DEBUG
-          //console.log('libraryShutter:touchend');
-          this.down = false;
-          break;
-      }
+    mouseDownPage:function(e){
+      this.down = true;
+      pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
     },
     touchPage:function(e){
       if (e.type = 'touchstart') {

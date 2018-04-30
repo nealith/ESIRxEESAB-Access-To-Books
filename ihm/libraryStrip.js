@@ -44,33 +44,22 @@ libraryStrip = new Vue({
 
       this.bookNameStyle.height = frame.h/booksLength+'px';
     },
-    click:function(e){
-      //DEBUG
-      //console.log('libraryStrip:click');
-    },
     start:function(e){
       //DEBUG
-      //console.log('libraryStrip:mouseDown');
-      //this.offsetX = strToFloat(this.style.left) - e.clientX;
-      //DEBUG
-      //console.log('libraryStrip:mouseMove:new offsetX:'+this.offsetX);
+      //console.log('libraryStrip:start');
       this.down = true;
-      //montageShutter.style.display='none';
-      //libraryShutter.style.display='none';
     },
     end:function(e){
       //DEBUG
-      //console.log('libraryStrip:mouseUp');
+      //console.log('libraryStrip:end');
       this.down = false;
       shutterController.onLibraryStripMove(this.moveX);
       this.moveX = 0;
-      //montageShutter.style.display='block';
-      //libraryShutter.style.display='block';
     },
     move:function(e){
       //DEBUG
-      //console.log('libraryStrip:mouseMove:'+e.clientX);
-
+      //console.log('libraryStrip:move');
+      
       e.movementX = e.movementX || e.deltaX;
       if (this.down == true &&
         strToFloat(this.style.left) + strToFloat(this.style.width) + e.movementX <= frame.w &&
@@ -80,55 +69,9 @@ libraryStrip = new Vue({
         this.moveX += e.movementX;
 
         //DEBUG
-        //console.log('libraryStrip:mouseMove:new position:'+this.style.left);
-
+        //console.log('libraryStrip:move:new position:'+this.style.left);
       }
-    },
-    pressMove:function(e){
-      console.log('pressMove');
-      //console.log(e);
-
-      if (this.down == true && strToFloat(this.style.left) + strToFloat(this.style.width) + e.deltaX <= frame.w &&
-        strToFloat(this.style.left) + e.deltaX >= strToFloat(montageStrip.style.left) + strToFloat(montageStrip.style.width)) {
-        //shutterController.onLibraryStripMove(e.deltaX);
-        this.style.left  = (strToFloat(this.style.left) + e.deltaX) + 'px';
-        //DEBUG
-        //console.log('libraryStrip:touchmove:new position:'+this.style.left);
-        this.moveX += e.deltaX;
-      }
-    },
-    touch:function(e){
-      /*console.log("teeeeeeee");
-      switch (e.type) {
-        case "touchstart":
-          //DEBUG
-          //console.log('libraryStrip:touchstart');
-          this.offsetX = strToFloat(this.style.left) - e.clientX;
-          //DEBUG
-          //console.log('libraryStrip:touchstart:new offsetX:'+this.offsetX);
-          this.down = true;
-          break;
-        case "touchmove":
-          //DEBUG
-          //console.log('libraryStrip:touchmove:'+e.clientX);
-          if (this.down == true &&
-            strToFloat(this.style.left) + strToFloat(this.style.width) + e.movementX <= frame.w &&
-            strToFloat(this.style.left) + e.movementX >= strToFloat(montageStrip.style.left) + strToFloat(montageStrip.style.width)) {
-            shutterController.onLibraryStripMove(e.movementX);
-            this.style.left  = (strToFloat(this.style.left) + e.movementX) + 'px';
-            //DEBUG
-            //console.log('libraryStrip:touchmove:new position:'+this.style.left);
-
-          }
-          break;
-        case "touchend":
-          //DEBUG
-          //console.log('libraryStrip:touchend');
-          this.down = false;
-          break;
-      }*/
     }
-
   }
 });
 libraryStrip.style['z-index'] = 2;
