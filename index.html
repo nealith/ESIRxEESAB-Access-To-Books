@@ -94,7 +94,7 @@
         </template>
       </div>
 
-      <div id="libraryStrip" v-finger:touch-start="touchStart" v-finger:touch-end="mouseUp"  v-finger:touch-cancel="mouseUp" v-finger:tap="tap" v-on:click="click" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-finger:swipe="swipe" v-finger:press-move="pressMove" v-bind:style="style">
+      <div id="libraryStrip" v-finger:touch-start="start" v-finger:touch-end="end"  v-finger:touch-cancel="end" v-on:click="click" v-on:touch="touch" v-on:mousedown.left="start" v-on:mouseup.left="end" v-on:mousemove.left="move" v-finger:press-move="move" v-bind:style="style">
         <template v-for="book in books">
           <div v-bind:style="bookNameStyle">
             <div class="verticalText">
