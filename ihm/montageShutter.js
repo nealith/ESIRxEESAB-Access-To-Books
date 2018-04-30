@@ -131,7 +131,6 @@ montageShutter = new Vue({
       }
     },
     tap:function(e){
-      console.log(e);
       if (dataTransfer.ready == true) {
         var k = -1;
         for (var i = 0; i < montages.length; i++) {

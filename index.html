@@ -25,35 +25,53 @@
   </head>
   <body>
     <div id="rotationWrap">
-      <div id="montageDialogue" v-bind:style="style" class="full-border" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
+
+      <div  id="montageDialogue"
+            v-bind:style="style"
+            class="full-border"
+            v-finger:touch-start="start"
+            v-finger:touch-end="end"
+            v-finger:touch-cancel="end"
+            v-finger:press-move="move"
+            v-on:mousedown.left="start"
+            v-on:mouseup.left="end"
+            v-on:mousemove.left="move">
         <div>
           <input autofocus="true" id="montageName" class="full-border" v-model="name" type="text" placeholder="Titre pour le nouveau montage">
         </div>
         <div>
-          <button class="full-border two-button" type="submit" v-on:click="ok">Créer</button>
-          <button class="full-border two-button" type="submit" v-on:click="cancel">Annuler</button>
+          <button class="full-border two-button" type="submit" v-on:click="onOkPressed" v-finger:tap="onOkPressed">Créer</button>
+          <button class="full-border two-button" type="submit" v-on:click="onCancelPressed" v-finger:tap="onCancelPressed">Annuler</button>
         </div>
 
       </div>
 
       <div id="rotationButtons" v-bind:style="style">
-        <div class="rotationButton" id="rotationButtonTopLeft" v-bind:style="buttonStyleTopLeft" v-on:click="rotate">
+        <div class="rotationButton" id="rotationButtonTopLeft" v-bind:style="buttonStyleTopLeft" v-on:click="onRotatePressed" v-finger:tap="onRotatePressed">
 
         </div>
-        <div class="rotationButton" id="rotationButtonTopRight" v-bind:style="buttonStyleTopRight" v-on:click="rotate">
+        <div class="rotationButton" id="rotationButtonTopRight" v-bind:style="buttonStyleTopRight" v-on:click="onRotatePressed" v-finger:tap="onRotatePressed">
 
         </div>
-        <div class="rotationButton" id="rotationButtonBottomLeft" v-bind:style="buttonStyleBottomLeft" v-on:click="rotate">
+        <div class="rotationButton" id="rotationButtonBottomLeft" v-bind:style="buttonStyleBottomLeft" v-on:click="onRotatePressed" v-finger:tap="onRotatePressed">
 
         </div>
-        <div class="rotationButton" id="rotationButtonBottomRight" v-bind:style="buttonStyleBottomRight" v-on:click="rotate">
+        <div class="rotationButton" id="rotationButtonBottomRight" v-bind:style="buttonStyleBottomRight" v-on:click="onRotatePressed" v-finger:tap="onRotatePressed">
 
         </div>
       </div>
 
-      <div id="keyboard" v-bind:style="style"  v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
+      <div  id="keyboard"
+            v-bind:style="style"
+            v-finger:touch-start="start"
+            v-finger:touch-end="end"
+            v-finger:touch-cancel="end"
+            v-finger:press-move="move"
+            v-on:mousedown.left="start"
+            v-on:mouseup.left="end"
+            v-on:mousemove.left="move">
         <template v-for="key in keys">
-          <div class="key" v-bind:style="styleKey" v-bind:id="key.label" v-on:click="onclick">
+          <div class="key" v-bind:style="styleKey" v-bind:id="key.label" v-on:click="onKeyPressed" v-finger:tap="onKeyPressed">
             <div>
               <p>{{key.letter}}</p>
             </div>
@@ -66,13 +84,13 @@
         <div v-bind:style="whiteSpace">
 
         </div>
-        <div id="montage" v-bind:style="buttonStyle" v-on:click="onmontage">
+        <div id="montage" v-bind:style="buttonStyle" v-on:click="onNewMontagePressed" v-finger:tap="onNewMontagePressed">
 
         </div>
-        <div id="notes" v-bind:style="buttonStyle" v-on:click="onnotes">
+        <div id="notes" v-bind:style="buttonStyle" v-on:click="onAddNotePressed" v-finger:tap="onAddNotePressed">
 
         </div>
-        <div id="vocal" v-bind:style="buttonStyle" v-on:click="onvocal">
+        <div id="vocal" v-bind:style="buttonStyle" v-on:click="onEnableVocalPressed" v-finger:tap="onEnableVocalPressed">
 
         </div>
       </div>

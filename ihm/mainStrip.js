@@ -28,14 +28,14 @@ mainStrip = new Vue({
 
       this.whiteSpace.height = frame.h-3*((sizePourcent*frame.w))+'px'
     },
-    onmontage:function(e){
+    onNewMontagePressed:function(e){
       console.log('onmontage');
-      montageDialogue.ontoggle();
+      montageDialogue.toggle();
     },
-    onnotes:function(e){
+    onAddNotePressed:function(e){
       console.log('onnotes');
     },
-    onvocal:function(e){
+    onEnableVocalPressed:function(e){
       console.log('onvocal');
     }
   }

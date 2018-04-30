@@ -17,19 +17,19 @@ montageDialogue = new Vue({
       this.style.width = 1/8*frame.w+'px';
       this.style.height = 1/6*frame.h+'px';
     },
-    ontoggle:function(){
+    toggle:function(){
       if (this.style.display == 'none') {
         this.style.display = 'block';
         keyboard.addListener('montageName');
-        keyboard.ontoggle();
+        keyboard.toggle();
       } else {
         this.style.display = 'none';
         keyboard.removeListener('montageName');
-        keyboard.ontoggle();
+        keyboard.toggle();
         this.name = "";
       }
     },
-    ok:function(){
+    onOkPressed:function(){
       alreadyexist = false;
       console.log(this.name);
       for (var i = 0; i < montageShutter.montages.length; i++) {
@@ -40,26 +40,28 @@ montageDialogue = new Vue({
       }
       if (!alreadyexist) {
         var name = this.name;
-        this.ontoggle();
+        this.toggle();
         montageShutter.newMontage(name);
       }
     },
-    cancel:function(){
-      this.ontoggle();
+    onCancelPressed:function(){
+      this.toggle();
     },
-    mouseDown:function(e){
+    start:function(e){
       //DEBUG
       //console.log('montageDialogue:mouseDown');
       this.down = true;
     },
-    mouseUp:function(e){
+    end:function(e){
       //DEBUG
       //console.log('montageDialogue:mouseUp');
       this.down = false;
     },
-    mouseMove:function(e){
+    move:function(e){
       //DEBUG
       //console.log('montageDialogue:mouseMove');
+      e.movementX = e.movementX || e.deltaX;
+      e.movementY = e.movementY || e.deltaY;
       if (this.down == true) {
 
         var right  = (strToFloat(this.style.right) - e.movementX);
@@ -70,38 +72,7 @@ montageDialogue = new Vue({
         }
 
       }
-    },
-    touch:function(e){
-      switch (e.type) {
-        case "touchstart":
-          //DEBUG
-          //console.log('montageDialogue:touchstart');
-          this.down = true;
-          break;
-        case "touchmove":
-          //DEBUG
-          //console.log('montageDialogue:touchmove');
-          if (this.down == true) {
-            var right  = (strToFloat(this.style.right) - e.movementX);
-            var bottom  = (strToFloat(this.style.bottom) - e.movementY);
-
-            if (right >= 0 && right+strToFloat(this.style.width) < frame.w && bottom >= 0 && bottom + strToFloat(this.style.height) < frame.h ) {
-              this.style.right = right + 'px';
-              this.style.bottom = bottom + 'px';
-            }
-            //DEBUG
-            //console.log('montageDialogue:touchmove:true');
-
-          }
-          break;
-        case "touchend":
-          //DEBUG
-          //console.log('montageDialogue:touchend');
-          this.down = false;
-          break;
-      }
     }
-
   }
 });
 

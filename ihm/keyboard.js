@@ -217,14 +217,14 @@ keyboard = new Vue({
         break;
       }
     },
-    ontoggle:function(){
+    toggle:function(){
       if (this.style.display == 'none') {
         this.style.display = 'block';
       } else {
         this.style.display = 'none';
       }
     },
-    oncapslock:function(){
+    onCapslockPressed:function(){
       if (this.toUpper) {
         this.toUpper = false;
         for (var i = 0; i < keys.length; i++) {
@@ -251,11 +251,30 @@ keyboard = new Vue({
         }
       }
     },
-    onclick:function(e){
-      if (e.currentTarget.id != "keyShift") {
+    onKeyPressed:function(e){
+      console.log(e);
+      e.target = e.target || e.currentTarget;
+      var id = e.target.id;
+      if (e.target.tagName == 'P') {
+        id = 'key'+e.target.innerText.toUpperCase();
+        if (e.target.innerText == ',') {
+          id = 'keyComma';
+        }
+        if (e.target.innerText == ';') {
+          id = 'keySemicolon';
+        }
+        if (e.target.innerText == '⇑') {
+          id = 'keyShift';
+        }
+        if (e.target.innerText == 'OK') {
+          id = 'keyOK';
+        }
+      }
+      console.log(id);
+      if (id != "keyShift") {
         var key = null;
         for (var i = 0; i < keys.length; i++) {
-          if(keys[i].label == e.currentTarget.id){
+          if(keys[i].label == id){
             key = keys[i];
             break;
           }
@@ -278,22 +297,24 @@ keyboard = new Vue({
         window.dispatchEvent(event);
 
       } else {
-        this.oncapslock();
+        this.onCapslockPressed();
       }
     },
-    mouseDown:function(e){
+    start:function(e){
       //DEBUG
       //console.log('keyboard:mouseDown');
       this.down = true;
     },
-    mouseUp:function(e){
+    end:function(e){
       //DEBUG
       //console.log('keyboard:mouseUp');
       this.down = false;
     },
-    mouseMove:function(e){
+    move:function(e){
       //DEBUG
       //console.log('keyboard:mouseMove');
+      e.movementX = e.movementX || e.deltaX;
+      e.movementY = e.movementY || e.deltaY;
       if (this.down == true) {
 
         var right  = (strToFloat(this.style.right) - e.movementX);
