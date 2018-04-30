@@ -88,8 +88,28 @@ libraryStrip = new Vue({
     tap2:function(e){
       console.log("tesstttteeee2");
     },
+    swipe:function(e){
+      console.log('swipe');
+      console.log(e);
+    },
+    touchStart:function(e){
+      this.down = true;
+    },
+    pressMove:function(e){
+      console.log('pressMove');
+      //console.log(e);
+
+      if (this.down == true && strToFloat(this.style.left) + strToFloat(this.style.width) + e.deltaX <= frame.w &&
+        strToFloat(this.style.left) + e.deltaX >= strToFloat(montageStrip.style.left) + strToFloat(montageStrip.style.width)) {
+        //shutterController.onLibraryStripMove(e.deltaX);
+        this.style.left  = (strToFloat(this.style.left) + e.deltaX) + 'px';
+        //DEBUG
+        //console.log('libraryStrip:touchmove:new position:'+this.style.left);
+        this.moveX += e.deltaX;
+      }
+    },
     touch:function(e){
-      console.log("teeeeeeee");
+      /*console.log("teeeeeeee");
       switch (e.type) {
         case "touchstart":
           //DEBUG
@@ -117,7 +137,7 @@ libraryStrip = new Vue({
           //console.log('libraryStrip:touchend');
           this.down = false;
           break;
-      }
+      }*/
     }
 
   }

@@ -12,7 +12,10 @@ socket.on('test', function(data){console.log(data);});
 socket.on('disconnect', function(){});
 socket.emit('test',{msg:'test'});*/ // USED TO TEST SOCKETIO
 
-
+dataTransfer = {
+  ready:false,
+  data:null
+}
 
 window.client = new Caress.Client({
     host: 'localhost',

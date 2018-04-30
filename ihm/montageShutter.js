@@ -159,13 +159,43 @@ montageShutter = new Vue({
         pressTimer = window.setTimeout(function() { montageShutter.down = false;},200);
       }
     },
+    tap:function(e){
+      console.log(e);
+      if (dataTransfer.ready == true) {
+        var k = -1;
+        for (var i = 0; i < montages.length; i++) {
+          if (e.target.parentElement.parentElement.id == montages[i].name || e.target.parentElement.id == montages[i].name) {
+            k=i;
+            break;
+          }
+
+        }
+        if (k >= 0) {
+          var rect = document.getElementById(montages[k].name).getBoundingClientRect();
+          var a = dataTransfer.data.height;
+          var b = dataTransfer.data.width;
+          var x = (e.clientX - rect.left) - dataTransfer.data.offsetx;
+          var y = (e.clientY - rect.top) - dataTransfer.data.offsety;
+          var img = svgCanvas[montages[k].name].image(dataTransfer.data.src,b,a).move(x,y);
+          img.draggable({
+            minX:0,
+            minY:0,
+            maxX:montageSize,
+            maxY:montageSize
+          });
+          img.mousedown = montageShutter.mouseDownPage;
+          saveMontage(montages[k]);
+          dataTransfer.data = null,
+          dataTransfer.ready = false;
+        }
+      }
+    },
     dragOverMontage:function(e){
       e.preventDefault();
     },
     dropMontage:function(e){
       var k = -1;
       for (var i = 0; i < montages.length; i++) {
-        montages[i].name
         if (e.currentTarget.id == montages[i].name) {
           k=i;
           break;

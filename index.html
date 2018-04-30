@@ -19,6 +19,8 @@
     <script type="text/javascript" src="./libs/alloy_finger.js"></script>
     <script type="text/javascript" src="./libs/alloy_finger.vue.js"></script>
 
+    <script type="text/javascript" src="./libs/hammer.min.js" charset="utf-8"></script>
+
 
   </head>
   <body>
@@ -87,12 +89,12 @@
 
       <div id="montageShutter" v-bind:style="style" v-on:touch="touch" v-on:wheel="onWheel" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove">
         <template v-for="montage in montages">
-          <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage">
+          <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage" v-finger:touch-end="tap">
           </div>
         </template>
       </div>
 
-      <div id="libraryStrip" v-finger:tap="tap" v-finger:touch-start="tap2" v-on:click="click" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-bind:style="style">
+      <div id="libraryStrip" v-finger:touch-start="touchStart" v-finger:touch-end="mouseUp"  v-finger:touch-cancel="mouseUp" v-finger:tap="tap" v-on:click="click" v-on:touch="touch" v-on:mousedown.left="mouseDown" v-on:mouseup.left="mouseUp" v-on:mousemove.left="mouseMove" v-finger:swipe="swipe" v-finger:press-move="pressMove" v-bind:style="style">
         <template v-for="book in books">
           <div v-bind:style="bookNameStyle">
             <div class="verticalText">
@@ -107,7 +109,7 @@
           <div v-bind:style="styleBook" v-bind:id="book.name" v-on:touch="touch" v-on:wheel="onWheelBook" v-on:mousedown.left="mouseDownBook" v-on:mouseup.left="mouseUpBook" v-on:mousemove.left="mouseMoveBook">
             <template v-for="page in book.pages">
               <div v-bind:style="stylePage" >
-                <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
+                <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-finger:long-tap="longTap" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
               </div>
             </template>
           </div>

@@ -48,7 +48,7 @@ libraryShutter = new Vue({
 
       var pageHeight = frame.h/numberOfBooksVisible;
       this.stylePage.height = pageHeight+'px';
-      this.stylePage.width = pageHeight/Math.sqrt(2);
+      this.stylePage.width = pageHeight/Math.sqrt(2)+'px';
       this.stylePage.padding = pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px';
 
       this.styleImage.height = (pageHeight - 2*pagePadding*(pageHeight))+'px';
@@ -151,6 +151,22 @@ libraryShutter = new Vue({
 
         pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
       }
+    },
+    longTap:function(e){
+      console.log('longTap');
+      console.log(e);
+
+      var rect = e.target.getBoundingClientRect();
+      dataTransfer.data = {
+        offsetx: e.clientX - rect.left,
+        offsety: e.clientY - rect.top,
+        width: e.target.width,
+        height: e.target.height,
+        src: e.srcElement.currentSrc
+      }
+      dataTransfer.ready = true;
+
+
     },
     dragPage:function(e){
       // DEBUG:
