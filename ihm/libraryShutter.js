@@ -57,7 +57,8 @@ libraryShutter = new Vue({
     },
     wheelOnBooks:function(e){
       var delta = Math.max(-1, Math.min(1, e.deltaY));
-      document.getElementById(e.currentTarget.id).scrollTop += (delta*40); // Multiplied by 40
+      document.getElementById("libraryShutter").scrollTop += (delta*40); // Multiplied by 40
+      document.getElementById("libraryStrip").scrollTop += (delta*40); // Multiplied by 40
       e.preventDefault();
     },
     startOnBooks:function(e){
@@ -76,7 +77,8 @@ libraryShutter = new Vue({
       e.movementY = e.movementY || e.deltaY;
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementY));
-        document.getElementById(e.currentTarget.id).scrollTop -= (delta*10); // Multiplied by 40
+        document.getElementById("libraryShutter").scrollTop -= (delta*10); // Multiplied by 40
+        document.getElementById("libraryStrip").scrollTop -= (delta*10); // Multiplied by 40
         e.preventDefault();
         //DEBUG
         //console.log('libraryShutter:mouseMove:true');

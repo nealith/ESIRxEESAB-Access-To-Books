@@ -83,25 +83,25 @@ montageShutter = new Vue({
       }
 
     },
-    wheel:function(e){
+    wheelOnMontages:function(e){
       var delta = Math.max(-1, Math.min(1, e.deltaY));
       document.getElementById("montageShutter").scrollTop += (delta*40); // Multiplied by 40
-      document.getElementById("montageStrip").scrollTop -= (delta*40); // Multiplied by 40
+      document.getElementById("montageStrip").scrollTop += (delta*40); // Multiplied by 40
       var t = document.getElementById(e.currentTarget.id);
 
       e.preventDefault();
     },
-    start:function(e){
+    startOnMontages:function(e){
       //DEBUG
       //console.log('montageShutter:mouseDown');
       this.down = true;
     },
-    end:function(e){
+    endOnMontages:function(e){
       //DEBUG
       //console.log('montageShutter:mouseUp');
       this.down = false;
     },
-    move:function(e){
+    moveOnMontages:function(e){
       //DEBUG
       //console.log('montageShutter:mouseMove');
       if (pressTimer) {
@@ -119,18 +119,7 @@ montageShutter = new Vue({
 
       }
     },
-
-    mouseDownPage:function(e){
-      this.down = true;
-      pressTimer = window.setTimeout(function() { montageShutter.down = false;},200);
-    },
-    touchPage:function(e){
-      if (e.type = 'touchstart') {
-
-        pressTimer = window.setTimeout(function() { montageShutter.down = false;},200);
-      }
-    },
-    tap:function(e){
+    endOnMontage:function(e){
       if (dataTransfer.ready == true) {
         var k = -1;
         for (var i = 0; i < montages.length; i++) {

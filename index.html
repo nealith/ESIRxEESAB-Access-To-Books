@@ -107,16 +107,16 @@
 
       <div  id="montageShutter"
             v-bind:style="style"
-            v-on:wheel="wheel"
-            v-finger:touch-start="start"
-            v-finger:touch-end="end"
-            v-finger:touch-cancel="end"
-            v-finger:press-move="move"
-            v-on:mousedown.left="start"
-            v-on:mouseup.left="end"
-            v-on:mousemove.left="move">
+            v-on:wheel="wheelOnMontages"
+            v-finger:touch-start="startOnMontages"
+            v-finger:touch-end="endOnMontages"
+            v-finger:touch-cancel="endOnMontages"
+            v-finger:press-move="moveOnMontages"
+            v-on:mousedown.left="startOnMontages"
+            v-on:mouseup.left="endOnMontages"
+            v-on:mousemove.left="moveOnMontages">
         <template v-for="montage in montages">
-          <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage" v-finger:touch-end="tap">
+          <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage" v-finger:touch-end="endOnMontage">
           </div>
         </template>
       </div>

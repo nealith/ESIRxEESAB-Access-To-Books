@@ -11,7 +11,7 @@ let win
 const fs = require('fs')
 const klaw = require('klaw')
 const through2 = require('through2')
-//const sharp = require('sharp')
+const sharp = require('sharp')
 
 const mqtt = require('mqtt')
 const client = mqtt.connect('mqtt://192.168.38.1')
@@ -59,13 +59,15 @@ function processVoiceMessage (message) {
 const CONFIG = require('./config.json')
 global.books = JSON.parse(fs.readFileSync(CONFIG.books.index))
 global.montages = JSON.parse(fs.readFileSync(CONFIG.montages.index))
-global.books_path = CONFIG.montages.path
+global.books_path = CONFIG.books.path
 global.montages_path = CONFIG.montages.path
 
 function saveBooksIndex(){
   if (global.books != undefined) {
+    console.log('saveBooksIndex');
     var jsonData = JSON.stringify(global.books);
-    if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '{' && jsonData[jsonData.length-1] == '}'){
+    if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']'){
+      console.log("test");
       fs.writeFile(CONFIG.books.index, jsonData, function(err) {
           if(err) {
               return console.log(err);
@@ -78,8 +80,9 @@ function saveBooksIndex(){
 
 function saveMontagesIndex(){
   if (global.montages != undefined) {
+    console.log('saveMontagesIndex');
     var jsonData = JSON.stringify(global.montages);
-    if (jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '{' && jsonData[jsonData.length-1] == '}') {
+    if (jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']') {
       fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
           if(err) {
               return console.log(err);
@@ -96,13 +99,14 @@ function saveMontagesIndex(){
 var book = {}
 
 const Exts = [
-  'jpeg',
-  'jpg',
-  'png',
-  'webp',
-  'tiff',
-  'gif',
-  'svg'
+  '.jpeg',
+  '.jpg',
+  '.png',
+  '.webp',
+  '.tif',
+  '.tiff',
+  '.gif',
+  '.svg'
 ]
 
 function checkExt(ext){
@@ -115,46 +119,56 @@ function checkExt(ext){
 }
 
 const addPage = through2.obj(function (item, enc, next) {
+  console.log("addPage called");
+  console.log(item);
+  console.log(!item.stats.isDirectory());
+  console.log(path.extname(item.path));
   if (!item.stats.isDirectory() && checkExt(path.extname(item.path))) {
     this.push(item)
 
     var page = {
       originalPath:item.path,
-      description:'page n°'+book.page.length,
-      id:book.name+'_'+book.page.length,
-      thumbnail:book.path+'thumbnail/'+'page_'+book.page.length+'.png',
-      dzi:book.path+'dzi/'+'page_'+book.page.length+'.dzi'
+      description:path.basename(item.path),//'page n°'+book.pages.length,
+      id:book.name+'_'+path.basename(item.path),//book.name+'_'+//book.pages.length,
+      thumbnail:book.path+'thumbnail/'+path.basename(item.path)+'.png',//'page_'+book.pages.length+'.png',
+      dzi:book.path+'dzi/'+path.basename(item.path)+'.dz'//'page_'+book.pages.length+'.dz'
     }
 
+    console.log('adding page....');
+    console.log(page);
+
     book.pages[page.id] = page
-      /*
+
      sharp(item.path)
      .resize(560, 360, {
        kernel: sharp.kernel.lanczos3
      })
      .max()
      .toFile(page.thumbnail,function(err){
-       if (err === undefined) {
+       if (err === undefined || err == null) {
          sharp(item.path)
+         .png()
+          .tile({
+            size: 256
+          })
          .max()
          .toFile(page.dzi,function(err){
-           if (err === undefined) {
+           if (err === undefined || err == null) {
              book.pages.push(page);
-             next()
            } else {
              console.log(err)
-             page.err = error
+             page.err = err
              book.pages.push(page);
            }
+           next()
          })
        } else {
          console.log(err)
-         page.err = error
+         page.err = err
          book.pages.push(page);
          next()
        }
-     })*/
-    next()
+     })
   } else {
     next()
   }
@@ -165,10 +179,13 @@ ipcMain.on('walkonBook',(event,arg) => {
 
   book={
     name:arg.name,
-    path:BOOKS_PATH+arg.name+'/',
+    path:global.books_path+arg.name+'/',
     originalPath: arg.path,
     pages:[]
   }
+
+  console.log('adding book....')
+  console.log(book);
 
   var pages = []
 
@@ -184,16 +201,28 @@ ipcMain.on('walkonBook',(event,arg) => {
     fs.mkdirSync(book.path+'thumbnail/');
   }
 
-  klaw(arg.path)
+  if (!fs.existsSync(arg.path)){
+    console.log(arg.path+" doesn't exist");
+  }
+
+  klaw(arg.path,{depthLimit:1})
     .pipe(addPage)
-    .on('error', err => event.sender.send('errorWhileWalkinOnBook',err))
+    .on('error', err => {
+      event.sender.send('errorWhileWalkinOnBook',err)
+      console.log(err)
+    })
     .on('data', item => {
       if (!item.deleted) return
       pages.push(item.path)
     })
     .on('end', () => {
       console.dir(pages)
+      console.log(book);
+      book.pages.sort(function(a,b){
+        return a.id < b.id;
+      })
       global.books.push(book)
+      console.log(global.books);
       saveBooksIndex()
       event.sender.send('receiveNewBook',null)
     })

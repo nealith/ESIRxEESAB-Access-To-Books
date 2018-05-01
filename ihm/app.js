@@ -17,6 +17,14 @@ dataTransfer = {
   data:null
 }
 
+function newBook(name,path){
+  ipcRenderer.send('walkonBook',{
+    name:name,
+    path:path
+  })
+
+}
+
 window.client = new Caress.Client({
     host: 'localhost',
     port: 5000
