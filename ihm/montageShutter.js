@@ -202,6 +202,15 @@ montageShutter = new Vue({
     },
     printSVG:function(name){
       console.log(svgCanvas[name].svg());
+    },
+    tap:function(e){
+      console.log(e);
+    },
+    rotateOnImage:function(e){
+      if (e.target.tagName == 'image') {
+        img = SVG.get(e.target.id);
+        img.rotate(e.angle);
+      }
     }
   }
 });

@@ -1,6 +1,8 @@
 var books = remote.getGlobal('books');
-var booksLength = books.length;
 const pagePadding = 0.05;
+
+
+const numberOfBooksVisible = 3;
 
 libraryStrip = new Vue({
   el: '#libraryStrip',
@@ -14,10 +16,11 @@ libraryStrip = new Vue({
       position : 'absolute',
       top : '0px',
       left : (frame.w-sizePourcent*frame.w)+'px',
-      width : (sizePourcent*frame.w)+'px'
+      width : (sizePourcent*frame.w)+'px',
+      overflow : 'hidden'
     },
     bookNameStyle:{
-      height : frame.h/booksLength+'px',
+      height : frame.h/numberOfBooksVisible+'px',
       color: "white",
       padding: '0px 0px 0px 0px',
       margin: '0px 0px',
@@ -42,7 +45,7 @@ libraryStrip = new Vue({
       this.style.height = frame.h+'px';
       this.style.width = newWidth+'px';
 
-      this.bookNameStyle.height = frame.h/booksLength+'px';
+      this.bookNameStyle.height = frame.h/numberOfBooksVisible+'px';
     },
     start:function(e){
       //DEBUG
@@ -59,7 +62,7 @@ libraryStrip = new Vue({
     move:function(e){
       //DEBUG
       //console.log('libraryStrip:move');
-      
+
       e.movementX = e.movementX || e.deltaX;
       if (this.down == true &&
         strToFloat(this.style.left) + strToFloat(this.style.width) + e.movementX <= frame.w &&

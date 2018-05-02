@@ -174,6 +174,37 @@ const addPage = through2.obj(function (item, enc, next) {
   }
 })
 
+ipcMain.on('sortBooks',(event,arg) => {
+
+  for (var i = 0; i < books.length; i++) {
+    books[i].pages.sort(function(a,b){
+      if (a.id.length == b.id.length) {
+        if(a.id <= b.id){
+          return -1;
+        } else {
+          return 1;
+        }
+      } else {
+        return a.id.length - b.id.length
+      }
+    });
+  }
+
+  books.sort(function(a,b){
+    return a.name < b.name
+  })
+
+  event.sender.send('sync_books',null)
+
+
+})
+
+ipcMain.on('saveBooks',(event,arg) => {
+
+  saveBooksIndex();
+
+
+})
 
 ipcMain.on('walkonBook',(event,arg) => {
 
@@ -219,12 +250,13 @@ ipcMain.on('walkonBook',(event,arg) => {
       console.dir(pages)
       console.log(book);
       book.pages.sort(function(a,b){
-        return a.id < b.id;
+
+        return (a.id.length < b.id.length || a.id < b.id)
       })
       global.books.push(book)
       console.log(global.books);
       saveBooksIndex()
-      event.sender.send('receiveNewBook',null)
+      event.sender.send('sync_books',null)
     })
 
 })

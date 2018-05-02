@@ -114,11 +114,28 @@
             v-finger:press-move="moveOnMontages"
             v-on:mousedown.left="startOnMontages"
             v-on:mouseup.left="endOnMontages"
-            v-on:mousemove.left="moveOnMontages">
+            v-on:mousemove.left="moveOnMontages"
+            v-finger:rotate="rotateOnImage"
+            v-finger:tap="tap">
         <template v-for="montage in montages">
           <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage" v-finger:touch-end="endOnMontage">
           </div>
         </template>
+      </div>
+
+      <div  id="zoom"
+            v-bind:style="style"
+            v-on:wheel="zoom"
+            v-finger:touch-start="start"
+            v-finger:touch-end="end"
+            v-finger:touch-cancel="end"
+            v-finger:press-move="move"
+            v-on:mousedown.left="start"
+            v-on:mouseup.left="end"
+            v-on:mousemove.left="move"
+            v-finger:rotate="rotate"
+            v-finger:double-tap="toggleForeground"
+      >
       </div>
 
       <div  id="libraryStrip"
@@ -162,7 +179,7 @@
                 v-on:mousemove.left="moveOnBook">
             <template v-for="page in book.pages">
               <div v-bind:style="stylePage" >
-                <img v-bind:id="page.id" v-bind:src="page.src" v-bind:alt="page.description" v-bind:style="styleImage" v-finger:long-tap="longTap" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
+                <img v-bind:id="page.id" v-bind:src="page.thumbnail" v-bind:alt="page.description" v-bind:style="styleImage" v-finger:long-tap="longTap" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
               </div>
             </template>
           </div>
@@ -180,5 +197,6 @@
     <script type="text/javascript" src="./ihm/libraryStrip.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/montageShutter.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/libraryShutter.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/zoom.js" charset="utf-8"></script>
   </body>
 </html>

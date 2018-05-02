@@ -65,6 +65,7 @@ var montageStrip;
 var libraryStrip;
 var montageShutter;
 var libraryShutter;
+var zoom;
 
 window.onresize = function(e){
     frame.oldH = frame.h;
@@ -79,6 +80,7 @@ window.onresize = function(e){
     keyboard.resize();
     montageDialogue.resize();
     rotationButtons.resize();
+    zoom.resize();
 }
 
 shutterController = {

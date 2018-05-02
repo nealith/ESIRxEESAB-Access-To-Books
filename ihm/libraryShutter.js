@@ -4,7 +4,6 @@
 
 let pressTimer;
 
-var numberOfBooksVisible = 3;
 
 libraryShutter = new Vue({
   el: '#libraryShutter',
@@ -56,10 +55,12 @@ libraryShutter = new Vue({
 
     },
     wheelOnBooks:function(e){
-      var delta = Math.max(-1, Math.min(1, e.deltaY));
-      document.getElementById("libraryShutter").scrollTop += (delta*40); // Multiplied by 40
-      document.getElementById("libraryStrip").scrollTop += (delta*40); // Multiplied by 40
-      e.preventDefault();
+      if ( Math.abs(e.deltaY) > Math.abs(e.deltaX) ) {
+        var delta = Math.max(-1, Math.min(1, e.deltaY));
+        document.getElementById("libraryShutter").scrollTop += (delta*40); // Multiplied by 40
+        document.getElementById("libraryStrip").scrollTop += (delta*40); // Multiplied by 40
+        e.preventDefault();
+      }
     },
     startOnBooks:function(e){
       //DEBUG
@@ -86,9 +87,11 @@ libraryShutter = new Vue({
       }
     },
     wheelOnBook:function(e){
-      var delta = Math.max(-1, Math.min(1, e.deltaY));
-      document.getElementById(e.currentTarget.id).scrollLeft += (delta*40); // Multiplied by 40
-      e.preventDefault();
+      if ( Math.abs(e.deltaY) < Math.abs(e.deltaX) ) {
+        var delta = Math.max(-1, Math.min(1, e.deltaY));
+        document.getElementById(e.currentTarget.id).scrollLeft += (delta*40); // Multiplied by 40
+        e.preventDefault();
+      }
     },
     startOnBook:function(e){
       //DEBUG
@@ -142,6 +145,11 @@ libraryShutter = new Vue({
 
 
     },
+    doubleTap:function(e){
+      var dziSrc = e.target.src.replace("thumbnail","dzi");
+      dziSrc = dziSrc.replace("png","dz");
+      zoom.toggle({dzi:dziSrc});
+    }
     dragPage:function(e){
       // DEBUG:
       console.log("start drag on page");
@@ -170,6 +178,20 @@ libraryShutter = new Vue({
       //e.dataTransfer.setData('text',JSON.stringify(data));
     }
   }
+});
+
+function sortBooks(){
+  ipcRenderer.send('sortBooks',null);
+}
+
+function saveBooks(){
+  ipcRenderer.send('saveBooks',null);
+}
+
+ipcRenderer.on('sync_books', (event, arg) => {
+  books = remote.getGlobal('books');
+  libraryShutter.books = books;
+  libraryStrip.books = books;
 });
 
 libraryShutter.styleBook['white-space'] = 'nowrap';
