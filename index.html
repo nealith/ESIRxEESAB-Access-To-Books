@@ -19,7 +19,7 @@
     <script type="text/javascript" src="./libs/alloy_finger.js"></script>
     <script type="text/javascript" src="./libs/alloy_finger.vue.js"></script>
 
-    <script type="text/javascript" src="./libs/hammer.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./libs/openseadragon/openseadragon.js" charset="utf-8"></script>
 
 
   </head>
@@ -125,17 +125,17 @@
 
       <div  id="zoom"
             v-bind:style="style"
-            v-on:wheel="zoom"
+            v-finger:double-tap="toggleForeground"
+            v-finger:tap="tap"
             v-finger:touch-start="start"
             v-finger:touch-end="end"
             v-finger:touch-cancel="end"
             v-finger:press-move="move"
-            v-on:mousedown.left="start"
-            v-on:mouseup.left="end"
-            v-on:mousemove.left="move"
             v-finger:rotate="rotate"
-            v-finger:double-tap="toggleForeground"
       >
+        <div id="zoomOpenSeadragon">
+
+        </div>
       </div>
 
       <div  id="libraryStrip"
@@ -176,7 +176,8 @@
                 v-finger:press-move="moveOnBook"
                 v-on:mousedown.left="startOnBook"
                 v-on:mouseup.left="endOnBook"
-                v-on:mousemove.left="moveOnBook">
+                v-on:mousemove.left="moveOnBook"
+                v-on:dblclick="doubleTap">
             <template v-for="page in book.pages">
               <div v-bind:style="stylePage" >
                 <img v-bind:id="page.id" v-bind:src="page.thumbnail" v-bind:alt="page.description" v-bind:style="styleImage" v-finger:long-tap="longTap" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">

@@ -258,7 +258,7 @@ function loadMontage(montage){
         var height = images[i].height.baseVal.value*ratio;
         var x = images[i].x.baseVal.value*ratio;
         var y = images[i].y.baseVal.value*ratio;
-        console.log(x,y)
+        //console.log(x,y)
         var img = svgCanvas[montage.name].image(images[i]['href'].baseVal, width, height).move(x,y);
       }
 

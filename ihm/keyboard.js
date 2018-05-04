@@ -360,7 +360,7 @@ keyboard = new Vue({
   }
 });
 
-keyboard.style['z-index'] = 10;
+keyboard.style['z-index'] = 20;
 
 //// Test
 

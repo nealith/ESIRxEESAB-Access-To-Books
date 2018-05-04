@@ -130,8 +130,6 @@ libraryShutter = new Vue({
       }
     },
     longTap:function(e){
-      console.log('longTap');
-      console.log(e);
 
       var rect = e.target.getBoundingClientRect();
       dataTransfer.data = {
@@ -147,9 +145,20 @@ libraryShutter = new Vue({
     },
     doubleTap:function(e){
       var dziSrc = e.target.src.replace("thumbnail","dzi");
-      dziSrc = dziSrc.replace("png","dz");
+      dziSrc = dziSrc.replace("png","dzi.dzi");
+      /*for (var i = 0; i < this.books.length; i++) {
+        for (var j = 0; j < this.books[i].pages.length; j++) {
+          var page = this.books[i].pages[j]
+          if (e.target.id == page.id) {
+            zoom.toggle({dzi:this.books[i].pages[j].dzi+'.dzi'});
+            break;
+          }
+        }
+      }*/
+
+
       zoom.toggle({dzi:dziSrc});
-    }
+    },
     dragPage:function(e){
       // DEBUG:
       console.log("start drag on page");

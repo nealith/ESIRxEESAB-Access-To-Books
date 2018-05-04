@@ -86,7 +86,7 @@ document.getElementById('montageName').addEventListener('keypress', (e) => {
 });
 
 
-montageDialogue.style['z-index'] = 10;
+montageDialogue.style['z-index'] = 20;
 
 //// Test
 

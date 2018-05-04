@@ -131,7 +131,7 @@ const addPage = through2.obj(function (item, enc, next) {
       description:path.basename(item.path),//'page n°'+book.pages.length,
       id:book.name+'_'+path.basename(item.path),//book.name+'_'+//book.pages.length,
       thumbnail:book.path+'thumbnail/'+path.basename(item.path)+'.png',//'page_'+book.pages.length+'.png',
-      dzi:book.path+'dzi/'+path.basename(item.path)+'.dz'//'page_'+book.pages.length+'.dz'
+      dzi:book.path+'dzi/'+path.basename(item.path)+'.dzi'//'page_'+book.pages.length+'.dz'
     }
 
     console.log('adding page....');
@@ -148,10 +148,7 @@ const addPage = through2.obj(function (item, enc, next) {
        if (err === undefined || err == null) {
          sharp(item.path)
          .png()
-          .tile({
-            size: 256
-          })
-         .max()
+        .tile()
          .toFile(page.dzi,function(err){
            if (err === undefined || err == null) {
              book.pages.push(page);
@@ -454,8 +451,8 @@ function createWindow () {
 
   win.on('close', () => {
     //event.preventDefault()
-    saveBooksIndex()
-    saveMontagesIndex()
+    //saveBooksIndex()
+    //saveMontagesIndex()
     //win.webContents.send('unload', null);
   })
 

@@ -27,6 +27,13 @@ body{
     -webkit-box-sizing: border-box;
 
 }
+#zoom{
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+
+}
 #libraryStrip{
   background: #231f20;
   box-sizing: border-box;
@@ -76,7 +83,7 @@ body{
   background-image: url(./turn.svg), none;
   background-repeat: no-repeat;
   background-position: center;
-    z-index:20;
+    z-index:30;
     pointer-events:all;
 }
 
