@@ -1,4 +1,5 @@
 var books = remote.getGlobal('books');
+var bonus = remote.getGlobal('bonus');
 const pagePadding = 0.05;
 
 

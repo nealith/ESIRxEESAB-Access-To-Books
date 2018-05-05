@@ -3,7 +3,7 @@ rotationButtons = new Vue({
   data:{
     rotated:false,
     style:{
-      width:frame.w*(1-sizePourcent)+'px',
+      width:frame.w+'px',
       height:frame.h+'px',
       position:'absolute',
       right:'0px',
@@ -32,7 +32,7 @@ rotationButtons = new Vue({
   },
   methods:{
     resize:function(){
-      this.style.width = frame.w*(1-sizePourcent)+'px',
+      this.style.width = frame.w+'px',
       this.style.height = frame.h+'px';
 
       this.buttonStyleTopLeft.left = frame.w*sizePourcent+'px';

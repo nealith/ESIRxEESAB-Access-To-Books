@@ -58,19 +58,41 @@ function processVoiceMessage (message) {
 
 const CONFIG = require('./config.json')
 global.books = JSON.parse(fs.readFileSync(CONFIG.books.index))
+global.bonus = JSON.parse(fs.readFileSync(CONFIG.bonus.index))
 global.montages = JSON.parse(fs.readFileSync(CONFIG.montages.index))
 global.books_path = CONFIG.books.path
+global.bonus_path = CONFIG.bonus.path
 global.montages_path = CONFIG.montages.path
+
 
 function saveBooksIndex(){
   if (global.books != undefined) {
-    console.log('saveBooksIndex');
+    console.log('saveBooksIndex...');
     var jsonData = JSON.stringify(global.books);
     if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']'){
-      console.log("test");
       fs.writeFile(CONFIG.books.index, jsonData, function(err) {
           if(err) {
               return console.log(err);
+          } else {
+            console.log("Books saved :)");
+          }
+      });
+    }
+  }
+
+}
+
+
+function saveBonusIndex(){
+  if (global.bonus != undefined) {
+    console.log('saveBooksIndex...');
+    var jsonData = JSON.stringify(global.bonus);
+    if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']'){
+      fs.writeFile(CONFIG.bonus.index, jsonData, function(err) {
+          if(err) {
+              return console.log(err);
+          } else {
+            console.log("Bonus saved :)");
           }
       });
     }
@@ -80,17 +102,97 @@ function saveBooksIndex(){
 
 function saveMontagesIndex(){
   if (global.montages != undefined) {
-    console.log('saveMontagesIndex');
+    console.log('saveMontagesIndex...');
     var jsonData = JSON.stringify(global.montages);
     if (jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']') {
       fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
           if(err) {
               return console.log(err);
+          } else {
+            console.log("Montages saved :)");
           }
       });
     }
   }
 }
+
+//----------------------------------------------------------------------
+// Bonus building
+//----------------------------------------------------------------------
+
+ipcMain.on('addBonus',(event,arg) => {
+
+  original = arg.original.dzi
+  if (fs.existsSync(arg.original.originalPath)) {
+    original = arg.original.originalPath
+  }
+  image = {
+    name : arg.name,
+    original : arg.original,
+    originalPath : global.bonus_path+'tiff/'+arg.name+'.tiff',
+    thumbnail : global.bonus_path+'thumbnail/'+arg.name+'.png',
+    dzi : global.bonus_path+'dzi/'+arg.name+'.dzi'
+  }
+
+  if (!fs.existsSync(bonus_path+'tiff/')){
+    fs.mkdirSync(bonus_path+'tiff/');
+  }
+
+  if (!fs.existsSync(bonus_path+'dzi/')){
+    fs.mkdirSync(bonus_path+'dzi/');
+  }
+
+  if (!fs.existsSync(bonus_path+'thumbnail/')){
+    fs.mkdirSync(bonus_path+'thumbnail/');
+  }
+
+  console.log('test');
+  console.log(arg);
+
+  rect={
+    left:Number.parseInt(arg.left,10),
+    top:Number.parseInt(arg.top,10),
+    width:Number.parseInt(arg.width,10),
+    height:Number.parseInt(arg.height,10)
+  }
+
+  console.log(rect);
+
+  sharp(original)
+  .rotate(arg.angle)
+  .extract(rect)
+  .toFile(image.originalPath,function(err){
+    if (err === undefined || err == null) {
+      sharp(image.originalPath)
+      .resize(560, 360, {
+        kernel: sharp.kernel.lanczos3
+      })
+      .max()
+      .toFile(image.thumbnail,function(err){
+        if (err === undefined || err == null) {
+          sharp(image.originalPath)
+          .png()
+         .tile()
+          .toFile(image.dzi,function(err){
+            if (err === undefined || err == null) {
+              bonus.push(image)
+              saveBonusIndex()
+              event.sender.send('sync_bonus',null)
+            } else {
+              console.log(err)
+            }
+          })
+        } else {
+          console.log(err)
+        }
+      })
+    } else {
+      console.log(err)
+    }
+
+
+  })
+})
 
 //----------------------------------------------------------------------
 // Librairy building
@@ -298,21 +400,11 @@ var io = require('socket.io')(server);
 var CaressServer = require('caress-server');
 var caress = new CaressServer('0.0.0.0', 3333, {json: true});
 
-caress.on('tuio', function(msg){
-  console.log(msg);
-});
+//DEBUG
+//caress.on('tuio', function(msg){
+//  console.log(msg);
+//});
 
-/*io.enable("browser client minification");
-io.enable("browser client etag");
-io.enable("browser client gzip");
-io.set("log level", 1);
-io.set("transports", [
-    "websocket",
-    "flashsocket",
-    "htmlfile",
-    "xhr-polling",
-    "jsonp-polling"
-]);*/
 io.sockets.on("connection", onSocketConnect);
 
 function onSocketConnect(socket) {
@@ -330,61 +422,6 @@ function onSocketConnect(socket) {
 
 server.listen(5000);
 
-/*
-//----------------------------------------------------------------------
-// tuio
-//----------------------------------------------------------------------
-
-var Tuio = require('tuio-nw');
-var tuioClient = new Tuio.Client({
-  host: '127.0.0.1',
-  port: 3333
-});
-
-var onAddTuioCursor = function (addCursor) {
-  console.log(addCursor);
-  //win.webContents.send('addTuioCursor' ,addCursor);
-},
-
-onUpdateTuioCursor = function (updateCursor) {
-  console.log(updateCursor);
-  //win.webContents.send('updateTuioCursor' ,updateCursor);
-},
-
-onRemoveTuioCursor = function (removeCursor) {
-  console.log(removeCursor);
-  //win.webContents.send('removeTuioCursor' ,removeCursor);
-},
-
-onAddTuioObject = function (addObject) {
-  console.log(addObject);
-  //win.webContents.send('addTuioObject' ,addObject);
-},
-
-onUpdateTuioObject = function (updateObject) {
-  console.log(updateObject);
-  //win.webContents.send('updateTuioObject' ,updateObject);
-},
-
-onRemoveTuioObject = function (removeObject) {
-  console.log(removeObject);
-  //win.webContents.send('removeTuioObject' ,removeObject);
-},
-
-onRefresh = function (time) {
-  console.log(time);
-  //win.webContents.send('refresh' ,time);
-};
-
-tuioClient.on('addTuioCursor', onAddTuioCursor);
-tuioClient.on('updateTuioCursor', onUpdateTuioCursor);
-tuioClient.on('removeTuioCursor', onRemoveTuioCursor);
-tuioClient.on('addTuioObject', onAddTuioObject);
-tuioClient.on('updateTuioObject', onUpdateTuioObject);
-tuioClient.on('removeTuioObject', onRemoveTuioObject);
-tuioClient.on('refresh', onRefresh);
-
-tuioClient.listen();*/
 
 //----------------------------------------------------------------------
 // ipc

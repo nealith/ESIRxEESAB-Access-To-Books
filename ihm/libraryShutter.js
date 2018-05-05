@@ -10,6 +10,8 @@ libraryShutter = new Vue({
   data:{
     div:document.getElementById('libraryShutter'),
     books:books,
+    bonus:bonus,
+    doubleTap:false,
     style:{
       height : frame.h+'px',
       position : 'absolute',
@@ -143,21 +145,25 @@ libraryShutter = new Vue({
 
 
     },
-    doubleTap:function(e){
-      var dziSrc = e.target.src.replace("thumbnail","dzi");
-      dziSrc = dziSrc.replace("png","dzi.dzi");
-      /*for (var i = 0; i < this.books.length; i++) {
-        for (var j = 0; j < this.books[i].pages.length; j++) {
-          var page = this.books[i].pages[j]
-          if (e.target.id == page.id) {
-            zoom.toggle({dzi:this.books[i].pages[j].dzi+'.dzi'});
-            break;
+    zoom:function(e){
+      //var dziSrc = e.target.src.replace("thumbnail","dzi");
+      //dziSrc = dziSrc.replace("png","dzi.dzi");
+      for (var i = 0; i < this.books.length; i++) {
+        bookName = this.books[i].name;
+        if (e.target.id.includes(bookName)) {
+          for (var j = 0; j < this.books[i].pages.length; j++) {
+            var page = this.books[i].pages[j]
+            if (e.target.id == page.id) {
+              zoom.toggle(page);
+              return;
+            }
           }
         }
-      }*/
+
+      }
 
 
-      zoom.toggle({dzi:dziSrc});
+      //zoom.toggle({dzi:dziSrc});
     },
     dragPage:function(e){
       // DEBUG:
@@ -185,6 +191,15 @@ libraryShutter = new Vue({
       e.dataTransfer.setDragImage(e.currentTarget, data.offsetx, data.offsety);
       console.log(data);
       //e.dataTransfer.setData('text',JSON.stringify(data));
+    },
+    tap:function(e){
+      if (this.doubleTap) { // double-tap event with alloy_finger is not handle...
+        this.doubleTap = false;
+        this.zoom(e);
+      } else {
+        this.doubleTap = true;
+        window.setTimeout(function() { libraryShutter.doubleTap = false;},150);
+      }
     }
   }
 });
@@ -202,5 +217,14 @@ ipcRenderer.on('sync_books', (event, arg) => {
   libraryShutter.books = books;
   libraryStrip.books = books;
 });
+
+ipcRenderer.on('sync_bonus', (event, arg) => {
+  bonus = remote.getGlobal('bonus');
+  libraryShutter.bonus = bonus;
+  libraryStrip.bonus = bonus;
+});
+
+
+
 
 libraryShutter.styleBook['white-space'] = 'nowrap';

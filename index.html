@@ -132,9 +132,28 @@
             v-finger:touch-cancel="end"
             v-finger:press-move="move"
             v-finger:rotate="rotate"
-      >
-        <div id="zoomOpenSeadragon">
-
+            v-finger:long-tap="longTap">
+        <div  id="marker1"
+              v-bind:style="styleMarker1"
+              v-finger:touch-start="startOnMarker1"
+              v-finger:touch-end="endOnMarker1"
+              v-finger:touch-cancel="endOnMarker1"
+              v-finger:press-move="moveOnMarker1"
+              v-on:mousedown.left="startOnMarker1"
+              v-on:mouseup.left="endOnMarker1"
+              v-on:mousemove.left="moveOnMarker1"
+              class="marker">
+        </div>
+        <div  id="marker2"
+              v-bind:style="styleMarker2"
+              v-finger:touch-start="startOnMarker2"
+              v-finger:touch-end="endOnMarker2"
+              v-finger:touch-cancel="endOnMarker2"
+              v-finger:press-move="moveOnMarker2"
+              v-on:mousedown.left="startOnMarker2"
+              v-on:mouseup.left="endOnMarker2"
+              v-on:mousemove.left="moveOnMarker2"
+              class="marker">
         </div>
       </div>
 
@@ -154,6 +173,11 @@
             </div>
           </div>
         </template>
+        <div v-bind:style="bookNameStyle">
+          <div class="verticalText">
+            <p>bonus</p>
+          </div>
+        </div>
       </div>
 
       <div  id="libraryShutter"
@@ -176,15 +200,48 @@
                 v-finger:press-move="moveOnBook"
                 v-on:mousedown.left="startOnBook"
                 v-on:mouseup.left="endOnBook"
-                v-on:mousemove.left="moveOnBook"
-                v-on:dblclick="doubleTap">
+                v-on:mousemove.left="moveOnBook">
+
             <template v-for="page in book.pages">
               <div v-bind:style="stylePage" >
-                <img v-bind:id="page.id" v-bind:src="page.thumbnail" v-bind:alt="page.description" v-bind:style="styleImage" v-finger:long-tap="longTap" v-on:dragstart="dragPage" v-on:mousedown.left="mouseDownPage" v-on:touch="touchPage">
+                <img  v-bind:id="page.id"
+                      v-bind:src="page.thumbnail"
+                      v-bind:alt="page.description"
+                      v-bind:style="styleImage"
+                      v-finger:long-tap="longTap"
+                      v-on:dragstart="dragPage"
+                      v-on:mousedown.left="mouseDownPage"
+                      v-on:dblclick="zoom"
+                      v-finger:touch-start="tap">
               </div>
             </template>
           </div>
         </template>
+        <div  v-bind:id="bonus"
+              v-bind:style="styleBook"
+              v-on:wheel="wheelOnBook"
+              v-finger:touch-start="startOnBook"
+              v-finger:touch-end="endOnBook"
+              v-finger:touch-cancel="endOnBook"
+              v-finger:press-move="moveOnBook"
+              v-on:mousedown.left="startOnBook"
+              v-on:mouseup.left="endOnBook"
+              v-on:mousemove.left="moveOnBook">
+
+              <template v-for="page in bonus">
+                <div v-bind:style="stylePage" >
+                  <img  v-bind:id="page.id"
+                        v-bind:src="page.thumbnail"
+                        v-bind:alt="page.description"
+                        v-bind:style="styleImage"
+                        v-finger:long-tap="longTap"
+                        v-on:dragstart="dragPage"
+                        v-on:mousedown.left="mouseDownPage"
+                        v-on:dblclick="zoom"
+                        v-finger:touch-start="tap">
+                </div>
+              </template>
+        </div>
       </div>
     </div>
 

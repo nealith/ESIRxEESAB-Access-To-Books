@@ -4,6 +4,20 @@ body{
   background: #000000;
 }
 
+#marker1{
+  background: darkorange;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+#marker2{
+  background: darkcyan;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
 #mainStrip{
   background: white;
   box-sizing: border-box;
