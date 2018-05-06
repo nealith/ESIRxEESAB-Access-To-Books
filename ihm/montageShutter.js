@@ -19,10 +19,16 @@ function saveMontages(){
 }
 
 function attachAutomaticSaving(montage){
-  svgCanvas[montage.name].touchend(function(){
+  svgCanvas[montage.name].touchend(function(e){
+    if (!oracle.pass(e)) {
+      return;
+    }
     saveMontage(montage);
   })
-  svgCanvas[montage.name].mouseup(function(){
+  svgCanvas[montage.name].mouseup(function(e){
+    if (!oracle.pass(e)) {
+      return;
+    }
     saveMontage(montage);
   })
 }
@@ -92,6 +98,10 @@ montageShutter = new Vue({
       e.preventDefault();
     },
     startOnMontages:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
+      console.log(e);
       //DEBUG
       //console.log('montageShutter:mouseDown');
       this.down = true;
@@ -211,6 +221,63 @@ montageShutter = new Vue({
         img = SVG.get(e.target.id);
         img.rotate(e.angle);
       }
+    },
+    theMostVisible:function(){
+      var k = -1;
+      var deltaOffsetTopScrollTop = 1000000;
+      for (var i = 0; i < montages.length; i++) {
+        pos = document.getElementById(montages[i].name).offsetTop;
+        currentScroll = document.getElementById("montageShutter").scrollTop;
+        if (deltaOffsetTopScrollTop > fabs(pos-currentScroll)) {
+          k=i;
+          deltaOffsetTopScrollTop = fabs(pos-currentScroll);
+        }
+      }
+      return k;
+    }
+    export:function(e){
+      k = this.theMostVisible();
+
+      if (k != -1) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(svgCanvas[montages[k].name].svg(), "image/svg+xml");
+
+        var images = doc.getElementsByTagName('image');
+
+        var minRatio = 1000000000;
+
+        for (var i = 0; i < images.length; i++) {
+          imgData = libraryShutter.getPageByHREF(images[i]['href'].baseVal);
+          width = images[i].width.baseVal.value;
+          height = images[i].height.baseVal.value;
+
+          if (imgData.originalWidth / width < minRatio) {
+            minRatio = imgData.originalWidth / width;
+          }
+          if (imgData.originalHeight / height < minRatio) {
+            minRatio = imgData.originalHeight / height;
+          }
+        }
+        var exportArea = SVG('exportArea').size(montageSize * minRatio,montageSize * minRatio)
+
+        imgs = []
+
+        for (var i = 0; i < images.length; i++) {
+          imgData = libraryShutter.getPageByHREF(images[i]['href'].baseVal);
+          imgData.width = images[i].width.baseVal.value*minRatio;
+          imgData.height = images[i].height.baseVal.value*minRatio;
+          imgData.x = images[i].x.baseVal.value*minRatio;
+          imgData.y = images[i].y.baseVal.value*minRatio;
+          imgs.push(imgs);
+        }
+
+
+        ipcRenderer.send('export_montage',{
+          svg:exportArea.svg(),
+          imgs:imgs
+        })
+
+      }
     }
   }
 });
@@ -258,8 +325,9 @@ function loadMontage(montage){
         var height = images[i].height.baseVal.value*ratio;
         var x = images[i].x.baseVal.value*ratio;
         var y = images[i].y.baseVal.value*ratio;
+        var angle = images[i].
         //console.log(x,y)
-        var img = svgCanvas[montage.name].image(images[i]['href'].baseVal, width, height).move(x,y);
+        var img = svgCanvas[montage.name].image(images[i]['href'].baseVal, width, height).move(x,y).rotate(angle);
       }
 
       var XMLS = new XMLSerializer();

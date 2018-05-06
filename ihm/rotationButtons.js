@@ -49,6 +49,9 @@ rotationButtons = new Vue({
       this.buttonStyleBottomRight.height = frame.w*sizePourcent+'px';
     },
     onRotatePressed:function(){
+      if (!oracle.pass(e)) {
+        return;
+      }
       el = document.getElementById("rotationWrap");
       if (this.rotated) {
         el.className = "";

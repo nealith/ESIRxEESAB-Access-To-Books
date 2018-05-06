@@ -12,6 +12,7 @@ const fs = require('fs')
 const klaw = require('klaw')
 const through2 = require('through2')
 const sharp = require('sharp')
+const sizeOf = require('image-size');
 
 const mqtt = require('mqtt')
 const client = mqtt.connect('mqtt://192.168.38.1')
@@ -156,6 +157,9 @@ ipcMain.on('addBonus',(event,arg) => {
     height:Number.parseInt(arg.height,10)
   }
 
+  image.originalWidth = rect.width;
+  image.originalHeight = rect.height;
+
   console.log(rect);
 
   sharp(original)
@@ -240,6 +244,10 @@ const addPage = through2.obj(function (item, enc, next) {
     console.log(page);
 
     book.pages[page.id] = page
+
+    var dimensions = sizeOf(item.path);
+    page.originalWidth = dimensions.width;
+    page.originalHeight = dimensions.height;
 
      sharp(item.path)
      .resize(560, 360, {

@@ -49,6 +49,9 @@ libraryStrip = new Vue({
       this.bookNameStyle.height = frame.h/numberOfBooksVisible+'px';
     },
     start:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
       //DEBUG
       //console.log('libraryStrip:start');
       this.down = true;

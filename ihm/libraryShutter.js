@@ -65,6 +65,9 @@ libraryShutter = new Vue({
       }
     },
     startOnBooks:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
       //DEBUG
       //console.log('libraryShutter:mouseDownBooks');
       this.down = true;
@@ -96,6 +99,9 @@ libraryShutter = new Vue({
       }
     },
     startOnBook:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
       //DEBUG
       //console.log('libraryShutter:mouseDownBooks');
       this.down = true;
@@ -122,16 +128,25 @@ libraryShutter = new Vue({
       }
     },
     mouseDownPage:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
       this.down = true;
       pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
     },
     touchPage:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
       if (e.type = 'touchstart') {
 
         pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
       }
     },
     longTap:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
 
       var rect = e.target.getBoundingClientRect();
       dataTransfer.data = {
@@ -146,6 +161,9 @@ libraryShutter = new Vue({
 
     },
     zoom:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
       //var dziSrc = e.target.src.replace("thumbnail","dzi");
       //dziSrc = dziSrc.replace("png","dzi.dzi");
       for (var i = 0; i < this.books.length; i++) {
@@ -193,6 +211,9 @@ libraryShutter = new Vue({
       //e.dataTransfer.setData('text',JSON.stringify(data));
     },
     tap:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
       if (this.doubleTap) { // double-tap event with alloy_finger is not handle...
         this.doubleTap = false;
         this.zoom(e);

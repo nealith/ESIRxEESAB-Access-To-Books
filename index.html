@@ -26,6 +26,14 @@
   <body>
     <div id="rotationWrap">
 
+      <div  id="oracle"
+            v-bind:style="style"
+            v-finger:touch-start="listen">
+        <div>
+          <p>{{wait}}</p>
+        </div>
+      </div>
+
       <div  id="montageDialogue"
             v-bind:style="style"
             class="full-border"
@@ -246,7 +254,14 @@
     </div>
 
 
+
+    <div id="exportArea">
+
+    </div>
+
+
     <script type="text/javascript" src="./ihm/app.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/oracle.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/keyboard.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/rotationButtons.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/montageDialogue.js" charset="utf-8"></script>

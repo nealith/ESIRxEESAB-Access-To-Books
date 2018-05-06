@@ -4,6 +4,10 @@ body{
   background: #000000;
 }
 
+#exportArea{
+  display: none;
+}
+
 #marker1{
   background: darkorange;
   box-sizing: border-box;
@@ -25,6 +29,31 @@ body{
     -webkit-box-sizing: border-box;
 
 }
+#oracle{
+  background: #231f20;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+
+}
+#oracle div{
+  margin: 0px;
+  padding: 0px;
+  transform-origin: top left 0;
+  position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#oracle p {
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+}
+
+
 #montageStrip{
   background: #231f20;
   box-sizing: border-box;

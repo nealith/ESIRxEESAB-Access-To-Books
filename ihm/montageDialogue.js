@@ -48,6 +48,9 @@ montageDialogue = new Vue({
       this.toggle();
     },
     start:function(e){
+      if (!oracle.pass(e)) {
+        return;
+      }
       //DEBUG
       //console.log('montageDialogue:mouseDown');
       this.down = true;
