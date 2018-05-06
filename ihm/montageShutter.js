@@ -228,13 +228,13 @@ montageShutter = new Vue({
       for (var i = 0; i < montages.length; i++) {
         pos = document.getElementById(montages[i].name).offsetTop;
         currentScroll = document.getElementById("montageShutter").scrollTop;
-        if (deltaOffsetTopScrollTop > fabs(pos-currentScroll)) {
+        if (deltaOffsetTopScrollTop > Math.abs(pos-currentScroll)) {
           k=i;
-          deltaOffsetTopScrollTop = fabs(pos-currentScroll);
+          deltaOffsetTopScrollTop = Math.abs(pos-currentScroll);
         }
       }
       return k;
-    }
+    },
     export:function(e){
       k = this.theMostVisible();
 
@@ -260,7 +260,9 @@ montageShutter = new Vue({
         }
         var exportArea = SVG('exportArea').size(montageSize * minRatio,montageSize * minRatio)
 
-        imgs = []
+        imgs = [];
+        paths = [];
+        counter = 0;
 
         for (var i = 0; i < images.length; i++) {
           imgData = libraryShutter.getPageByHREF(images[i]['href'].baseVal);
@@ -268,14 +270,84 @@ montageShutter = new Vue({
           imgData.height = images[i].height.baseVal.value*minRatio;
           imgData.x = images[i].x.baseVal.value*minRatio;
           imgData.y = images[i].y.baseVal.value*minRatio;
-          imgs.push(imgs);
+          imgData.angle = 0.0;
+          for (var j = 0; j < images[i].length; j++) {
+            if(images[i].transform.baseVal[j].angle != 0){
+              imgData.angle = images[i].transform.baseVal[j].angle;
+            }
+          }
+
+          imgs.push(imgData);
+          paths.push(path.basename(imgData.originalPath));
+          //ipcRenderer.sendSync('copyFileSync',{path:imgData.originalPath,dest:path.basename(imgData.originalPath)});
+          fs.createReadStream(imgData.originalPath).pipe(fs.createWriteStream(path.basename(imgData.originalPath)).on("close", function() {
+            counter+=1;
+            if (paths.length == counter) {
+
+              for (var l = 0; l < imgs.length; l++) {
+                exportArea.image(path.basename(imgs[l].originalPath), imgs[l].width, imgs[l].height).move(imgs[l].x,imgs[l].y).rotate(imgs[l].angle)
+              }
+
+              fs.writeFileSync(montages[k].name+'.svg', exportArea.svg());
+
+              n = 1;
+              zipOutput = montages[k].name+'_export'+n+'.zip';
+              exist = fs.existsSync(zipOutput);
+              while (exist) {
+                n+=1;
+                zipOutput = montages[k].name+'_export'+n+'.zip';
+                exist = fs.existsSync(zipOutput);
+              }
+
+              var zipfile = new yazl.ZipFile();
+              for (var i = 0; i < paths.length; i++) {
+                zipfile.addFile(paths[i],paths[i]);
+
+              }
+              zipfile.addFile(montages[k].name+'.svg',montages[k].name+'.svg');
+              zipfile.outputStream.pipe(fs.createWriteStream(zipOutput)).on("close", function() {
+                for (var l = 0; l < paths.length; l++) {
+                  if (fs.existsSync(paths[l])) {
+                    fs.unlinkSync(paths[l]);
+                  }
+                }
+                fs.unlinkSync(montages[k].name+'.svg');
+                console.log("export done");
+              });
+              zipfile.end();
+            }
+          }));
+
+
+
         }
 
+        /*
+        Zipit({
+          input: paths,
+          cwd: process.cwd()
+        }, (err, buffer) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          console.log('test');
+          n = 1;
+          zipOutput = montages[k].name+'_export'+n+'.zip';
+          exist = fs.existsSync(zipOutput);
+          while (exist) {
+            n+=1;
+            zipOutput = montages[k].name+'_export'+n+'.zip';
+            exist = fs.existsSync(zipOutput);
+          }
 
-        ipcRenderer.send('export_montage',{
-          svg:exportArea.svg(),
-          imgs:imgs
-        })
+          fs.writeFile(montages[k].name+'.zip', buffer, (err) => {
+            if(err){
+              console.log(err);
+            }
+          });
+          // Handle buffer, which is an instance of Buffer
+        });*/
 
       }
     }
@@ -325,7 +397,12 @@ function loadMontage(montage){
         var height = images[i].height.baseVal.value*ratio;
         var x = images[i].x.baseVal.value*ratio;
         var y = images[i].y.baseVal.value*ratio;
-        var angle = images[i].
+        var angle = 0
+        for (var j = 0; j < images[i].length; j++) {
+          if(images[i].transform.baseVal[j].angle != 0){
+            angle = images[i].transform.baseVal[j].angle;
+          }
+        }
         //console.log(x,y)
         var img = svgCanvas[montage.name].image(images[i]['href'].baseVal, width, height).move(x,y).rotate(angle);
       }

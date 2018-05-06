@@ -99,6 +99,12 @@ body{
   transform: rotate(180deg);
 }
 
+#exportMontage{
+  background-image: url(./export.svg), none;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 #montage{
   background-image: url(./montage.svg), none;
   background-repeat: no-repeat;
@@ -118,7 +124,7 @@ body{
 }
 
 #rotationButtons{
-  z-index:20;
+  z-index:60;
   pointer-events:none;
 }
 

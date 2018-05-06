@@ -1,7 +1,9 @@
 const {ipcRenderer} = require('electron');
 const {remote} = require('electron');
 const path = require('path');
-var fs = require('fs');
+const yazl = require("yazl");
+const Zipit = require('zipit');
+const fs = require('fs');
 
 Vue.use(AlloyFingerVue);
 

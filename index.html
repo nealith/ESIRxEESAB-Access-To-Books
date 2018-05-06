@@ -95,6 +95,9 @@
         <div id="montage" v-bind:style="buttonStyle" v-on:click="onNewMontagePressed" v-finger:tap="onNewMontagePressed">
 
         </div>
+        <div id="exportMontage" v-bind:style="buttonStyle" v-on:click="onExportMontagePressed" v-finger:tap="onExportMontagePressed">
+
+        </div>
         <div id="notes" v-bind:style="buttonStyle" v-on:click="onAddNotePressed" v-finger:tap="onAddNotePressed">
 
         </div>
@@ -102,7 +105,6 @@
 
         </div>
       </div>
-
       <div id="montageStrip" v-bind:style="style">
         <template v-for="montage in montages">
           <div v-bind:style="montageNameStyle">

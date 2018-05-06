@@ -81,7 +81,7 @@ montageDialogue = new Vue({
 
 document.getElementById('montageName').addEventListener('keypress', (e) => {
   if (e.key == 9166) {
-    montageDialogue.ok();
+    montageDialogue.onOkPressed();
   } else {
     montageDialogue.name += String.fromCharCode(e.key);
   }
@@ -89,7 +89,7 @@ document.getElementById('montageName').addEventListener('keypress', (e) => {
 });
 
 
-montageDialogue.style['z-index'] = 20;
+montageDialogue.style['z-index'] = 60;
 
 //// Test
 

@@ -81,6 +81,6 @@ libraryStrip = new Vue({
     }
   }
 });
-libraryStrip.style['z-index'] = 2;
+libraryStrip.style['z-index'] = 50;
 libraryStrip.style['line-height'] = 1;
 libraryStrip.bookNameStyle['line-height'] = 1;

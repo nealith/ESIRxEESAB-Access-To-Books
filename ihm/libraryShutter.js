@@ -221,6 +221,34 @@ libraryShutter = new Vue({
         this.doubleTap = true;
         window.setTimeout(function() { libraryShutter.doubleTap = false;},150);
       }
+    },
+    getPageByHREF:function(href){
+      re = /%20/gi;
+      href = href.replace(re,' ');
+      //console.log(href);
+      //console.log(path.basename(href,path.extname(href)));
+      for (var i = 0; i < this.books.length; i++) {
+        bookName = this.books[i].name;
+        if (href.includes(bookName)) {
+          for (var j = 0; j < this.books[i].pages.length; j++) {
+            var page = this.books[i].pages[j];
+            //console.log(page);
+            if (page.id.includes(path.basename(href,path.extname(href)))) {
+              //console.log(page);
+              return page;
+            }
+          }
+        }
+
+      }
+      for (var j = 0; j < this.bonus0.length; j++) {
+        var page = this.bonus[j];
+        //console.log(page);
+        if (page.id.includes(path.basename(href,path.extname(href)))) {
+          //console.log(page);
+          return page;
+        }
+      }
     }
   }
 });

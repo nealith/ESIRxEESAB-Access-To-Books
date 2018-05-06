@@ -1,3 +1,5 @@
+nbButtons = 4
+
 mainStrip = new Vue({
   el: '#mainStrip',
   data:{
@@ -14,7 +16,7 @@ mainStrip = new Vue({
       height : (sizePourcent*frame.w)+'px'
     },
     whiteSpace:{
-      height : frame.h-3*((sizePourcent*frame.w))+'px'
+      height : frame.h-nbButtons*((sizePourcent*frame.w))+'px'
     }
   },
   methods:{
@@ -26,11 +28,15 @@ mainStrip = new Vue({
       this.buttonStyle.width = frame.w * sizePourcent+'px';
       this.buttonStyle.height = frame.w * sizePourcent+'px';
 
-      this.whiteSpace.height = frame.h-3*((sizePourcent*frame.w))+'px'
+      this.whiteSpace.height = frame.h-nbButtons*((sizePourcent*frame.w))+'px'
     },
     onNewMontagePressed:function(e){
       console.log('onmontage');
       montageDialogue.toggle();
+    },
+    onExportMontagePressed:function(e){
+      console.log('onmontageExport');
+      montageShutter.export();
     },
     onAddNotePressed:function(e){
       console.log('onnotes');

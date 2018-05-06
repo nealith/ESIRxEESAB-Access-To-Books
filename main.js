@@ -117,6 +117,14 @@ function saveMontagesIndex(){
   }
 }
 
+
+ipcMain.on('copyFileSync',(event,arg) => {
+
+  //fs.copyFileSync(arg.path,arg.dest)
+  fs.createReadStream(arg.path).pipe(fs.createWriteStream(arg.dest));
+  return
+})
+
 //----------------------------------------------------------------------
 // Bonus building
 //----------------------------------------------------------------------
@@ -234,10 +242,10 @@ const addPage = through2.obj(function (item, enc, next) {
 
     var page = {
       originalPath:item.path,
-      description:path.basename(item.path),//'page n°'+book.pages.length,
-      id:book.name+'_'+path.basename(item.path),//book.name+'_'+//book.pages.length,
-      thumbnail:book.path+'thumbnail/'+path.basename(item.path)+'.png',//'page_'+book.pages.length+'.png',
-      dzi:book.path+'dzi/'+path.basename(item.path)+'.dzi'//'page_'+book.pages.length+'.dz'
+      description:path.basename(item.path,path.extname(item.path)),//'page n°'+book.pages.length,
+      id:book.name+'_'+path.basename(item.path,path.extname(item.path)),//book.name+'_'+//book.pages.length,
+      thumbnail:book.path+'thumbnail/'+path.basename(item.path,path.extname(item.path))+'.png',//'page_'+book.pages.length+'.png',
+      dzi:book.path+'dzi/'+path.basename(item.path,path.extname(item.path))+'.dzi'//'page_'+book.pages.length+'.dz'
     }
 
     console.log('adding page....');
@@ -466,6 +474,7 @@ ipcMain.on('new_montage',(event,arg) => {
   console.log(arg);
 
   //event.sender.send('sync_montages',null)
+  saveMontagesIndex()
   event.sender.send('new_montage_added',arg)
 })
 

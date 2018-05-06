@@ -103,13 +103,16 @@ zoom = new Vue({
       if (!oracle.pass(e)) {
         return;
       }
-      if (this.doubleTap) { // double-tap event with alloy_finger is not handle...
-        this.doubleTap = false;
-        this.toggleForeground();
-      } else if (this.view != null) {
-        this.center = this.view.viewport.getCenter();
-        this.doubleTap = true;
-        window.setTimeout(function() { this.doubleTap = false;},150);
+      id = e.target.id || e.currentTarget.id;
+      if (id != 'marker1' && id != 'marker2' ) {
+        if (this.doubleTap) { // double-tap event with alloy_finger is not handle...
+          this.doubleTap = false;
+          this.toggleForeground();
+        } else if (this.view != null) {
+          this.center = this.view.viewport.getCenter();
+          this.doubleTap = true;
+          window.setTimeout(function() { this.doubleTap = false;},150);
+        }
       }
     },
     end:function(e){
@@ -167,9 +170,6 @@ zoom = new Vue({
       }
     },
     toggleForeground:function(e){
-      if (!oracle.pass(e)) {
-        return;
-      }
       console.log(e);
       if (this.inTheForeground) {
         this.inTheForeground = false;
@@ -219,10 +219,10 @@ zoom = new Vue({
       e.movementY = e.movementY || e.deltaY;
       e.movementX = e.movementX || e.deltaX;
       if (this.downMarker2 &&
-        strToFloat(this.styleMarker2.bottom) + e.movementY - strToFloat(this.styleMarker2.height) >= 0 &&
-        strToFloat(this.styleMarker2.bottom) + e.movementY < strToFloat(this.style.height)  &&
-        strToFloat(this.styleMarker2.right) + e.movementX - strToFloat(this.styleMarker2.width) >= 0 &&
-        strToFloat(this.styleMarker2.right) + e.movementX < strToFloat(this.style.width)) {
+        strToFloat(this.styleMarker2.bottom) - e.movementY >= 0 &&
+        strToFloat(this.styleMarker2.bottom) - e.movementY + strToFloat(this.styleMarker2.height) < strToFloat(this.style.height)  &&
+        strToFloat(this.styleMarker2.right) - e.movementX >= 0 &&
+        strToFloat(this.styleMarker2.right) - e.movementX + strToFloat(this.styleMarker2.width) < strToFloat(this.style.width)) {
 
         this.styleMarker2.bottom = strToFloat(this.styleMarker2.bottom) - e.movementY +'px';
         this.styleMarker2.right = strToFloat(this.styleMarker2.right) - e.movementX +'px';
@@ -266,7 +266,7 @@ zoom = new Vue({
 
 zoom.style['z-index'] = 10;
 zoom.styleReduced['z-index'] = 10;
-zoom.styleInTheForeground['z-index'] = 10;
+zoom.styleInTheForeground['z-index'] = 90;
 
 zoom.styleMarker1['z-index'] = 30;
 zoom.styleMarker2['z-index'] = 30;
