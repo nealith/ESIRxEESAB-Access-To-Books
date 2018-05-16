@@ -5,6 +5,7 @@ zoom = new Vue({
     downMarker1:false,
     downMarker2:false,
     inTheForeground:false,
+    longClick:false,
     style:{
       height : frame.h+'px',
       position : 'absolute',
@@ -111,7 +112,8 @@ zoom = new Vue({
         } else if (this.view != null) {
           this.center = this.view.viewport.getCenter();
           this.doubleTap = true;
-          window.setTimeout(function() { this.doubleTap = false;},150);
+          window.setTimeout(function() { zoom.doubleTap = false;},150);
+
         }
       }
     },
@@ -122,7 +124,7 @@ zoom = new Vue({
     },
     move:function(e){
       if (this.center != null) {
-
+        zoom.longClick = false;
         e.movementY = e.movementY || e.deltaY;
         e.movementX = e.movementX || e.deltaX;
         var newPoint = new OpenSeadragon.Point(this.center.x - e.movementX/1000,this.center.y - e.movementY/1000);
@@ -134,6 +136,7 @@ zoom = new Vue({
       if (!oracle.pass(e)) {
         return;
       }
+      zoom.longClick = false;
       if (this.view != null) {
         r = 1;
         if (e.angle < 0) {
@@ -163,10 +166,26 @@ zoom = new Vue({
           });
           this.currentZoomLevel = this.view.viewport.getMinZoom();
           this.imgInfos = data;
-        //} else {
-        //  console.log("c'est la merdeeeeeee");
-        //  console.log(data.dzi);
-        //}
+
+          this.view.addHandler('canvas-press',function(e){
+            zoom.longClick = true;
+            window.setTimeout(function() {
+              console.log('test');
+              if (zoom.longClick) {
+                zoom.longTap(null);
+              }
+              zoom.longClick = false;
+            },200);
+          })
+
+          this.view.addHandler('canvas-release',function(e){
+            zoom.longClick = false;
+          })
+
+          this.view.addHandler('canvs-drag',function(e){
+            zoom.longClick = false;
+          })
+
       }
     },
     toggleForeground:function(e){
@@ -229,9 +248,15 @@ zoom = new Vue({
       }
     },
     longTap:function(e){
-      if (!oracle.pass(e)) {
+      if (e != null && !oracle.pass(e)) {
         return;
       }
+
+      if (this.view.viewport.getRotation() == 0 && strToFloat(this.styleMarker1.left) == 0 && strToFloat(this.styleMarker1.top) == 0 && strToFloat(this.styleMarker2.right) == 0 && strToFloat(this.styleMarker2.bottom) == 0) {
+        this.toggle(null);
+        return;
+      }
+
       leftMarker1 = strToFloat(this.styleMarker1.left);
 
       topMarker1 = strToFloat(this.styleMarker1.top);

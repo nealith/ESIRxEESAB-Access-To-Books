@@ -187,14 +187,25 @@ libraryShutter = new Vue({
       // DEBUG:
       console.log("start drag on page");
       var src = '';
-      for (var i = 0; i < books.length; i++) {
-        for (var j = 0; j < books[i].pages.length; j++) {
-          if (books[i].pages[j].id == e.currentTarget.id) {
-            src = books[i].pages[j].src;
+      for (var i = 0; i < this.books.length; i++) {
+        if (e.currentTarget.id.includes(this.books[i].name)) {
+          for (var j = 0; j < this.books[i].pages.length; j++) {
+            if (this.books[i].pages[j].id == e.currentTarget.id) {
+              src = this.books[i].pages[j].thumbnail;
+              break;
+            }
+          }
+        }
+      }
+      if (src == '') {
+        for (var j = 0; j < this.bonus.length; j++) {
+          if (this.bonus[j].name == e.currentTarget.id) {
+            src = this.bonus[j].thumbnail;
             break;
           }
         }
       }
+
       var rect = e.currentTarget.getBoundingClientRect();
       var data = {
         offsetx: e.clientX - rect.left,
@@ -241,10 +252,11 @@ libraryShutter = new Vue({
         }
 
       }
-      for (var j = 0; j < this.bonus0.length; j++) {
+      for (var j = 0; j < this.bonus.length; j++) {
         var page = this.bonus[j];
         //console.log(page);
-        if (page.id.includes(path.basename(href,path.extname(href)))) {
+        var id = page.id || page.name;
+        if (id.includes(path.basename(href,path.extname(href)))) {
           //console.log(page);
           return page;
         }

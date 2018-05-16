@@ -133,7 +133,7 @@ montageShutter = new Vue({
       if (dataTransfer.ready == true) {
         var k = -1;
         for (var i = 0; i < montages.length; i++) {
-          if (e.target.parentElement.parentElement.id == montages[i].name || e.target.parentElement.id == montages[i].name) {
+          if (e.target.parentElement.parentElement.id == montages[i].name || e.target.parentElement.id == montages[i].name || e.target.id == montages[i].name) {
             k=i;
             break;
           }
@@ -165,39 +165,40 @@ montageShutter = new Vue({
     dropMontage:function(e){
       var k = -1;
       for (var i = 0; i < montages.length; i++) {
-        if (e.currentTarget.id == montages[i].name) {
+        if (e.target.parentElement.parentElement.id == montages[i].name || e.target.parentElement.id == montages[i].name || e.target.id == montages[i].name) {
           k=i;
           break;
         }
       }
 
       if (k >= 0) {
-        var rect = e.currentTarget.getBoundingClientRect();
+        var rect = document.getElementById(montages[k].name).getBoundingClientRect();
 
         var data;
 
         try {
           data = JSON.parse(e.dataTransfer.getData('text'));
+          var a = data.height;
+          var b = data.width;
+          var x = (e.clientX - rect.left) - data.offsetx;
+          var y = (e.clientY - rect.top) - data.offsety;
+          var img = svgCanvas[montages[k].name].image(data.src,b,a).move(x,y);
+          img.draggable({
+            minX:0,
+            minY:0,
+            maxX:montageSize,
+            maxY:montageSize
+          });
+          img.mousedown = montageShutter.mouseDownPage;
+          saveMontage(montages[k]);
+          //img.touchstart(montageShutter.touchPage);
+          console.log("pass in a canvas, src:"+e.dataTransfer.getData('text'));
         } catch (e) {
-          data = montage_data;
+
         } finally {
 
         }
-        var a = data.height;
-        var b = data.width;
-        var x = (e.clientX - rect.left) - data.offsetx;
-        var y = (e.clientY - rect.top) - data.offsety;
-        var img = svgCanvas[montages[k].name].image(data.src,b,a).move(x,y);
-        img.draggable({
-          minX:0,
-          minY:0,
-          maxX:montageSize,
-          maxY:montageSize
-        });
-        img.mousedown = montageShutter.mouseDownPage;
-        saveMontage(montages[k]);
-        //img.touchstart(montageShutter.touchPage);
-        console.log("pass in a canvas, src:"+e.dataTransfer.getData('text'));
+
       }
 
       console.log("pass in dropImg");

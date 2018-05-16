@@ -142,7 +142,8 @@
             v-finger:touch-cancel="end"
             v-finger:press-move="move"
             v-finger:rotate="rotate"
-            v-finger:long-tap="longTap">
+            v-finger:long-tap="longTap"
+            v-on:mousedown.left="start">
         <div  id="marker1"
               v-bind:style="styleMarker1"
               v-finger:touch-start="startOnMarker1"
@@ -227,7 +228,7 @@
             </template>
           </div>
         </template>
-        <div  v-bind:id="bonus"
+        <div  id="bonus"
               v-bind:style="styleBook"
               v-on:wheel="wheelOnBook"
               v-finger:touch-start="startOnBook"
@@ -240,7 +241,7 @@
 
               <template v-for="page in bonus">
                 <div v-bind:style="stylePage" >
-                  <img  v-bind:id="page.id"
+                  <img  v-bind:id="page.name"
                         v-bind:src="page.thumbnail"
                         v-bind:alt="page.description"
                         v-bind:style="styleImage"
