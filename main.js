@@ -14,13 +14,13 @@ const through2 = require('through2')
 const sharp = require('sharp')
 const sizeOf = require('image-size');
 
-const mqtt = require('mqtt')
-const client = mqtt.connect('mqtt://192.168.38.1')
-
 /*
  * MQTT Communications
  *
  */
+
+ const mqtt = require('mqtt')
+ const client = mqtt.connect('mqtt://192.168.38.1')
 
 const voicepi_status = 'voicepi/status';
 const voicepi_mic0_status = 'voicepi/0/status';
@@ -57,10 +57,30 @@ function processVoiceMessage (message) {
     data = JSON.parse(message)
 }
 
+//----------------------------------------------------------------------
+// CONFIG AND DATA FILES
+//----------------------------------------------------------------------
+
 const CONFIG = require('./config.json')
-global.books = JSON.parse(fs.readFileSync(CONFIG.books.index))
-global.bonus = JSON.parse(fs.readFileSync(CONFIG.bonus.index))
-global.montages = JSON.parse(fs.readFileSync(CONFIG.montages.index))
+
+if (fs.existsSync(CONFIG.books.index)){
+  global.books = JSON.parse(fs.readFileSync(CONFIG.books.index))
+} else {
+  global.books = []
+}
+
+if (fs.existsSync(CONFIG.bonus.index)){
+  global.bonus = JSON.parse(fs.readFileSync(CONFIG.bonus.index))
+} else {
+  global.bonus = []
+}
+
+if (fs.existsSync(CONFIG.montages.index)){
+  global.montages = JSON.parse(fs.readFileSync(CONFIG.montages.index))
+} else {
+  global.montages = []
+}
+
 global.books_path = CONFIG.books.path
 global.bonus_path = CONFIG.bonus.path
 global.montages_path = CONFIG.montages.path
@@ -414,26 +434,74 @@ ipcMain.on('walkon',(event,arg) => {
 var server = require('http').createServer();
 var io = require('socket.io')(server);
 var CaressServer = require('caress-server');
-var caress = new CaressServer('0.0.0.0', 3333, {json: true});
+var caress = new CaressServer('0.0.0.0', 3333, {json: false});
 
 //DEBUG
 //caress.on('tuio', function(msg){
 //  console.log(msg);
 //});
 
-io.sockets.on("connection", onSocketConnect);
+var badEvent = {}
+var transfer = false
+var time = 0
+
+function wait(){
+  time+=1;
+  if (time < 10) {
+    setTimeout(wait,1000);
+    win.webContents.send('splash_update', null)
+  } else {
+    transfer = true
+    win.webContents.send('splash_hide', null)
+    console.log(badEvent);
+  }
+}
 
 function onSocketConnect(socket) {
     console.log("Socket.io Client Connected");
 
-    caress.on('tuio', function(msg){
-      socket.emit('tuio', msg);
+    caress.on('tuio', function(msgObj){
+      if (transfer) {
+        var k = 0
+        while (k < msgObj.messages.length) {
+          e= msgObj.messages[k]
+          if (e.type != 'alive' && e.type != 'fseq') {
+            if( !(badEvent[e.sessionId] === undefined && badEvent[JSON.stringify({x:e.xPosition,y:e.yPosition})] === undefined)){
+              //console.log(e.sessionId);
+              //console.log(JSON.stringify({x:e.xPosition,y:e.yPosition}));
+                msgObj.messages.splice(k,1);
+                k--
+              }
+          }
+          k++
+        }
+        if (msgObj.messages.length > 2) {
+          socket.emit('tuio', msgObj)
+        } else {
+          //console.log("event removed")
+        }
+
+      } else {
+        var k = 0
+        while (k < msgObj.messages.length) {
+          e= msgObj.messages[k]
+          if (e.type != 'alive' && e.type != 'fseq') {
+            badEvent[e.sessionId]=e
+            badEvent[JSON.stringify({x:e.xPosition,y:e.yPosition})]=e
+          }
+          k++
+        }
+      }
     });
 
     socket.on("disconnect", function(){
       console.log("Socket.io Client Disconnected");
     });
+
+    setTimeout(wait,1000)
 }
+
+io.sockets.on("connection", onSocketConnect);
 
 
 server.listen(5000);

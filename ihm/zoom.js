@@ -85,9 +85,7 @@ zoom = new Vue({
       }
     },
     tap:function(e){
-      if (!oracle.pass(e)) {
-        return;
-      }
+
       this.currentZoomLevel+=this.incZoom;
       console.log(this.currentZoomLevel);
       if (this.currentZoomLevel >= this.view.viewport.getMaxZoom()) {
@@ -101,9 +99,7 @@ zoom = new Vue({
       console.log(this.view.viewport.getZoom());
     },
     start:function(e){
-      if (!oracle.pass(e)) {
-        return;
-      }
+
       id = e.target.id || e.currentTarget.id;
       if (id != 'marker1' && id != 'marker2' ) {
         if (this.doubleTap) { // double-tap event with alloy_finger is not handle...
@@ -133,9 +129,7 @@ zoom = new Vue({
       }
     },
     rotate:function(e){ // rotate by 90deg (or -90deg) !!!
-      if (!oracle.pass(e)) {
-        return;
-      }
+
       zoom.longClick = false;
       if (this.view != null) {
         r = 1;
@@ -204,9 +198,7 @@ zoom = new Vue({
       this.styleMarker2.right = '0px';
     },
     startOnMarker1:function(e){
-      if (!oracle.pass(e)) {
-        return;
-      }
+
       this.downMarker1 = true;
     },
     endOnMarker1:function(e){
@@ -226,9 +218,7 @@ zoom = new Vue({
       }
     },
     startOnMarker2:function(e){
-      if (!oracle.pass(e)) {
-        return;
-      }
+
       this.downMarker2 = true;
     },
     endOnMarker2:function(e){
@@ -248,10 +238,6 @@ zoom = new Vue({
       }
     },
     longTap:function(e){
-      if (e != null && !oracle.pass(e)) {
-        return;
-      }
-
       if (this.view.viewport.getRotation() == 0 && strToFloat(this.styleMarker1.left) == 0 && strToFloat(this.styleMarker1.top) == 0 && strToFloat(this.styleMarker2.right) == 0 && strToFloat(this.styleMarker2.bottom) == 0) {
         this.toggle(null);
         return;

@@ -3,19 +3,21 @@
   "version": "0.1.0",
   "main": "main.js",
   "dependencies": {
-    "electron": "^1.8.4",
     "buffertools": "2.1.6",
     "caress-server": "^0.2.1",
+    "electron": "^1.8.7",
+    "image-size": "^0.6.2",
     "klaw": "^2.1.1",
     "mqtt": "^1.0.0",
-    "sharp": "0.15.1",
-    "socket.io": "^2.1.0",
-    "socket.io-client": "^2.1.0",
-    "through2": "^2.0.3"
+    "sharp": "^0.20.2",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1",
+    "through2": "^2.0.3",
+    "yazl": "^2.4.3"
   },
   "scripts": {
     "start": "./node_modules/electron/dist/electron ./",
-    "electron-rebuild":"./node_modules/.bin/electron-rebuild"
+    "electron-rebuild": "./node_modules/.bin/electron-rebuild"
   },
   "not-supported": {
     "sharp": "^0.19.1"

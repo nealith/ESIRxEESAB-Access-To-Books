@@ -6,5 +6,9 @@
   "books":{
     "index":"./books.json",
     "path":"./books/"
+  },
+  "bonus":{
+    "index":"./bonus.json",
+    "path":"./bonus/"
   }
 }

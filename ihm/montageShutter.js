@@ -20,15 +20,9 @@ function saveMontages(){
 
 function attachAutomaticSaving(montage){
   svgCanvas[montage.name].touchend(function(e){
-    if (!oracle.pass(e)) {
-      return;
-    }
     saveMontage(montage);
   })
   svgCanvas[montage.name].mouseup(function(e){
-    if (!oracle.pass(e)) {
-      return;
-    }
     saveMontage(montage);
   })
 }
@@ -98,9 +92,6 @@ montageShutter = new Vue({
       e.preventDefault();
     },
     startOnMontages:function(e){
-      if (!oracle.pass(e)) {
-        return;
-      }
       console.log(e);
       //DEBUG
       //console.log('montageShutter:mouseDown');

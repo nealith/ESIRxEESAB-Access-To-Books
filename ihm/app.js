@@ -2,7 +2,6 @@ const {ipcRenderer} = require('electron');
 const {remote} = require('electron');
 const path = require('path');
 const yazl = require("yazl");
-const Zipit = require('zipit');
 const fs = require('fs');
 
 Vue.use(AlloyFingerVue);
@@ -68,7 +67,7 @@ var libraryStrip;
 var montageShutter;
 var libraryShutter;
 var zoom;
-var oracle;
+var splash;
 
 window.onresize = function(e){
     frame.oldH = frame.h;
@@ -84,7 +83,7 @@ window.onresize = function(e){
     montageDialogue.resize();
     rotationButtons.resize();
     zoom.resize();
-    oracle.resize();
+    splash.resize();
 }
 
 shutterController = {
