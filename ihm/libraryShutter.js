@@ -2,148 +2,144 @@
 // LibraryShutter
 // ---------------------------------
 
-let pressTimer;
+// Init active
 
+function jq( myid ) {
+
+    return "#" + myid.replace( /(:|\.|\[|\]|,|=|@)/g, "\\$1" );
+
+}
+
+var active = {};
+
+for (var i = 0; i < books.length; i++) {
+  active[books[i].name] = 0;
+}
+
+active.bonus = 0;
 
 libraryShutter = new Vue({
   el: '#libraryShutter',
   data:{
-    div:document.getElementById('libraryShutter'),
     books:books,
     bonus:bonus,
+    active:active,
     doubleTap:false,
-    style:{
-      height : frame.h+'px',
-      position : 'absolute',
-      top : '0px',
-      right : '0px',
-      width : '0px',
-      overflow: 'hidden',
-      display:'block'
-    },
-    styleBook:{
-      height:(frame.h/numberOfBooksVisible)+'px',
-      width:'auto',
-      overflow:'hidden'
-    },
-    stylePage:{
-      display:'inline-block',
-      height:(frame.h/numberOfBooksVisible)+'px',
-      width:(frame.h/numberOfBooksVisible)/Math.sqrt(2)+'px',
-      padding: pagePadding*(frame.h/numberOfBooksVisible)+'px '+pagePadding*(frame.h/numberOfBooksVisible)+'px '+pagePadding*(frame.h/numberOfBooksVisible)+'px '+pagePadding*(frame.h/numberOfBooksVisible)+'px'
-    },
-    styleImage:{
-      display:'block',
-      height:(frame.h/numberOfBooksVisible - 2*pagePadding*(frame.h/numberOfBooksVisible))+'px',
-      //width:(frame.h/numberOfBooksVisible - 2*pagePadding*(frame.h/numberOfBooksVisible))/Math.sqrt(2)+'px',
-      overflow:'hidden'
-    }
+    longClick:false,
+    dragBook:false
   },
   methods:{
-    resize:function(){
-      this.style.height = frame.h+'px';
-      this.style.width = frame.w - (strToFloat(libraryStrip.style.left)+strToFloat(libraryStrip.style.width))+'px';
+    scrollBook:function(e){
 
-      this.styleBook.height = (frame.h/numberOfBooksVisible)+'px';
-      //this.styleBook.width = this.style.width;
+      if(library_scroll_active){
 
-      var pageHeight = frame.h/numberOfBooksVisible;
-      this.stylePage.height = pageHeight+'px';
-      this.stylePage.width = pageHeight/Math.sqrt(2)+'px';
-      this.stylePage.padding = pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px '+pagePadding*pageHeight+'px';
+        idElem = e.currentTarget.id;
+        var nextActive = this.active[idElem];
+        if(e.deltaY>0){
+          nextActive++;
+          if (nextActive >= e.currentTarget.numberPages) {
+            nextActive = e.currentTarget.numberPages-1;
+          }
+        }else {
+          nextActive--;
+          if (nextActive < 0) {
+            nextActive = 0;
+          }
+        }
 
-      this.styleImage.height = (pageHeight - 2*pagePadding*(pageHeight))+'px';
-      //this.styleImage.width = (pageHeight - 2*pagePadding*(pageHeight))/Math.sqrt(2)+'px';
+        var from;
+        var to;
 
-    },
-    wheelOnBooks:function(e){
-      if ( Math.abs(e.deltaY) > Math.abs(e.deltaX) ) {
-        var delta = Math.max(-1, Math.min(1, e.deltaY));
-        document.getElementById("libraryShutter").scrollTop += (delta*40); // Multiplied by 40
-        document.getElementById("libraryStrip").scrollTop += (delta*40); // Multiplied by 40
-        e.preventDefault();
-      }
-    },
-    startOnBooks:function(e){
-      //DEBUG
-      //console.log('libraryShutter:mouseDownBooks');
-      this.down = true;
-    },
-    endOnBooks:function(e){
-      //DEBUG
-      //console.log('libraryShutter:mouseUpBooks');
-      this.down = false;
-    },
-    moveOnBooks:function(e){
-      //DEBUG
-      //console.log('libraryShutter:mouseMoveBooks');
-      e.movementY = e.movementY || e.deltaY;
-      if (this.down == true) {
-        var delta = Math.max(-1, Math.min(1, e.movementY));
-        document.getElementById("libraryShutter").scrollTop -= (delta*10); // Multiplied by 40
-        document.getElementById("libraryStrip").scrollTop -= (delta*10); // Multiplied by 40
-        e.preventDefault();
-        //DEBUG
-        //console.log('libraryShutter:mouseMove:true');
 
+        if (idElem == 'bonus') {
+          from = $('#'+this.bonus[this.active.bonus].id);
+          to = $('#'+this.bonus[nextActive].id);
+        } else {
+          for (var i = 0; i < books.length; i++) {
+            if(this.books[i].name == idElem) {
+              console.log(this.books[i].pages[this.active[idElem]].id);
+              console.log(this.books[i].pages[nextActive].id);
+              from = $(document.getElementById(this.books[i].pages[this.active[idElem]].id));
+              to = $(document.getElementById(this.books[i].pages[nextActive].id));
+              break;
+            }
+          }
+        }
+
+        from.removeAttr("active");
+        to.attr("active", "");
+
+        this.active[idElem] = nextActive;
+
+
+        var $activePage = $(document.getElementById(idElem)).children(".library_page[active]");
+        var widthActivePage = $activePage.width();
+        var widthLibrary = $(document.getElementById(idElem)).parent().width();
+
+        library_scroll_active = false; // Prevent separator moving from triggering scroll event on libraries
+
+        $(document.getElementById(idElem)).scrollTo($activePage, 300, {
+          offset: -(widthLibrary/2)+(widthActivePage/2),
+          onAfter: function() {
+            setTimeout(function() {
+              library_scroll_active = true;
+            }, 350); // Wait until animation ends to activate scroll detection
+          }
+        });
       }
     },
     wheelOnBook:function(e){
-      if ( Math.abs(e.deltaY) < Math.abs(e.deltaX) ) {
-        var delta = Math.max(-1, Math.min(1, e.deltaY));
-        document.getElementById(e.currentTarget.id).scrollLeft += (delta*40); // Multiplied by 40
-        e.preventDefault();
+      this.scrollBook(e);
+    },
+    swipeOnBook:function(e){
+      //console.log("swipe" + e.direction);
+      var fe = {
+        currentTarget:e.target,
+        deltaY:10
       }
+      if (e.direction=="swipeLeft") {
+        fe.deltaY=-10;
+      }
+
+      if (e.target.tagName == "IMG") {
+        fe.currentTarget = e.target.parentElement;
+      }
+      console.log(fe);
+      this.scrollBook(fe);
     },
     startOnBook:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseDownBooks');
-      this.down = true;
+      this.dragBook = true;
     },
     endOnBook:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseUpBooks');
-      this.down = false;
+      this.dragBook = false;
     },
     moveOnBook:function(e){
       //DEBUG
       //console.log('libraryShutter:mouseMoveBooks');
-      if (pressTimer) {
-        clearTimeout(pressTimer);
-      }
-      e.movementX = e.movementX || e.deltaX;
-      if (this.down == true) {
-        var delta = Math.max(-1, Math.min(1, e.movementX));
-        document.getElementById(e.currentTarget.id).scrollLeft -= (delta*10); // Multiplied by 40
-        e.preventDefault();
-        //DEBUG
-        //console.log('libraryShutter:mouseMove:true');
-
+      e.deltaY = e.movementX || e.deltaX;
+      if (this.dragBook == true) {
+        this.scrollBook(e);
       }
     },
-    mouseDownPage:function(e){
-      this.down = true;
-      pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
+    startOnPage:function(e){
+      pressTimer = window.setTimeout(function() {
+        if (libraryShutter.longClick) {
+          longTap(e);
+        }
+      },200);
     },
-    touchPage:function(e){
-      if (e.type = 'touchstart') {
-
-        pressTimer = window.setTimeout(function() { libraryShutter.down = false;},200);
-      }
+    endOnPage:function(e){
+      libraryShutter.longClick = false
+    },
+    moveOnPage:function(e){
+      libraryShutter.longClick = false
     },
     longTap:function(e){
-
-      var rect = e.target.getBoundingClientRect();
-      dataTransfer.data = {
-        offsetx: e.clientX - rect.left,
-        offsety: e.clientY - rect.top,
-        width: e.target.width,
-        height: e.target.height,
-        src: e.srcElement.currentSrc
-      }
-      dataTransfer.ready = true;
-
-
+      montageShutter.pushImage(e.target);
     },
     zoom:function(e){
       //var dziSrc = e.target.src.replace("thumbnail","dzi");
@@ -161,47 +157,6 @@ libraryShutter = new Vue({
         }
 
       }
-
-
-      //zoom.toggle({dzi:dziSrc});
-    },
-    dragPage:function(e){
-      // DEBUG:
-      console.log("start drag on page");
-      var src = '';
-      for (var i = 0; i < this.books.length; i++) {
-        if (e.currentTarget.id.includes(this.books[i].name)) {
-          for (var j = 0; j < this.books[i].pages.length; j++) {
-            if (this.books[i].pages[j].id == e.currentTarget.id) {
-              src = this.books[i].pages[j].thumbnail;
-              break;
-            }
-          }
-        }
-      }
-      if (src == '') {
-        for (var j = 0; j < this.bonus.length; j++) {
-          if (this.bonus[j].name == e.currentTarget.id) {
-            src = this.bonus[j].thumbnail;
-            break;
-          }
-        }
-      }
-
-      var rect = e.currentTarget.getBoundingClientRect();
-      var data = {
-        offsetx: e.clientX - rect.left,
-        offsety: e.clientY - rect.top,
-        width: e.currentTarget.width,
-        height: e.currentTarget.height,
-        src: src
-      }
-
-      //e.dataTransfer.setData('text',src);
-      e.dataTransfer.setData('text',JSON.stringify(data));
-      e.dataTransfer.setDragImage(e.currentTarget, data.offsetx, data.offsety);
-      console.log(data);
-      //e.dataTransfer.setData('text',JSON.stringify(data));
     },
     tap:function(e){
       if (this.doubleTap) { // double-tap event with alloy_finger is not handle...
@@ -211,38 +166,13 @@ libraryShutter = new Vue({
         this.doubleTap = true;
         window.setTimeout(function() { libraryShutter.doubleTap = false;},150);
       }
-    },
-    getPageByHREF:function(href){
-      re = /%20/gi;
-      href = href.replace(re,' ');
-      //console.log(href);
-      //console.log(path.basename(href,path.extname(href)));
-      for (var i = 0; i < this.books.length; i++) {
-        bookName = this.books[i].name;
-        if (href.includes(bookName)) {
-          for (var j = 0; j < this.books[i].pages.length; j++) {
-            var page = this.books[i].pages[j];
-            //console.log(page);
-            if (page.id.includes(path.basename(href,path.extname(href)))) {
-              //console.log(page);
-              return page;
-            }
-          }
-        }
-
-      }
-      for (var j = 0; j < this.bonus.length; j++) {
-        var page = this.bonus[j];
-        //console.log(page);
-        var id = page.id || page.name;
-        if (id.includes(path.basename(href,path.extname(href)))) {
-          //console.log(page);
-          return page;
-        }
-      }
     }
   }
 });
+
+for (var i = 0; i < books.length; i++) {
+  $('#'+libraryShutter.books[i].pages[libraryShutter.active[books[i].name]].id).attr("active", "");
+}
 
 function sortBooks(){
   ipcRenderer.send('sortBooks',null);
@@ -256,6 +186,9 @@ ipcRenderer.on('sync_books', (event, arg) => {
   books = remote.getGlobal('books');
   libraryShutter.books = books;
   libraryStrip.books = books;
+  active[books[books.length-1].name] = 0;
+
+  $('#'+libraryShutter.books[books.length-1].pages[libraryShutter.active[books[books.length-1].name]].id).attr("active", "");
 });
 
 ipcRenderer.on('sync_bonus', (event, arg) => {
@@ -263,8 +196,3 @@ ipcRenderer.on('sync_bonus', (event, arg) => {
   libraryShutter.bonus = bonus;
   libraryStrip.bonus = bonus;
 });
-
-
-
-
-libraryShutter.styleBook['white-space'] = 'nowrap';

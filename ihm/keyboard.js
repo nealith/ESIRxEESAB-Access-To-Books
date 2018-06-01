@@ -39,7 +39,6 @@ keys = [
     letter:'9',
     label:'key9'
   },
-  //
   {
     letter:'a',
     label:'keyA'
@@ -172,40 +171,25 @@ keyboard = new Vue({
   data:{
     down:false,
     keys:keys,
+    active:false,
     toUpper:false,
-    keySize: sizePourcent*frame.w,
-    keyMargin: sizePourcent*frame.w*0.1,
-    keyBoardSizeX: sizePourcent*frame.w*10+sizePourcent*frame.w*0.1*20,
-    keyBoardSizeY: sizePourcent*frame.w*4+sizePourcent*frame.w*0.1*8,
-    style:{
+    /*style:{
       width:sizePourcent*frame.w*10+sizePourcent*frame.w*0.1*20+'px',
       height:sizePourcent*frame.w*4+sizePourcent*frame.w*0.1*8+'px',
       display:'none',
       position:'absolute',
       right:'0px',
       bottom:'0px',
-    },
-    styleKey:{
-      height:sizePourcent*frame.w+'px',
-      width:sizePourcent*frame.w+'px',
-      margin:sizePourcent*frame.w*0.1+'px',
-      float:'left'
-    },
+    },*/
     listener:[]
   },
   methods:{
-    resize:function(){
-      this.keySize = sizePourcent*frame.w;
-      this.keyMargin = sizePourcent*frame.w*0.1;
-      this.keyBoardSizeX = this.keySize*10+this.keyMargin*20;
-      this.keyBoardSizeY = this.keySize*4+this.keyMargin*8;
-
-      this.style.width = this.keyBoardSizeX+'px';
-      this.style.height = this.keyBoardSizeY+'px';
-
-      this.styleKey.width = this.keySize+'px';
-      this.styleKey.height = this.keySize+'px';
-      this.styleKey.margin = this.keyMargin+'px';
+    toggle:function(){
+      if (this.active) {
+        this.active = false;
+      } else {
+        this.active = true;
+      }
     },
     addListener:function(id){
       this.listener.push(id)
@@ -215,13 +199,6 @@ keyboard = new Vue({
         this.listener[i] == id;
         this.listener.splice(i, 1);
         break;
-      }
-    },
-    toggle:function(){
-      if (this.style.display == 'none') {
-        this.style.display = 'block';
-      } else {
-        this.style.display = 'none';
       }
     },
     onCapslockPressed:function(){
@@ -301,68 +278,18 @@ keyboard = new Vue({
       } else {
         this.onCapslockPressed();
       }
-    },
-    start:function(e){
-      //DEBUG
-      //console.log('keyboard:mouseDown');
-      this.down = true;
-    },
-    end:function(e){
-      //DEBUG
-      //console.log('keyboard:mouseUp');
-      this.down = false;
-    },
-    move:function(e){
-      //DEBUG
-      //console.log('keyboard:mouseMove');
-      e.movementX = e.movementX || e.deltaX;
-      e.movementY = e.movementY || e.deltaY;
-      if (this.down == true) {
-
-        var right  = (strToFloat(this.style.right) - e.movementX);
-        var bottom  = (strToFloat(this.style.bottom) - e.movementY);
-        if (right >= 0 && right+this.keyBoardSizeX < frame.w && bottom >= 0 && bottom + this.keyBoardSizeY < frame.h ) {
-          this.style.right = right + 'px';
-          this.style.bottom = bottom + 'px';
-        }
-
-      }
-    },
-    touch:function(e){
-      switch (e.type) {
-        case "touchstart":
-          //DEBUG
-          //console.log('keyboard:touchstart');
-          this.down = true;
-          break;
-        case "touchmove":
-          //DEBUG
-          //console.log('keyboard:touchmove');
-          if (this.down == true) {
-            var right  = (strToFloat(this.style.right) - e.movementX);
-            var bottom  = (strToFloat(this.style.bottom) - e.movementY);
-
-            if (right >= 0 && right+this.keyBoardSizeX < frame.w && bottom >= 0 && bottom + this.keyBoardSizeY < frame.h ) {
-              this.style.right = right + 'px';
-              this.style.bottom = bottom + 'px';
-            }
-            //DEBUG
-            //console.log('keyboard:touchmove:true');
-
-          }
-          break;
-        case "touchend":
-          //DEBUG
-          //console.log('keyboard:touchend');
-          this.down = false;
-          break;
-      }
     }
-
   }
 });
 
-keyboard.style['z-index'] = 60;
+$("#keyboard").draggable({
+  containment: "parent",
+  snap: "#rotationWrap",
+  snapTolerance: 20,
+  start: function(){},
+  drag: function(){},
+  stop: function(){}
+});
 
 //// Test
 

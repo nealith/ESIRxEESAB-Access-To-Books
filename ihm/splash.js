@@ -5,14 +5,7 @@ splash = new Vue({
     mapCoord:{},
     time:0,
     wait:'',
-    style:{
-      position : 'absolute',
-      top : '0px',
-      left : '0px',
-      width : frame.w+'px',
-      height : frame.h+'px',
-      display : 'block'
-    }
+    active:true
   },
   methods:{
     resize:function(){
@@ -22,13 +15,11 @@ splash = new Vue({
   }
 });
 
-splash.style['z-index'] = 100;
-
 ipcRenderer.on('splash_update', (event, arg) => {
   splash.wait += '.';
 });
 
 ipcRenderer.on('splash_hide', (event, arg) => {
   console.log("lol");
-  splash.style.display='none';
+  splash.active = false;
 });

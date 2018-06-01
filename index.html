@@ -8,9 +8,19 @@
     <link rel="stylesheet" href="./ihm/style.css">
 
     <!-- Javascript -->
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
     <script type="text/javascript" src="./libs/socket.io.slim.js" charset="utf-8"></script>
+
     <script type="text/javascript" src="./libs/vue.min.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./libs/jquery.min.js" charset="utf-8"></script>
+
+    <script type="text/javascript" src="./libs/jquery.min.js"></script>
+  	<script type="text/javascript" src="./libs/jquery-ui.min.js"></script>
+  	<script type="text/javascript" src="./libs/jquery.scrollTo.min.js"></script>
+  	<script type="text/javascript" src="./libs/jquery.scrollend.min.js"></script>
+  	<script type="text/javascript" src="./libs/jquery.mobile-1.5.0-alpha.1.min.js"></script>
+  	<script type="text/javascript" src="./libs/jquery.ui.touch-punch.min.js"></script>
+
     <script type="text/javascript" src="./libs/svg.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="./libs/svg.draggable.min.js" charset="utf-8"></script>
 
@@ -25,59 +35,71 @@
   </head>
   <body>
     <div id="rotationWrap">
-      <div  id="splash"
-            v-bind:style="style">
+      <div  id="splash" :active="active">
         <div>
           <p>{{wait}}</p>
         </div>
       </div>
 
-      <div  id="montageDialogue"
-            v-bind:style="style"
+      <div  id="dialogue"
             class="full-border"
-            v-finger:touch-start="start"
-            v-finger:touch-end="end"
-            v-finger:touch-cancel="end"
-            v-finger:press-move="move"
-            v-on:mousedown.left="start"
-            v-on:mouseup.left="end"
-            v-on:mousemove.left="move">
+            :active="active">
         <div>
-          <input autofocus="true" id="montageName" class="full-border" v-model="name" type="text" placeholder="Titre pour le nouveau montage">
+          <input  autofocus="true"
+                  id="name"
+                  class="full-border"
+                  v-model="name"
+                  type="text"
+                  placeholder="Un ptit nom s'il vous plaît ? (:">
         </div>
         <div>
-          <button class="full-border two-button" type="submit" v-on:click="onOkPressed" v-finger:tap="onOkPressed">Créer</button>
-          <button class="full-border two-button" type="submit" v-on:click="onCancelPressed" v-finger:tap="onCancelPressed">Annuler</button>
+          <button   class="full-border two-button"
+                    type="submit"
+                    v-on:click="onOkPressed"
+                    v-finger:tap="onOkPressed">
+                    Créer
+          </button>
+          <button   class="full-border two-button"
+                    type="submit"
+                    v-on:click="onCancelPressed"
+                    v-finger:tap="onCancelPressed">
+                    Annuler
+          </button>
         </div>
 
       </div>
 
-      <div id="rotationButtons" v-bind:style="style">
-        <div class="rotationButton" id="rotationButtonTopLeft" v-bind:style="buttonStyleTopLeft" v-on:click="onRotatePressed" v-finger:tap="onRotatePressed">
+      <div id="rotationButtons">
+        <div  class="rotationButton"
+              id="rotationButtonTopLeft"
+              v-on:click="onRotatePressed"
+              v-finger:tap="onRotatePressed">
 
         </div>
-        <div class="rotationButton" id="rotationButtonTopRight" v-bind:style="buttonStyleTopRight" v-on:click="onRotatePressed" v-finger:tap="onRotatePressed">
+        <div  class="rotationButton"
+              id="rotationButtonTopRight"
+              v-on:click="onRotatePressed"
+              v-finger:tap="onRotatePressed">
 
         </div>
-        <div class="rotationButton" id="rotationButtonBottomLeft" v-bind:style="buttonStyleBottomLeft" v-on:click="onRotatePressed" v-finger:tap="onRotatePressed">
+        <div  class="rotationButton"
+              id="rotationButtonBottomLeft"
+              v-on:click="onRotatePressed"
+              v-finger:tap="onRotatePressed">
 
         </div>
-        <div class="rotationButton" id="rotationButtonBottomRight" v-bind:style="buttonStyleBottomRight" v-on:click="onRotatePressed" v-finger:tap="onRotatePressed">
+        <div  class="rotationButton"
+              id="rotationButtonBottomRight"
+              v-on:click="onRotatePressed"
+              v-finger:tap="onRotatePressed">
 
         </div>
       </div>
 
       <div  id="keyboard"
-            v-bind:style="style"
-            v-finger:touch-start="start"
-            v-finger:touch-end="end"
-            v-finger:touch-cancel="end"
-            v-finger:press-move="move"
-            v-on:mousedown.left="start"
-            v-on:mouseup.left="end"
-            v-on:mousemove.left="move">
+            :active="active">
         <template v-for="key in keys">
-          <div class="key" v-bind:style="styleKey" v-bind:id="key.label" v-on:click="onKeyPressed" v-finger:tap="onKeyPressed">
+          <div class="key" v-bind:id="key.label" v-on:click="onKeyPressed" v-finger:tap="onKeyPressed">
             <div>
               <p>{{key.letter}}</p>
             </div>
@@ -86,54 +108,39 @@
         </template>
       </div>
 
-      <div id="mainStrip" v-bind:style="style">
-        <div v-bind:style="whiteSpace">
-
-        </div>
-        <div id="montage" v-bind:style="buttonStyle" v-on:click="onNewMontagePressed" v-finger:tap="onNewMontagePressed">
-
-        </div>
-        <div id="exportMontage" v-bind:style="buttonStyle" v-on:click="onExportMontagePressed" v-finger:tap="onExportMontagePressed">
-
-        </div>
-        <div id="notes" v-bind:style="buttonStyle" v-on:click="onAddNotePressed" v-finger:tap="onAddNotePressed">
-
-        </div>
-        <div id="vocal" v-bind:style="buttonStyle" v-on:click="onEnableVocalPressed" v-finger:tap="onEnableVocalPressed">
-
-        </div>
-      </div>
-      <div id="montageStrip" v-bind:style="style">
-        <template v-for="montage in montages">
-          <div v-bind:style="montageNameStyle">
-            <div class="verticalText">
-              <p>{{montage.name}}</p>
+      <div id="mainStrip">
+        <div id="buttons">
+          <div id="buttons_top">
+            <div  id="activate_voice"
+                  class="button"
+                  v-on:click="onEnableVocalPressed"
+                  v-finger:tap="onEnableVocalPressed"></div>
+            <div  id="voice_filters_info">
+              <span>Filtre actif &mdash;</span>
+              <span>{{filtre_actif}}</span>
             </div>
           </div>
-        </template>
-      </div>
+          <div  id="buttons_bottom">
+            <div  id="title">ACCESS TO TOOLS</div>
+            <div  id="add_montage"
+                  class="button"
+                  v-on:click="onNewMontagePressed"
+                  v-finger:tap="onNewMontagePressed"></div>
+            <div  id="add_post-it"
+                  class="button"
+                  v-on:click="onAddPostIt"
+                  v-finger:tap="onAddPostIt"></div>
+            <div  id="export_montage"
+                  class="button"
+                  v-on:click="onExportMontagePressed"
+                  v-finger:tap="onExportMontagePressed"></div>
 
-      <div  id="montageShutter"
-            v-bind:style="style"
-            v-on:wheel="wheelOnMontages"
-            v-finger:touch-start="startOnMontages"
-            v-finger:touch-end="endOnMontages"
-            v-finger:touch-cancel="endOnMontages"
-            v-finger:press-move="moveOnMontages"
-            v-on:mousedown.left="startOnMontages"
-            v-on:mouseup.left="endOnMontages"
-            v-on:mousemove.left="moveOnMontages"
-            v-finger:rotate="rotateOnImage"
-            v-finger:tap="tap">
-        <template v-for="montage in montages">
-          <div v-bind:style="styleMontage" v-bind:id="montage.name" v-on:dragover="dragOverMontage" v-on:drop="dropMontage" v-finger:touch-end="endOnMontage">
           </div>
-        </template>
+        </div>
       </div>
 
       <div  id="zoom"
-            v-bind:style="style"
-            v-finger:double-tap="toggleForeground"
+            class="full-space"
             v-finger:tap="tap"
             v-finger:touch-start="start"
             v-finger:touch-end="end"
@@ -141,67 +148,103 @@
             v-finger:press-move="move"
             v-finger:rotate="rotate"
             v-finger:long-tap="longTap"
-            v-on:mousedown.left="start">
+            v-on:mousedown.left="start"
+            :active="active">
         <div  id="marker1"
-              v-bind:style="styleMarker1"
-              v-finger:touch-start="startOnMarker1"
-              v-finger:touch-end="endOnMarker1"
-              v-finger:touch-cancel="endOnMarker1"
-              v-finger:press-move="moveOnMarker1"
-              v-on:mousedown.left="startOnMarker1"
-              v-on:mouseup.left="endOnMarker1"
-              v-on:mousemove.left="moveOnMarker1"
               class="marker">
         </div>
         <div  id="marker2"
-              v-bind:style="styleMarker2"
-              v-finger:touch-start="startOnMarker2"
-              v-finger:touch-end="endOnMarker2"
-              v-finger:touch-cancel="endOnMarker2"
-              v-finger:press-move="moveOnMarker2"
-              v-on:mousedown.left="startOnMarker2"
-              v-on:mouseup.left="endOnMarker2"
-              v-on:mousemove.left="moveOnMarker2"
               class="marker">
         </div>
       </div>
 
-      <div  id="libraryStrip"
-            v-finger:touch-start="start"
-            v-finger:touch-end="end"
-            v-finger:touch-cancel="end"
-            v-finger:press-move="move"
-            v-on:mousedown.left="start"
-            v-on:mouseup.left="end"
-            v-on:mousemove.left="move"
-            v-bind:style="style">
-        <template v-for="book in books">
-          <div v-bind:style="bookNameStyle">
-            <div class="verticalText">
-              <p>{{book.name}}</p>
+      <div id="montageStrip">
+        <template v-for="montage in montages">
+          <div class="montage-label-container">
+            <div class="vertical-label-container">
+              <label>{{montage.name}}</label>
             </div>
           </div>
         </template>
-        <div v-bind:style="bookNameStyle">
-          <div class="verticalText">
-            <p>bonus</p>
-          </div>
-        </div>
       </div>
 
-      <div  id="libraryShutter"
-            v-bind:style="style"
-            v-on:wheel="wheelOnBooks"
-            v-finger:touch-start="startOnBooks"
-            v-finger:touch-end="endOnBooks"
-            v-finger:touch-cancel="endOnBooks"
-            v-finger:press-move="moveOnBooks"
-            v-on:mousedown.left="startOnBooks"
-            v-on:mouseup.left="endOnBooks"
-            v-on:mousemove.left="moveOnBooks">
-        <template v-for="book in books">
-          <div  v-bind:id="book.name"
-                v-bind:style="styleBook"
+      <div class="global_container">
+
+        <div  id="montageShutter"
+              class="space"
+              v-on:wheel="wheelOnMontages"
+              v-finger:touch-start="startOnMontages"
+              v-finger:touch-end="endOnMontages"
+              v-finger:touch-cancel="endOnMontages"
+              v-finger:press-move="moveOnMontages"
+              v-on:mousedown.left="startOnMontages"
+              v-on:mouseup.left="endOnMontages"
+              v-on:mousemove.left="moveOnMontages"
+              v-finger:rotate="rotateOnImage">
+          <template v-for="montage in montages">
+            <div class="workspace" v-bind:id="montage.name">
+            </div>
+          </template>
+        </div>
+
+        <div  id="libraryStrip"
+              v-finger:touch-start="start"
+              v-finger:touch-end="end"
+              v-finger:touch-cancel="end"
+              v-finger:press-move="move"
+              v-on:mousedown.left="start"
+              v-on:mouseup.left="end"
+              v-on:mousemove.left="move">
+          <template v-for="book in books">
+            <div class="library-label-container">
+              <div class="vertical-label-container">
+                <label>{{book.name}}</label>
+              </div>
+            </div>
+          </template>
+          <div class="library-label-container">
+            <div class="vertical-label-container">
+              <p>bonus</p>
+            </div>
+          </div>
+        </div>
+
+        <div  id="libraryShutter"
+              class="space">
+          <template v-for="book in books">
+            <div class="library">
+              <div class="library_container"
+                v-bind:id="book.name"
+                v-on:wheel="wheelOnBook"
+                v-finger:swipe="swipeOnBook"
+                v-finger:press-move="moveOnBook"
+                v-on:mousedown.left="startOnBook"
+                v-on:mouseup.left="endOnBook"
+                v-on:mousemove.left="moveOnBook"
+                v-bind:numberPages="book.pages.length">
+                <template v-for="page in book.pages">
+                  <img  class="library_page"
+                        v-bind:src="page.thumbnail"
+                        v-bind:originalPath="page.originalPath"
+                        v-bind:originalWidth="page.originalWidth"
+                        v-bind:originalHeight="page.originalHeight"
+                        v-bind:thumbnail="page.thumbnail"
+                        v-bind:dzi="page.dzi"
+                        v-bind:id="page.id"
+                        v-bind:alt="page.description"
+                        v-finger:long-tap="longTap"
+                        v-on:dblclick="zoom"
+                        v-finger:tap="tap">
+                </template>
+              </div>
+              <label class="library_label">
+                <span class="book_name">{{book.name}}</span>
+                <span class="page_ref">{{book.pages[active[book.name]].description}}</span>
+              </label>
+            </div>
+          </template>
+          <!--<div  id="bonus"
+                class="library"
                 v-on:wheel="wheelOnBook"
                 v-finger:touch-start="startOnBook"
                 v-finger:touch-end="endOnBook"
@@ -209,54 +252,35 @@
                 v-finger:press-move="moveOnBook"
                 v-on:mousedown.left="startOnBook"
                 v-on:mouseup.left="endOnBook"
-                v-on:mousemove.left="moveOnBook">
-
-            <template v-for="page in book.pages">
-              <div v-bind:style="stylePage" >
-                <img  v-bind:id="page.id"
-                      v-bind:src="page.thumbnail"
-                      v-bind:alt="page.description"
-                      v-bind:style="styleImage"
-                      v-finger:long-tap="longTap"
-                      v-on:dragstart="dragPage"
-                      v-on:mousedown.left="mouseDownPage"
-                      v-on:dblclick="zoom"
-                      v-finger:touch-start="tap">
-              </div>
-            </template>
-          </div>
-        </template>
-        <div  id="bonus"
-              v-bind:style="styleBook"
-              v-on:wheel="wheelOnBook"
-              v-finger:touch-start="startOnBook"
-              v-finger:touch-end="endOnBook"
-              v-finger:touch-cancel="endOnBook"
-              v-finger:press-move="moveOnBook"
-              v-on:mousedown.left="startOnBook"
-              v-on:mouseup.left="endOnBook"
-              v-on:mousemove.left="moveOnBook">
-
-              <template v-for="page in bonus">
-                <div v-bind:style="stylePage" >
-                  <img  v-bind:id="page.name"
-                        v-bind:src="page.thumbnail"
-                        v-bind:alt="page.description"
-                        v-bind:style="styleImage"
-                        v-finger:long-tap="longTap"
-                        v-on:dragstart="dragPage"
-                        v-on:mousedown.left="mouseDownPage"
-                        v-on:dblclick="zoom"
-                        v-finger:touch-start="tap">
+                v-on:mousemove.left="moveOnBook"
+                v-bind:numberPages="bonus.length">
+                <div class="library_container">
+                  <template v-for="page in bonus">
+                    <div  class="library_page"
+                          v-bind:style="{ 'background-image': 'url(' + page.thumbnail + ')' }"
+                          originalPath="page.originalPath"
+                          originalWidth="page.originalWidth"
+                          originalHeight="page.originalHeight"
+                          thumbnail="page.thumbnail"
+                          dzi="page.dzi"
+                          v-bind:id="page.id"
+                          v-bind:alt="page.description"
+                          v-finger:long-tap="longTap"
+                          :active="(bonus[active['bonus']].id == page.id)? true : false">
+                    </div>
+                  </template>
                 </div>
-              </template>
+                <label class="library_label">
+                  <span class="book_name">Bonus</span>
+                  <span class="page_ref">{{bonus.pages[active['bonus']].description}}</span>
+                </label>
+          </div>-->
         </div>
       </div>
+
     </div>
 
-
-
-    <div id="exportArea">
+    <div id="montageIO">
 
     </div>
 
@@ -265,7 +289,7 @@
     <script type="text/javascript" src="./ihm/splash.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/keyboard.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/rotationButtons.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./ihm/montageDialogue.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/dialogue.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/mainStrip.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/montageStrip.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/libraryStrip.js" charset="utf-8"></script>

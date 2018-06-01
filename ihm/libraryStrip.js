@@ -1,83 +1,59 @@
-var books = remote.getGlobal('books');
-var bonus = remote.getGlobal('bonus');
-const pagePadding = 0.05;
+var library_scroll_active = true;
 
+function move_separator() {
+  var posX = parseFloat($("#libraryStrip").css("left"));
+  var separatorW = parseFloat($("#libraryStrip").css("width"));
+  $("#libraryShutter").css({
+    "left": posX+separatorW,
+    "width": frame.w-posX-separatorW,
+  });
+  $("#montageShutter").css({
+    "width": posX
+  });
+}
 
-const numberOfBooksVisible = 3;
+function align_libraries_on_active_page() {
+  $(".library_container").each(function() {
+    var $activePage = $(this).children(".library_page[active]");
+    var widthActivePage = $activePage.width();
+    var widthLibrary = $(this).parent().width();
+
+    library_scroll_active = false; // Prevent separator moving from triggering scroll event on libraries
+
+    $(this).scrollTo($activePage, 300, {
+      offset: -(widthLibrary/2)+(widthActivePage/2),
+      onAfter: function() {
+        setTimeout(function() {
+          library_scroll_active = true;
+        }, 350); // Wait until animation ends to activate scroll detection
+      }
+    });
+  });
+}
 
 libraryStrip = new Vue({
   el: '#libraryStrip',
   data:{
-    moveX:0,
-    offsetX:0,
-    down:false,
-    div:document.getElementById('libraryStrip'),
-    style:{
-      height : frame.h+'px',
-      position : 'absolute',
-      top : '0px',
-      left : (frame.w-sizePourcent*frame.w)+'px',
-      width : (sizePourcent*frame.w)+'px',
-      overflow : 'hidden'
-    },
-    bookNameStyle:{
-      height : frame.h/numberOfBooksVisible+'px',
-      color: "white",
-      padding: '0px 0px 0px 0px',
-      margin: '0px 0px',
-      position: 'relative',
-      left: '0%'
-    },
     books:books
-
   },
   methods:{
-    resize:function(){
-      var oldLeft = strToFloat(this.style.left);
-      var oldWidth = frame.oldW*sizePourcent;
-      var newWidth = frame.w*sizePourcent;
-      var realOldFrameWidth = frame.oldW - 2*oldWidth;
-      var realNewFrameWidth = frame.w - 2*newWidth;
-      var realOldLeft = oldLeft-oldWidth;
-      var realNewLeft = realNewFrameWidth * realOldLeft / realOldFrameWidth;
-      var newLeft = realNewLeft + newWidth;
-
-      this.style.left =   newLeft+'px';
-      this.style.height = frame.h+'px';
-      this.style.width = newWidth+'px';
-
-      this.bookNameStyle.height = frame.h/numberOfBooksVisible+'px';
-    },
     start:function(e){
-      //DEBUG
-      //console.log('libraryStrip:start');
-      this.down = true;
     },
     end:function(e){
-      //DEBUG
-      //console.log('libraryStrip:end');
-      this.down = false;
-      shutterController.onLibraryStripMove(this.moveX);
-      this.moveX = 0;
+      align_libraries_on_active_page();
     },
     move:function(e){
-      //DEBUG
-      //console.log('libraryStrip:move');
-
-      e.movementX = e.movementX || e.deltaX;
-      if (this.down == true &&
-        strToFloat(this.style.left) + strToFloat(this.style.width) + e.movementX <= frame.w &&
-        strToFloat(this.style.left) + e.movementX >= strToFloat(montageStrip.style.left) + strToFloat(montageStrip.style.width)) {
-
-        this.style.left  = (strToFloat(this.style.left) + e.movementX) + 'px';
-        this.moveX += e.movementX;
-
-        //DEBUG
-        //console.log('libraryStrip:move:new position:'+this.style.left);
-      }
+      move_separator();
     }
   }
 });
-libraryStrip.style['z-index'] = 50;
-libraryStrip.style['line-height'] = 1;
-libraryStrip.bookNameStyle['line-height'] = 1;
+
+$("#libraryStrip").draggable({
+  containment: "parent",
+  axis: "x",
+  snap: "#global_container",
+  snapTolerance: 20,
+  start: libraryStrip.start,
+  drag: libraryStrip.move,
+  stop: libraryStrip.end
+});

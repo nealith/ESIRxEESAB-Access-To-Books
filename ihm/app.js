@@ -6,24 +6,11 @@ const fs = require('fs');
 
 Vue.use(AlloyFingerVue);
 
-/*
-var socket = io('http://localhost:3000');
-socket.on('connect', function(){});
-socket.on('test', function(data){console.log(data);});
-socket.on('disconnect', function(){});
-socket.emit('test',{msg:'test'});*/ // USED TO TEST SOCKETIO
-
-dataTransfer = {
-  ready:false,
-  data:null
-}
-
 function newBook(name,path){
   ipcRenderer.send('walkonBook',{
     name:name,
     path:path
   })
-
 }
 
 window.client = new Caress.Client({
@@ -38,20 +25,7 @@ var frame = {
   w:window.innerWidth,
   oldH:0,
   oldW:0
-
 }
-
-const sizePourcent = 0.03125;
-
-var mouseCoord = {
-  x:0,
-  y:0
-}
-
-window.addEventListener('mousemove',function(e){
-  mouseCoord.x = e.clientX;
-  mouseCoord.y = e.clientY;
-});
 
 function strToFloat(s){
   ss = s.substr(0,s.length-2);
@@ -60,7 +34,7 @@ function strToFloat(s){
 
 var rotationButtons;
 var keyboard;
-var montageDialogue;
+var dialogue;
 var mainStrip;
 var montageStrip;
 var libraryStrip;
@@ -74,7 +48,7 @@ window.onresize = function(e){
     frame.oldW = frame.w;
     frame.h = window.innerHeight;
     frame.w = window.innerWidth;
-    mainStrip.resize();
+/*    mainStrip.resize();
     montageStrip.resize();
     libraryStrip.resize();
     montageShutter.resize();
@@ -84,7 +58,7 @@ window.onresize = function(e){
     rotationButtons.resize();
     zoom.resize();
     splash.resize();
-}
+*/}
 
 shutterController = {
   onLibraryStripMove:function(x){
@@ -94,6 +68,13 @@ shutterController = {
     zoom.styleReduced.width = montageShutter.style.width;
   }
 }
+
+// SYNC DATA
+
+var montages = remote.getGlobal('montages');
+var books = remote.getGlobal('books');
+var bonus = remote.getGlobal('bonus');
+
 
 //----------------------------------------------------------------------
 // ipc

@@ -1,49 +1,11 @@
 zoom = new Vue({
   el: '#zoom',
   data:{
+    active:false,
     down:false,
     downMarker1:false,
     downMarker2:false,
-    inTheForeground:false,
     longClick:false,
-    style:{
-      height : frame.h+'px',
-      position : 'absolute',
-      top : '0px',
-      left : (sizePourcent*frame.w*2)+'px',
-      width : (frame.w - sizePourcent*frame.w*3)+'px',
-      display:'none'
-    },
-    styleReduced:{
-      height : frame.h+'px',
-      position : 'absolute',
-      top : '0px',
-      left : (sizePourcent*frame.w*2)+'px',
-      width : (frame.w - sizePourcent*frame.w*3)+'px',
-      display: 'none'
-    },
-    styleInTheForeground:{
-      height : frame.h+'px',
-      position : 'absolute',
-      top : '0px',
-      left : '0px',
-      width : frame.w+'px',
-      display: 'none'
-    },
-    styleMarker1:{
-      position:'absolute',
-      top:'0px',
-      left:'0px',
-      width: sizePourcent*frame.w+'px',
-      height : sizePourcent*frame.w+'px'
-    },
-    styleMarker2:{
-      position:'absolute',
-      bottom:'0px',
-      right:'0px',
-      width: sizePourcent*frame.w+'px',
-      height : sizePourcent*frame.w+'px'
-    },
     view:null,
     currentZoomFactor:1,
     center:null,
@@ -54,30 +16,6 @@ zoom = new Vue({
 
   },
   methods:{
-    resize:function(){
-      this.styleReduced.width = (frame.w - sizePourcent*frame.w*3)+'px';
-      this.styleReduced.height = frame.h+'px';
-      this.styleReduced.left = (sizePourcent*frame.w*2)+'px';
-
-      this.styleInTheForeground.width = frame.w+'px';
-      this.styleInTheForeground.height = frame.h+'px';
-
-      this.styleMarker1.width = sizePourcent*frame.w+'px';
-      this.styleMarker1.height = sizePourcent*frame.w+'px';
-      this.styleMarker2.width = sizePourcent*frame.w+'px';
-      this.styleMarker2.height = sizePourcent*frame.w+'px';
-
-      this.styleMarker1.top = '0px';
-      this.styleMarker1.left = '0px';
-      this.styleMarker2.bottom = '0px';
-      this.styleMarker2.right = '0px';
-
-      if (this.inTheForeground) {
-        this.style = this.styleInTheForeground;
-      } else {
-        this.style = this.styleReduced;
-      }
-    },
     zoom:function(e){
       this.currentZoomFactor += e.deltaY || e.zoom;
       if (this.view != null) {
@@ -141,16 +79,12 @@ zoom = new Vue({
     },
     toggle:function(data){
       if (data == null) {
-        this.style.display = 'none';
-        this.styleReduced.display = 'none';
-        this.styleInTheForeground.display = 'none';
         this.view.destroy();
         this.view = null;
         this.imgInfos = null;
+        this.active = false;
       } else {
-        this.style.display = 'block';
-        this.styleReduced.display = 'block';
-        this.styleInTheForeground.display = 'block';
+        this.active = true;
         //if (fs.existsSync(data.dzi)) {
           this.view = OpenSeadragon({
             id:'zoom',
@@ -182,74 +116,19 @@ zoom = new Vue({
 
       }
     },
-    toggleForeground:function(e){
-      console.log(e);
-      if (this.inTheForeground) {
-        this.inTheForeground = false;
-        this.style = this.styleReduced;
-
-      } else {
-        this.inTheForeground = true;
-        this.style = this.styleInTheForeground;
-      }
-      this.styleMarker1.top = '0px';
-      this.styleMarker1.left = '0px';
-      this.styleMarker2.bottom = '0px';
-      this.styleMarker2.right = '0px';
-    },
-    startOnMarker1:function(e){
-
-      this.downMarker1 = true;
-    },
-    endOnMarker1:function(e){
-      this.downMarker1 = false;
-    },
-    moveOnMarker1:function(e){
-      e.movementY = e.movementY || e.deltaY;
-      e.movementX = e.movementX || e.deltaX;
-      if (this.downMarker1 &&
-          strToFloat(this.styleMarker1.top) + e.movementY >= 0 &&
-          strToFloat(this.styleMarker1.top) + e.movementY + strToFloat(this.styleMarker1.height) < strToFloat(this.style.height)  &&
-          strToFloat(this.styleMarker1.left) + e.movementX >= 0 &&
-          strToFloat(this.styleMarker1.left) + e.movementX + strToFloat(this.styleMarker1.width) < strToFloat(this.style.width)) {
-
-        this.styleMarker1.top = strToFloat(this.styleMarker1.top) + e.movementY +'px';
-        this.styleMarker1.left = strToFloat(this.styleMarker1.left) + e.movementX +'px';
-      }
-    },
-    startOnMarker2:function(e){
-
-      this.downMarker2 = true;
-    },
-    endOnMarker2:function(e){
-      this.downMarker2 = false;
-    },
-    moveOnMarker2:function(e){
-      e.movementY = e.movementY || e.deltaY;
-      e.movementX = e.movementX || e.deltaX;
-      if (this.downMarker2 &&
-        strToFloat(this.styleMarker2.bottom) - e.movementY >= 0 &&
-        strToFloat(this.styleMarker2.bottom) - e.movementY + strToFloat(this.styleMarker2.height) < strToFloat(this.style.height)  &&
-        strToFloat(this.styleMarker2.right) - e.movementX >= 0 &&
-        strToFloat(this.styleMarker2.right) - e.movementX + strToFloat(this.styleMarker2.width) < strToFloat(this.style.width)) {
-
-        this.styleMarker2.bottom = strToFloat(this.styleMarker2.bottom) - e.movementY +'px';
-        this.styleMarker2.right = strToFloat(this.styleMarker2.right) - e.movementX +'px';
-      }
-    },
     longTap:function(e){
-      if (this.view.viewport.getRotation() == 0 && strToFloat(this.styleMarker1.left) == 0 && strToFloat(this.styleMarker1.top) == 0 && strToFloat(this.styleMarker2.right) == 0 && strToFloat(this.styleMarker2.bottom) == 0) {
+      if (this.view.viewport.getRotation() == 0 && $('#marker1').position().left == 0 && $('#marker1').position().top == 0 && $('#marker2').position().right == 0 && $('#marker2').position().bottom == 0) {
         this.toggle(null);
         return;
       }
 
-      leftMarker1 = strToFloat(this.styleMarker1.left);
+      leftMarker1 = $('#marker1').position().left;
 
-      topMarker1 = strToFloat(this.styleMarker1.top);
+      topMarker1 = $('#marker1').position().top;
 
-      rightMarker2 = strToFloat(this.style.width) - strToFloat(this.styleMarker2.right);
+      rightMarker2 = $('#marker2').position().right;
 
-      bottomMarker2 = strToFloat(this.style.height) - strToFloat(this.styleMarker2.bottom);
+      bottomMarker2 = $('#marker2').position().bottom;
 
 
       if (leftMarker1 < rightMarker2 && topMarker1 < bottomMarker2) {
@@ -275,9 +154,20 @@ zoom = new Vue({
   }
 });
 
-zoom.style['z-index'] = 10;
-zoom.styleReduced['z-index'] = 10;
-zoom.styleInTheForeground['z-index'] = 90;
+$("#marker1").draggable({
+  containment: "parent",
+  snap: "#zoom",
+  snapTolerance: 20,
+  start: function(){},
+  drag: function(){},
+  stop: function(){}
+});
 
-zoom.styleMarker1['z-index'] = 30;
-zoom.styleMarker2['z-index'] = 30;
+$("#marker2").draggable({
+  containment: "parent",
+  snap: "#zoom",
+  snapTolerance: 20,
+  start: function(){},
+  drag: function(){},
+  stop: function(){}
+});

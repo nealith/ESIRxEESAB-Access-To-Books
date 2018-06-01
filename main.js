@@ -156,7 +156,7 @@ ipcMain.on('addBonus',(event,arg) => {
     original = arg.original.originalPath
   }
   image = {
-    name : arg.name,
+    id : arg.name,
     original : arg.original,
     originalPath : global.bonus_path+'tiff/'+arg.name+'.tiff',
     thumbnail : global.bonus_path+'thumbnail/'+arg.name+'.png',
