@@ -323,7 +323,7 @@ MONTAGES
 #montageShutter {
 	top:0px;
 	left: 0px;
-  width:50%;
+  width:50vh;
   height:100vh;
   overflow:hidden;
 	width:calc(var(--bars-width)*2);
@@ -366,7 +366,7 @@ LIBRARIES
 #libraryShutter {
 	top:0px;
 	left:50%;
-	width:calc(50%-var(--bars-width));
+	width:calc(50vh-var(--bars-width));
 	z-index:2;
 	background-color:black;
 }

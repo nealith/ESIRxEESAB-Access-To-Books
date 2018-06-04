@@ -198,19 +198,25 @@ VueSimpleGesture.install = function(Vue, options){
         }
 
         el.addEventListener('touchend',function(evt){
-          evt.movementX = evt.changedTouches[0].pageX - currentX;
-          evt.movementY = evt.changedTouches[0].pageY - currentY;
-          evt.direction = getDir(evt.movementX,evt.movementY);
+          if (press) {
+            press = false;
+            evt.movementX = evt.changedTouches[0].pageX - currentX;
+            evt.movementY = evt.changedTouches[0].pageY - currentY;
+            evt.direction = getDir(evt.movementX,evt.movementY);
 
-          if(evt.direction != undefined && evt.direction != '' && evt.direction.length != 0){binding.value(evt);}
+            if(evt.direction != undefined && evt.direction != '' && evt.direction.length != 0){binding.value(evt);}
+          }
         });
         el.addEventListener('mouseup',function(evt){
-          e = {};
-          e.movementX = evt.pageX - currentX;
-          e.movementY = evt.pageY - currentY;
-          e.direction = getDir(e.movementX,e.movementY);
+          if (press) {
+            press = false;
+            e = {};
+            e.movementX = evt.pageX - currentX;
+            e.movementY = evt.pageY - currentY;
+            e.direction = getDir(e.movementX,e.movementY);
 
-          if(e.direction != undefined && e.direction != '' && e.direction.length != 0){binding.value(e);}
+            if(e.direction != undefined && e.direction != '' && e.direction.length != 0){binding.value(e);}
+          }
         });
 
         el.addEventListener('touchleave',function(evt){
@@ -226,6 +232,7 @@ VueSimpleGesture.install = function(Vue, options){
         });
         el.addEventListener('mouseout',function(evt){
           if (press) {
+            press = false;
             e = {};
             e.movementX = evt.pageX - currentX;
             e.movementY = evt.pageY - currentY;

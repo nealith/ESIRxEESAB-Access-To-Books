@@ -26,6 +26,7 @@
 
     <script type="text/javascript" src="./ihm/vue-draggable.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/vue-simple-gesture.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/vue-size-changed.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/vue-slides.js" charset="utf-8"></script>
 
     <script type="text/javascript" src="./libs/openseadragon/openseadragon.js" charset="utf-8"></script>
@@ -209,7 +210,7 @@
         <div  id="libraryShutter"
               class="space">
 
-          <slides v-bind:conf="{id:'library'}">
+          <slides v-bind:conf="{id:'library',pos:0}">
             <template v-for="book in books">
               <slide v-bind:wrap="{}">
                 <slides v-bind:conf="{id:book.name,horizontal:true}">

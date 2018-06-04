@@ -1,7 +1,9 @@
 // IMPORTANT
 
+// NEED vue-size-changed.js
 // NEED vue-simple-gesture.js
 
+// if not done : don't forget Vue.use(VueSizeChanged);
 // if not done : don't forget Vue.use(VueSimpleGesture);
 
 VueSlides = {};
@@ -18,89 +20,119 @@ VueSlides.install = function(Vue, options){
       conf:Object
     },
     methods:{
-      update:function(){
-        container = document.getElementById(this.conf.id);
-        slides = (Array.from(container.childNodes))[0];
-        slidesChilds = Array.from(slides.childNodes);
-        selectedEl = slidesChilds[selected];
-        selectedEl.setAttribute('selected',true);
-      },
-      scrollTo:function(nextSelected){
-
+      scrollToSelected:function(){
         container = document.getElementById(this.conf.id);
         slides = (Array.from(container.children))[0];
         slidesChilds = Array.from(slides.children);
 
-        console.log(nextSelected);
-        if (nextSelected >= 0 && nextSelected < slidesChilds.length) {
+        selectedEl = slidesChilds[this.selected];
+        rectSelectedEl = selectedEl.getBoundingClientRect();
+        rectContainer = container.getBoundingClientRect();
 
-          selectedEl = slidesChilds[this.selected];
-          nextSelectedEl = slidesChilds[nextSelected];
+        console.log(rectContainer);
+        console.log(rectSelectedEl);
 
-          selectedElStyle = selectedEl.getBoundingClientRect()//window.getComputedStyle(selectedEl);
-          nextSelectedElStyle = nextSelectedEl.getBoundingClientRect()//window.getComputedStyle(nextSelectedEl);
+        xContainerCenter = parseFloat(rectContainer.width)/2 + parseFloat(rectContainer.left);
+        yContainerCenter = parseFloat(rectContainer.height)/2 + parseFloat(rectContainer.top);
 
-          dLeft = parseFloat(nextSelectedElStyle.left) - parseFloat(selectedElStyle.left);
-          dTop = parseFloat(nextSelectedElStyle.top) - parseFloat(selectedElStyle.top);
+        xSelectedElCenter = parseFloat(rectSelectedEl.width)/2 + parseFloat(rectSelectedEl.left);
+        ySelectedElCenter = parseFloat(rectSelectedEl.height)/2 + parseFloat(rectSelectedEl.top);
 
-          slidesStyle = window.getComputedStyle(slides)
-
-          lefttop = 'left:'+(parseFloat(slidesStyle.left) - dLeft)+'px;top:'+(parseFloat(slidesStyle.top) - dTop)+'px;';
-
-          slides.setAttribute('style',lefttop);
-          console.log(slides.getAttribute('style'));
-
-          selectedEl.removeAttribute('selected');
-          nextSelectedEl.setAttribute('selected',true);
+        if (this.conf.pos != undefined && this.conf.pos==0) {
+          if (this.conf.horizontal != undefined && this.conf.horizontal == true) {
+            xContainerCenter = parseFloat(rectContainer.left);
+            xSelectedElCenter = parseFloat(rectSelectedEl.left);
+          } else {
+            yContainerCenter = parseFloat(rectContainer.top);
+            ySelectedElCenter = parseFloat(rectSelectedEl.top);
+          }
         }
 
+        if (this.conf.pos != undefined && this.conf.pos==2) {
+          if (this.conf.horizontal != undefined && this.conf.horizontal == true) {
+            xContainerCenter = parseFloat(rectContainer.right);
+            xSelectedElCenter = parseFloat(rectSelectedEl.right);
+          } else {
+            yContainerCenter = parseFloat(rectContainer.bottom);
+            ySelectedElCenter = parseFloat(rectSelectedEl.bottom);
+          }
+        }
+
+        dLeft = xContainerCenter - xSelectedElCenter;
+        dTop = yContainerCenter - ySelectedElCenter;
+
+        slidesStyle = window.getComputedStyle(slides)
+        lefttop = 'left:'+(parseFloat(slidesStyle.left) + dLeft)+'px;top:'+(parseFloat(slidesStyle.top) + dTop)+'px;';
+        console.log(lefttop);
+        slides.setAttribute('style',lefttop);
+        selectedEl.setAttribute('selected',true);
 
       },
       swipe:function(evt){
-        console.log(evt.direction);
-        nextSelected=this.selected;
-        if ((this.conf.horizontal != undefined && this.conf.horizontal == true ) && (evt.direction == 'R' || evt.direction == 'L')) {
-          if (evt.direction == 'L') {
-            nextSelected++;
-          } else {
-            nextSelected--;
+        if ( this.conf.drag === undefined || this.conf.drag == false) {
+          nextSelected=this.selected;
+          if ((this.conf.horizontal != undefined && this.conf.horizontal == true ) && (evt.direction == 'R' || evt.direction == 'L')) {
+            if (evt.direction == 'L') {
+              nextSelected++;
+            } else {
+              nextSelected--;
+            }
+          } else if((this.conf.horizontal === undefined || this.conf.horizontal == false) && (evt.direction == 'T' || evt.direction == 'B')) {
+            if (evt.direction == 'T') {
+              nextSelected++;
+            } else {
+              nextSelected--;
+            }
           }
-        } else if((this.conf.horizontal === undefined || this.conf.horizontal == false) && (evt.direction == 'T' || evt.direction == 'B')) {
-          if (evt.direction == 'T') {
-            nextSelected++;
-          } else {
-            nextSelected--;
+          if (nextSelected != this.selected) {
+            container = document.getElementById(this.conf.id);
+            slides = (Array.from(container.children))[0];
+            slidesChilds = Array.from(slides.children);
+
+            if (nextSelected >= 0 && nextSelected < slidesChilds.length) {
+              selectedEl = slidesChilds[this.selected];
+              selectedEl.removeAttribute('selected');
+
+              this.selected = nextSelected;
+              this.scrollToSelected();
+            }
           }
-        }
-        if (nextSelected != this.selected) {
-          this.scrollTo(nextSelected);
-          this.selected = nextSelected;
         }
       },
       move:function(evt){
-        /*
-        nextSelected=this.selected;
-        if ((this.conf.horizontal != undefined && this.conf.horizontal == true ) && evt.movementX > evt.movementY) {
-          if (evt.movementX > 0) {
-            nextSelected++;
-          } else {
-            nextSelected--;
+        if (this.conf.drag != undefined || this.conf.drag == true) {
+          nextSelected=this.selected;
+          if ((this.conf.horizontal != undefined && this.conf.horizontal == true ) && evt.movementX > evt.movementY) {
+            if (evt.movementX > 0) {
+              nextSelected++;
+            } else {
+              nextSelected--;
+            }
+          } else if((this.conf.horizontal === undefined || this.conf.horizontal == false) && evt.movementX < evt.movementY) {
+            if (evt.movementY > 0) {
+              nextSelected++;
+            } else {
+              nextSelected--;
+            }
           }
-        } else if((this.conf.horizontal === undefined || this.conf.horizontal == false) && evt.movementX < evt.movementY) {
-          if (evt.movementY > 0) {
-            nextSelected++;
-          } else {
-            nextSelected--;
+          if (nextSelected != this.selected) {
+            container = document.getElementById(this.conf.id);
+            slides = (Array.from(container.children))[0];
+            slidesChilds = Array.from(slides.children);
+
+            if (nextSelected >= 0 && nextSelected < slidesChilds.length) {
+              selectedEl = slidesChilds[this.selected];
+              selectedEl.removeAttribute('selected');
+
+              this.selected = nextSelected;
+              this.scrollToSelected();
+            }
           }
         }
-        if (nextSelected != this.selected) {
-          this.scrollTo(nextSelected);
-          this.selected = nextSelected;
-        }*/
       }
     },
     template:`
-      <div v-bind:id="conf.id" class="slides-container" v-simple-gesture:swipe="swipe" v-simple-gesture:pressMove="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="conf.horizontal">
+      <div v-bind:id="conf.id" class="slides-container" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:pressMove="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="conf.horizontal" :vertical="!conf.horizontal">
         <div class="slides">
           <slot></slot>
         </div>

@@ -5,6 +5,7 @@ const yazl = require("yazl");
 const fs = require('fs');
 
 Vue.use(VueSimpleGesture);
+Vue.use(VueSizeChanged);
 Vue.use(VueSlides);
 Vue.use(AlloyFingerVue);
 Vue.use(VueDraggable);
