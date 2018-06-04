@@ -1,6 +1,6 @@
 var library_scroll_active = true;
 
-function move_separator() {
+/*function move_separator() {
   var posX = parseFloat($("#libraryStrip").css("left"));
   var separatorW = parseFloat($("#libraryStrip").css("width"));
   $("#libraryShutter").css({
@@ -29,7 +29,7 @@ function align_libraries_on_active_page() {
       }
     });
   });
-}
+*/
 
 libraryStrip = new Vue({
   el: '#libraryStrip',
@@ -37,17 +37,25 @@ libraryStrip = new Vue({
     books:books
   },
   methods:{
-    start:function(e){
+    /*start:function(e){
     },
     end:function(e){
-      align_libraries_on_active_page();
-    },
+      //align_libraries_on_active_page();
+    },*/
     move:function(e){
-      move_separator();
+      //move_separator();
+      let rectStrip = rect(byId('libraryStrip'))
+      let rectContainer = rect(byClass('global_container')[0]);
+
+      byId('montageShutter').setAttribute('style','width:'+(rectStrip.left-rectContainer.left)+'px;');
+      byId('libraryShutter').setAttribute('style','width:'+(frame.w-rectStrip.left-rectStrip.width-rectContainer.left)+'px;');
+      byId('libraryShutter').setAttribute('style','left:'+(rectStrip.left+rectStrip.width-rectContainer.left)+'px;');
+
     }
   }
 });
 
+/*
 $("#libraryStrip").draggable({
   containment: "parent",
   axis: "x",
@@ -56,4 +64,4 @@ $("#libraryStrip").draggable({
   start: libraryStrip.start,
   drag: libraryStrip.move,
   stop: libraryStrip.end
-});
+});*/

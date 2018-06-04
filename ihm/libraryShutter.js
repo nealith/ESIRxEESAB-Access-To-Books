@@ -4,12 +4,6 @@
 
 // Init active
 
-function jq( myid ) {
-
-    return "#" + myid.replace( /(:|\.|\[|\]|,|=|@)/g, "\\$1" );
-
-}
-
 var active = {};
 
 for (var i = 0; i < books.length; i++) {
@@ -29,8 +23,8 @@ libraryShutter = new Vue({
     dragBook:false
   },
   methods:{
-    scrollBook:function(e){
-
+    /*scrollBook:function(e){
+      console.log(library_scroll_active);
       if(library_scroll_active){
 
         idElem = e.currentTarget.id;
@@ -72,18 +66,18 @@ libraryShutter = new Vue({
         this.active[idElem] = nextActive;
 
 
-        var $activePage = $(document.getElementById(idElem)).children(".library_page[active]");
+        var $activePage = $(document.getElementById(idElem)).children(".book_page[active]");
         var widthActivePage = $activePage.width();
         var widthLibrary = $(document.getElementById(idElem)).parent().width();
 
         library_scroll_active = false; // Prevent separator moving from triggering scroll event on libraries
 
-        $(document.getElementById(idElem)).scrollTo($activePage, 300, {
+        $(document.getElementById(idElem)).scrollTo($activePage, 5, {
           offset: -(widthLibrary/2)+(widthActivePage/2),
           onAfter: function() {
             setTimeout(function() {
               library_scroll_active = true;
-            }, 350); // Wait until animation ends to activate scroll detection
+            }, 5); // Wait until animation ends to activate scroll detection
           }
         });
       }
@@ -124,7 +118,7 @@ libraryShutter = new Vue({
       if (this.dragBook == true) {
         this.scrollBook(e);
       }
-    },
+    },*/
     startOnPage:function(e){
       pressTimer = window.setTimeout(function() {
         if (libraryShutter.longClick) {
@@ -170,9 +164,9 @@ libraryShutter = new Vue({
   }
 });
 
-for (var i = 0; i < books.length; i++) {
+/*for (var i = 0; i < books.length; i++) {
   $('#'+libraryShutter.books[i].pages[libraryShutter.active[books[i].name]].id).attr("active", "");
-}
+}*/
 
 function sortBooks(){
   ipcRenderer.send('sortBooks',null);
@@ -188,7 +182,7 @@ ipcRenderer.on('sync_books', (event, arg) => {
   libraryStrip.books = books;
   active[books[books.length-1].name] = 0;
 
-  $('#'+libraryShutter.books[books.length-1].pages[libraryShutter.active[books[books.length-1].name]].id).attr("active", "");
+  //$('#'+libraryShutter.books[books.length-1].pages[libraryShutter.active[books[books.length-1].name]].id).attr("active", "");
 });
 
 ipcRenderer.on('sync_bonus', (event, arg) => {

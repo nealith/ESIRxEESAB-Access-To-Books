@@ -22,7 +22,7 @@ html {
 /**/
 
 :root {
-	--bars-width: calc(0.03125*100vw);
+	--bars-width: 2vw;
   --number-of-books-visible:3;
 }
 
@@ -51,10 +51,11 @@ body {
 
 /*GLOBAL UI*/
 
-#global_container {
+.global_container {
 	position:absolute;
 	top:0px;
 	left:calc(var(--bars-width)*2);
+	width: calc(100%-var(--bars-width)*2);
 	bottom:0px;
 	right:0px;
 	overflow:hidden;
@@ -114,25 +115,6 @@ body {
   top:0px;
   left:0px;
 	cursor:crosshair;
-}
-
-#workspaces {
-	position:absolute;
-	top:0px;
-	bottom:0px;
-	left:0px;
-	right:0px;
-	overflow:scroll;
-	z-index:1;
-}
-
-#libraries {
-	top:50px;
-	bottom:50px;
-	left:50%;
-	width:50%;
-	z-index:2;
-	background-color:black;
 }
 
 /* EXPORT AREA : used to create the svg that will be export  */
@@ -298,7 +280,7 @@ until server capture all fake touch event from camera */
 
 #rotationButtonTopLeft{
   position:'absolute';
-  left:calc(--var(--bars-width)*2);
+  left:calc(var(--bars-width)*2);
   top:'0px';
 }
 #rotationButtonTopRight{
@@ -308,7 +290,7 @@ until server capture all fake touch event from camera */
 }
 #rotationButtonBottomLeft{
   position:'absolute';
-  left:calc(--var(--bars-width)*2);
+  left:calc(var(--bars-width)*2);
   bottom:'0px';
 }
 #rotationButtonBottomRight{
@@ -338,11 +320,17 @@ MONTAGES
 
 }
 
-#montageStrip svg{
-  position:relative;
-  width:100%;
+#montageShutter {
+	top:0px;
+	left: 0px;
+  width:50%;
   height:100vh;
   overflow:hidden;
+	width:calc(var(--bars-width)*2);
+}
+
+#montageShutter svg{
+  height:100vh;
 }
 
 #ontageStrip svg + #montageStrip svg {
@@ -360,34 +348,30 @@ LIBRARIES
 ******************************************/
 
 #libraryStrip{
+	position: absolute;
   top:0px;
   left:50%;
   width:var(--bars-width);
-  height:100%;
+  height:100vh;
   background-color:black;
-  /*overflow:hidden;*/
   border-left:1px solid white;
   border-right:1px solid white;
   cursor:move;
   z-index:3;
-  overflow : 'hidden';
+  overflow :hidden;
+
 
 }
 
 #libraryShutter {
-	top:50px;
-	bottom:50px;
+	top:0px;
 	left:50%;
-	width:50%;
+	width:calc(50%-var(--bars-width));
 	z-index:2;
 	background-color:black;
 }
 
-.library-label-container{
-  height:calc(100vh/var(--number-of-books-visible));
-}
-
-.library {
+.book {
 	position: relative;
 	width:100%;
 	height:calc((100%/var(--number-of-books-visible)) - 20px);
@@ -396,25 +380,23 @@ LIBRARIES
 	/*border:1px solid green;*/
 }
 
-.library:first-of-type {
+.book:first-of-type {
 	margin-bottom:30px;
 }
 
-.library:last-of-type {
+.book:last-of-type {
 	margin-top:30px;
 }
 
-.library_container {
+.book_container {
 	position: relative;
 	height:calc(100% - 20px);
 	overflow-x: auto;
 	overflow-y: hidden;
 	white-space: nowrap;
-	padding-left:300px;
-	padding-right:300px;
 }
 
-.library_label {
+.book_label {
 	position:absolute;
 	bottom:0px;
 	width:100%;
@@ -423,14 +405,13 @@ LIBRARIES
 	pointer-events: none;
 }
 
-.library_label > .page_ref:before {
+.book_label > .page_ref:before {
 	content:"p.";
 }
 
-.library_page {
+.book_page {
 	display: inline-block;
 	height:100%;
-	width:200px;
 	background-color:blue;
 	margin-left:10px;
 	margin-right:10px;
@@ -442,30 +423,39 @@ LIBRARIES
 	background-color:transparent;
 }
 
-.library_page[active] {
-	opacity:1;
-}
-
-.ui-draggable-dragging {
+.book_page[active] {
 	opacity:1;
 }
 
 
 /* VERTICALS LABELS ON STRIP */
 
-.vertical-label-container{
-	transform-origin: left top 0;
-  position: relative;
-    top: 50%;
-    left:50%;
-    transform: translateY(-50%);
-    transform: translateX(-50%);
-
+.label-container{
+	transform-origin: 0 0 0;
+	transform: rotate(90deg) translateY(-50%) translateY(calc(var(--bars-width)*-.5));
 }
 
-.vertical-label-container label {
-  transform-origin: 50% 50% 0;
-  transform: rotate(90deg);
+.label-container label{
+	text-align: center;
+	display: block;
+}
+
+#libraryStrip .label-container{
+	height: calc(100vh/var(--number-of-books-visible));
+	width: calc(100vh/var(--number-of-books-visible));
+}
+
+#montageStrip .label-container{
+	height: 100vh;
+	width: 100vh;
+}
+
+.centered-label{
+	transform-origin: 0 0 0;
+	position: relative;
+		top: 50%;
+		left:50%;
+	transform: translateY(-50%) translateX(-50%);
 }
 
 /*****************************************
@@ -500,6 +490,9 @@ KEYBOARD
     left:50%;
     transform: translateY(-50%);
     transform: translateX(-50%);
+    width:calc(var(--bars-width)*10+var(--bars-width)*0.1*20);
+    height:calc(var(--bars-width)*4+var(--bars-width)*0.1*8);
+
 }
 
 #keyboard[active]{
@@ -515,9 +508,9 @@ KEYBOARD
   color:white;
   padding: 0px;
   float:left;
-  width: --var(--bars-width);
-  height: --var(--bars-width);
-  margin: calc(--var(--bars-width)*0.1);
+  width: var(--bars-width);
+  height: var(--bars-width);
+  margin: calc(var(--bars-width)*0.1);
 }
 
 .key div{

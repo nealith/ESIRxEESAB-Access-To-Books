@@ -4,7 +4,31 @@ const path = require('path');
 const yazl = require("yazl");
 const fs = require('fs');
 
+Vue.use(VueSimpleGesture);
+Vue.use(VueSlides);
 Vue.use(AlloyFingerVue);
+Vue.use(VueDraggable);
+
+//shorcut
+function byId(id){
+  return document.getElementById(id);
+}
+
+function byTag(tag){
+  return document.getElementsByTagName(tag)
+}
+
+function byClass(clas){
+  return document.getElementsByClassName(clas);
+}
+
+function rect(el){
+  return el.getBoundingClientRect();
+}
+
+
+
+
 
 function newBook(name,path){
   ipcRenderer.send('walkonBook',{

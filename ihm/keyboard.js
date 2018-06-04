@@ -281,7 +281,7 @@ keyboard = new Vue({
     }
   }
 });
-
+/*
 $("#keyboard").draggable({
   containment: "parent",
   snap: "#rotationWrap",
@@ -289,7 +289,7 @@ $("#keyboard").draggable({
   start: function(){},
   drag: function(){},
   stop: function(){}
-});
+});*/
 
 //// Test
 

@@ -81,9 +81,23 @@ if (fs.existsSync(CONFIG.montages.index)){
   global.montages = []
 }
 
+
+
 global.books_path = CONFIG.books.path
 global.bonus_path = CONFIG.bonus.path
 global.montages_path = CONFIG.montages.path
+
+if (!fs.existsSync(global.books_path)){
+  fs.mkdirSync(global.books_path);
+}
+
+if (!fs.existsSync(global.bonus_path)){
+  fs.mkdirSync(global.bonus_path);
+}
+
+if (!fs.existsSync(global.montages_path)){
+  fs.mkdirSync(global.montages_path);
+}
 
 
 function saveBooksIndex(){
@@ -309,8 +323,7 @@ const addPage = through2.obj(function (item, enc, next) {
   }
 })
 
-ipcMain.on('sortBooks',(event,arg) => {
-
+function sortBooks(){
   for (var i = 0; i < books.length; i++) {
     books[i].pages.sort(function(a,b){
       if (a.id.length == b.id.length) {
@@ -328,10 +341,11 @@ ipcMain.on('sortBooks',(event,arg) => {
   books.sort(function(a,b){
     return a.name < b.name
   })
+}
 
+ipcMain.on('sortBooks',(event,arg) => {
+  sortBooks();
   event.sender.send('sync_books',null)
-
-
 })
 
 ipcMain.on('saveBooks',(event,arg) => {
@@ -384,12 +398,8 @@ ipcMain.on('walkonBook',(event,arg) => {
     .on('end', () => {
       console.dir(pages)
       console.log(book);
-      book.pages.sort(function(a,b){
-
-        return (a.id.length < b.id.length || a.id < b.id)
-      })
       global.books.push(book)
-      console.log(global.books);
+      sortBooks()
       saveBooksIndex()
       event.sender.send('sync_books',null)
     })

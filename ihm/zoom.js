@@ -117,19 +117,21 @@ zoom = new Vue({
       }
     },
     longTap:function(e){
-      if (this.view.viewport.getRotation() == 0 && $('#marker1').position().left == 0 && $('#marker1').position().top == 0 && $('#marker2').position().right == 0 && $('#marker2').position().bottom == 0) {
+      leftMarker1 = rect(byId('marker1')).left;
+
+      topMarker1 = rect(byId('marker1')).top;
+
+      rightMarker2 = rect(byId('marker2')).right;
+
+      bottomMarker2 = rect(byId('marker2')).bottom;
+
+      rotation = this.view.viewport.getRotation()
+
+
+      if (rotation == 0 && leftMarker1 == 0 && topMarker1 == 0 && rightMarker2 == 0 && bottomMarker2 == 0) {
         this.toggle(null);
         return;
       }
-
-      leftMarker1 = $('#marker1').position().left;
-
-      topMarker1 = $('#marker1').position().top;
-
-      rightMarker2 = $('#marker2').position().right;
-
-      bottomMarker2 = $('#marker2').position().bottom;
-
 
       if (leftMarker1 < rightMarker2 && topMarker1 < bottomMarker2) {
 
@@ -143,7 +145,7 @@ zoom = new Vue({
           width:bottomright.x - topleft.x,
           height:bottomright.y - topleft.y,
           original:this.imgInfos,
-          angle:this.view.viewport.getRotation()
+          angle:rotation
         }
         console.log(arg);
         ipcRenderer.send('addBonus',arg);
@@ -154,7 +156,8 @@ zoom = new Vue({
   }
 });
 
-$("#marker1").draggable({
+/*
+$(document.getElementById('marker1')).draggable({
   containment: "parent",
   snap: "#zoom",
   snapTolerance: 20,
@@ -163,11 +166,11 @@ $("#marker1").draggable({
   stop: function(){}
 });
 
-$("#marker2").draggable({
+$(document.getElementById('marker2')).draggable({
   containment: "parent",
   snap: "#zoom",
   snapTolerance: 20,
   start: function(){},
   drag: function(){},
   stop: function(){}
-});
+});*/

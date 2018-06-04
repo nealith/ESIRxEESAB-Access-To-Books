@@ -1,0 +1,21 @@
+.slides-container{
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.slides{
+  position: relative;
+  left:0px;
+  top:0px;
+  transition: left 2s, top 2s;
+  transition-timing-function: ease;
+}
+
+.slide{
+  height: 100%;
+
+}
+
+.slides-container[horizontal] .slide{
+  display: inline-block;
+}

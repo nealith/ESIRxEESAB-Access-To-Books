@@ -91,9 +91,6 @@ montageShutter = new Vue({
     moveOnMontages:function(e){
       //DEBUG
       //console.log('montageShutter:mouseMove');
-      if (pressTimer) {
-        clearTimeout(pressTimer);
-      }
       e.movementY = e.movementY || e.deltaY;
       if (this.down == true) {
         var delta = Math.max(-1, Math.min(1, e.movementY));

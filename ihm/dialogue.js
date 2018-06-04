@@ -41,7 +41,7 @@ document.getElementById('name').addEventListener('keypress', (e) => {
   console.log(e.target.value);
 });
 
-
+/*
 $("#dialogue").draggable({
   containment: "parent",
   snap: "#rotationWrap",
@@ -49,4 +49,4 @@ $("#dialogue").draggable({
   start: function(){},
   drag: function(){},
   stop: function(){}
-});
+});*/
