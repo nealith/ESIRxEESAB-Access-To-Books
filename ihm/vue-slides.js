@@ -17,11 +17,31 @@ VueSlides.install = function(Vue, options){
       };
     },
     props:{
-      conf:Object
+      id:String,
+      pos:Number,
+      horizontal:Boolean,
+      lock:Boolean,
+      conf:Object,
+      aclass:String,
+      drag:Boolean,
+      'on-slide':Function
     },
     methods:{
+      updateSelected(selected){
+        container = document.getElementById(this.id);
+        slides = (Array.from(container.children))[0];
+        slidesChilds = Array.from(slides.children);
+
+        if (selected >= 0 && selected < slidesChilds.length) {
+          selectedEl = slidesChilds[this.selected];
+          selectedEl.removeAttribute('selected');
+
+          this.selected = selected;
+          this.scrollToSelected();
+        }
+      },
       scrollToSelected:function(){
-        container = document.getElementById(this.conf.id);
+        container = document.getElementById(this.id);
         slides = (Array.from(container.children))[0];
         slidesChilds = Array.from(slides.children);
 
@@ -29,17 +49,14 @@ VueSlides.install = function(Vue, options){
         rectSelectedEl = selectedEl.getBoundingClientRect();
         rectContainer = container.getBoundingClientRect();
 
-        console.log(rectContainer);
-        console.log(rectSelectedEl);
-
         xContainerCenter = parseFloat(rectContainer.width)/2 + parseFloat(rectContainer.left);
         yContainerCenter = parseFloat(rectContainer.height)/2 + parseFloat(rectContainer.top);
 
         xSelectedElCenter = parseFloat(rectSelectedEl.width)/2 + parseFloat(rectSelectedEl.left);
         ySelectedElCenter = parseFloat(rectSelectedEl.height)/2 + parseFloat(rectSelectedEl.top);
 
-        if (this.conf.pos != undefined && this.conf.pos==0) {
-          if (this.conf.horizontal != undefined && this.conf.horizontal == true) {
+        if (this.pos != undefined && this.pos==0) {
+          if (this.horizontal != undefined && this.horizontal == true) {
             xContainerCenter = parseFloat(rectContainer.left);
             xSelectedElCenter = parseFloat(rectSelectedEl.left);
           } else {
@@ -48,8 +65,8 @@ VueSlides.install = function(Vue, options){
           }
         }
 
-        if (this.conf.pos != undefined && this.conf.pos==2) {
-          if (this.conf.horizontal != undefined && this.conf.horizontal == true) {
+        if (this.pos != undefined && this.pos==2) {
+          if (this.horizontal != undefined && this.horizontal == true) {
             xContainerCenter = parseFloat(rectContainer.right);
             xSelectedElCenter = parseFloat(rectSelectedEl.right);
           } else {
@@ -63,21 +80,24 @@ VueSlides.install = function(Vue, options){
 
         slidesStyle = window.getComputedStyle(slides)
         lefttop = 'left:'+(parseFloat(slidesStyle.left) + dLeft)+'px;top:'+(parseFloat(slidesStyle.top) + dTop)+'px;';
-        console.log(lefttop);
         slides.setAttribute('style',lefttop);
         selectedEl.setAttribute('selected',true);
 
+        if (this.onSlide != undefined) {
+          this.onSlide({selected:this.selected,id:this.id});
+        }
+
       },
       swipe:function(evt){
-        if ( this.conf.drag === undefined || this.conf.drag == false) {
+        if ( (this.drag === undefined || this.drag == false) && (this.lock === undefined || this.lock == false)) {
           nextSelected=this.selected;
-          if ((this.conf.horizontal != undefined && this.conf.horizontal == true ) && (evt.direction == 'R' || evt.direction == 'L')) {
+          if ((this.horizontal != undefined && this.horizontal == true ) && (evt.direction == 'R' || evt.direction == 'L')) {
             if (evt.direction == 'L') {
               nextSelected++;
             } else {
               nextSelected--;
             }
-          } else if((this.conf.horizontal === undefined || this.conf.horizontal == false) && (evt.direction == 'T' || evt.direction == 'B')) {
+          } else if((this.horizontal === undefined || this.horizontal == false) && (evt.direction == 'T' || evt.direction == 'B')) {
             if (evt.direction == 'T') {
               nextSelected++;
             } else {
@@ -85,7 +105,7 @@ VueSlides.install = function(Vue, options){
             }
           }
           if (nextSelected != this.selected) {
-            container = document.getElementById(this.conf.id);
+            container = document.getElementById(this.id);
             slides = (Array.from(container.children))[0];
             slidesChilds = Array.from(slides.children);
 
@@ -100,15 +120,15 @@ VueSlides.install = function(Vue, options){
         }
       },
       move:function(evt){
-        if (this.conf.drag != undefined || this.conf.drag == true) {
+        if ((this.drag != undefined && this.drag == true) && (this.lock === undefined || this.lock == false)) {
           nextSelected=this.selected;
-          if ((this.conf.horizontal != undefined && this.conf.horizontal == true ) && evt.movementX > evt.movementY) {
+          if ((this.horizontal != undefined && this.horizontal == true ) && evt.movementX > evt.movementY) {
             if (evt.movementX > 0) {
               nextSelected++;
             } else {
               nextSelected--;
             }
-          } else if((this.conf.horizontal === undefined || this.conf.horizontal == false) && evt.movementX < evt.movementY) {
+          } else if((this.horizontal === undefined || this.horizontal == false) && evt.movementX < evt.movementY) {
             if (evt.movementY > 0) {
               nextSelected++;
             } else {
@@ -116,7 +136,7 @@ VueSlides.install = function(Vue, options){
             }
           }
           if (nextSelected != this.selected) {
-            container = document.getElementById(this.conf.id);
+            container = document.getElementById(this.id);
             slides = (Array.from(container.children))[0];
             slidesChilds = Array.from(slides.children);
 
@@ -132,7 +152,7 @@ VueSlides.install = function(Vue, options){
       }
     },
     template:`
-      <div v-bind:id="conf.id" class="slides-container" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:pressMove="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="conf.horizontal" :vertical="!conf.horizontal">
+      <div v-bind:id="id" :class="'slides-container '+aclass" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:pressMove="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="horizontal" :vertical="!horizontal">
         <div class="slides">
           <slot></slot>
         </div>
@@ -146,30 +166,34 @@ VueSlides.install = function(Vue, options){
       };
     },
     props:{
-      wrap:Object
-    }, // wrap should be a object, called 'data' about slide information, like image path, text etc, and 'methods' : with three (optionnal) methods : tap, longTap, doubleTap
+      data:Object,
+      aclass:String,
+      'on-tap':Function,
+      'on-double-tap':Function,
+      'on-long-tap':Function,
+    },
     methods:{
       tap:function(evt){
-        if (this.wrap.methods && this.wrap.methods.tap) {
-          evt.data = wrap.data;
-          this.wrap.methods.tap(evt);
+        if (this.onTap) {
+          evt.data = this.data;
+          this.onTap(evt);
         }
       },
       doubleTap:function(evt){
-        if (this.wrap.methods && this.wrap.methods.doubleTap) {
-          evt.data = wrap.data;
-          this.wrap.methods.doubleTap(evt);
+        if (this.onDoubleTap) {
+          evt.data = this.data;
+          this.onDoubleTap(evt);
         }
       },
       longTap:function(evt){
-        if (this.wrap.methods && this.wrap.methods.longTap) {
-          evt.data = wrap.data;
-          this.wrap.methods.longTap(evt);
+        if (this.onLongTap) {
+          evt.data = this.data;
+          this.onLongTap(evt);
         }
       }
     },
     template:`
-      <div class="slide" v-simple-gesture:tap="tap" v-simple-gesture:doubleTap="doubleTap" v-simple-gesture:long-tap="longTap">
+      <div :class="'slide '+aclass" v-simple-gesture:tap="tap" v-simple-gesture:doubleTap="doubleTap" v-simple-gesture:long-tap="longTap">
         <slot></slot>
       </div>
     `

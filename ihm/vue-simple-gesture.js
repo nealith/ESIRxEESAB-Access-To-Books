@@ -83,6 +83,16 @@ VueSimpleGesture.install = function(Vue, options){
               window.setTimeout(function() { isLongTap = true;},longTapTime);
           }
         });
+        el.addEventListener('touchmove',function(evt){
+          if (isLongTap) {
+            isLongTap = false;
+          }
+        });
+        el.addEventListener('touchleave',function(evt){
+          if (isLongTap) {
+            isLongTap = false;
+          }
+        });
         el.addEventListener('touchend',function(evt){
           if (isLongTap) {
             isLongTap = false;
@@ -90,9 +100,21 @@ VueSimpleGesture.install = function(Vue, options){
           }
         });
 
+
+
         el.addEventListener('mousedown',function(evt){
           if (!isLongTap) {
               window.setTimeout(function() { isLongTap = true;},longTapTime);
+          }
+        });
+        el.addEventListener('mousemove',function(evt){
+          if (isLongTap) {
+            isLongTap = false;
+          }
+        });
+        el.addEventListener('mouseout',function(evt){
+          if (isLongTap) {
+            isLongTap = false;
           }
         });
         el.addEventListener('mouseup',function(evt){

@@ -54,11 +54,9 @@ body {
 .global_container {
 	position:absolute;
 	top:0px;
-	left:calc(var(--bars-width)*2);
-	width: calc(100%-var(--bars-width)*2);
 	bottom:0px;
 	right:0px;
-	overflow:hidden;
+	width: 96vw;
 }
 
 #buttons {
@@ -130,7 +128,6 @@ body {
   margin: 0px;
   padding: 0px;
   z-index:10;
-  display: none;
   transform-origin: left top 0;
   position: absolute;
     top: 50%;
@@ -141,10 +138,6 @@ body {
   height: calc(100vh/6);
 }
 
-#dialogue[active]{
-  display: block;
-}
-
 /* ZOOM */
 
 #zoom{
@@ -153,11 +146,6 @@ body {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
   z-index: 50;
-  display: none;
-}
-
-#zoom[active]{
-  display: block;
 }
 
 #marker1{
@@ -200,14 +188,10 @@ until server capture all fake touch event from camera */
   border-left: 1px solid white;
   border-right: 1px solid white;
   z-index: 100;
-  display: none;
   width: 100vw;
   height: 100vh;
   opacity: 0.9;
 
-}
-#splash[active]{
-  display: block;
 }
 
 #splash div{
@@ -255,7 +239,7 @@ until server capture all fake touch event from camera */
 }
 
 #rotationWrap{
-  width: 100%;
+  width: 100vw;
   height: 100vh;
 }
 
@@ -306,13 +290,12 @@ MONTAGES
 ******************************************/
 
 #montageStrip{
-  position:absolute;
+	position: absolute;
   top:0px;
   left:var(--bars-width);
   width:var(--bars-width);
   height:100vh;
   background-color:black;
-  /*overflow:hidden;*/
   border-left:1px solid white;
   border-right:1px solid white;
   z-index:3;
@@ -321,6 +304,7 @@ MONTAGES
 }
 
 #montageShutter {
+	position: absolute;
 	top:0px;
 	left: 0px;
   width:50vh;
@@ -364,36 +348,19 @@ LIBRARIES
 }
 
 #libraryShutter {
+	position: absolute;
 	top:0px;
-	left:50%;
-	width:calc(50vh-var(--bars-width));
+	right:0px;
+	width:48vw;
+	height: 100vh;
 	z-index:2;
 	background-color:black;
 }
 
-.book {
-	position: relative;
-	width:100%;
-	height:calc((100%/var(--number-of-books-visible)) - 20px);
-	overflow-x:scroll;
-	overflow-y:hidden;
-	/*border:1px solid green;*/
-}
-
-.book:first-of-type {
-	margin-bottom:30px;
-}
-
-.book:last-of-type {
-	margin-top:30px;
-}
-
-.book_container {
-	position: relative;
-	height:calc(100% - 20px);
-	overflow-x: auto;
-	overflow-y: hidden;
-	white-space: nowrap;
+#library-books-container{
+	padding-top: 30px;
+	padding-bottom: 30px;
+	height: 100vh;
 }
 
 .book_label {
@@ -410,20 +377,14 @@ LIBRARIES
 }
 
 .book_page {
-	display: inline-block;
-	height:100%;
-	background-color:blue;
+	height: 100%;
 	margin-left:10px;
 	margin-right:10px;
 	opacity:0.6;
 	transition: opacity .3s ease-out;
-	background-size:contain;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-color:transparent;
 }
 
-.book_page[active] {
+.book_page[selected] {
 	opacity:1;
 }
 
@@ -483,7 +444,6 @@ KEYBOARD
   margin: 0px;
   padding: 0px;
   z-index:10;
-  display: none;
   transform-origin: left top 0;
   position: absolute;
     top: 50%;
@@ -493,10 +453,6 @@ KEYBOARD
     width:calc(var(--bars-width)*10+var(--bars-width)*0.1*20);
     height:calc(var(--bars-width)*4+var(--bars-width)*0.1*8);
 
-}
-
-#keyboard[active]{
-  display: block;
 }
 
 .key{

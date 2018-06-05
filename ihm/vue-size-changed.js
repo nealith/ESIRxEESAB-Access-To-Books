@@ -7,7 +7,7 @@ VueSizeChanged.install = function(Vue, options){
       var style = window.getComputedStyle(el);
       var transition = style.transition;
       if (!(style.transition.includes('width'))) {
-        let width='width 0s ease 0s';
+        let width='width 0.01s ease 0.01s';
         if (transition == '') {
           transition+=width;
         } else {
@@ -16,7 +16,7 @@ VueSizeChanged.install = function(Vue, options){
       }
 
       if (!(style.transition.includes('height'))) {
-        let height='height 0s ease 0s';
+        let height='height 0.01s ease 0.01s';
         if (transition == '') {
           transition+=height;
         } else {

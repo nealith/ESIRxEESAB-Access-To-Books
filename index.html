@@ -35,7 +35,7 @@
   </head>
   <body>
     <div id="rotationWrap">
-      <div  id="splash" :active="active">
+      <div  id="splash" v-show="active">
         <div>
           <p>{{wait}}</p>
         </div>
@@ -43,7 +43,7 @@
 
       <div  id="dialogue"
             class="full-border"
-            :active="active"
+            v-show="active"
             v-draggable="{containment:'parent'}">
         <div>
           <input  autofocus="true"
@@ -98,7 +98,7 @@
       </div>
 
       <div  id="keyboard"
-            :active="active"
+            v-show="active"
             v-draggable="{containment:'parent'}">
         <template v-for="key in keys">
           <div class="key" v-bind:id="key.label" v-on:click="onKeyPressed" v-finger:tap="onKeyPressed">
@@ -151,7 +151,7 @@
             v-finger:rotate="rotate"
             v-finger:long-tap="longTap"
             v-on:mousedown.left="start"
-            :active="active">
+            v-show="active">
         <div  id="marker1"
               class="marker"
               v-draggable="{containment:'parent'}">
@@ -193,114 +193,69 @@
 
         <div  id="libraryStrip"
               v-draggable="{axis:'x',containment:'parent',drag:move}">
-              <template v-for="book in books">
-                <div class="label-container">
+          <slides id="library-books-titles-container"
+                  :lock="true"
+                  :pos=0
+                  ref="libraryStripSlides">
+
+            <template v-for="book in books">
+              <slide aclass="label-container">
                   <div class="centered-label">
                     <label>{{book.name}}</label>
                   </div>
-                </div>
-              </template>
-              <div class="label-container">
+              </slide>
+            </template>
+
+            <slide aclass="label-container">
                 <div class="centered-label">
                   <label>bonus</label>
                 </div>
-              </div>
+            </slide>
+
+          </slides>
         </div>
 
         <div  id="libraryShutter"
               class="space">
-
-          <slides v-bind:conf="{id:'library',pos:0}">
+          <slides id="library-books-container"
+                  :pos="0"
+                  :on-slide="selectedBookChanged">
             <template v-for="book in books">
-              <slide v-bind:wrap="{}">
-                <slides v-bind:conf="{id:book.name,horizontal:true}">
+              <slide>
+                <slides :id="book.name"
+                        :horizontal="true"
+                        :on-slide="updateDescription">
                   <template v-for="page in book.pages">
-                    <slide v-bind:wrap="{data:page,methods:{}}">
+                    <slide  aclass="book_page"
+                            :data="page"
+                            :on-long-tap="toMontage"
+                            :on-double-tap="zoom" >
                       <img v-bind:src="page.thumbnail" draggable="false">
                     </slide>
                   </template>
                 </slides>
-                <label class="book_label">
+                <label class="book_label" v-if="book.selected">
                   <span class="book_name">{{book.name}}</span>
-                  <span class="page_ref">{{book.pages[active[book.name]].description}}</span>
+                  <span class="page_ref">{{book.pages[book.selected].description}}</span>
                 </label>
               <slide>
             </template>
-            <!--<slide v-bind:wrap="{}">
-              <slides v-bind:conf="{id:bonus}">
+            <slide v-if="(bonus.length > 0)">
+              <slides id="bonus"
+                      :horizontal="true"
+                      :on-slide="updateDescription">
                 <template v-for="page in bonus">
-                  <slide v-bind:wrap="{data:page,methods:{}}">
+                  <slide :data="page">
                     <img v-bind:src="page.thumbnail" draggable="false">
                   </slide>
                 </template>
               </slides>
               <label class="book_label">
                 <span class="book_name">Bonus</span>
-                <span class="page_ref">{{bonus.pages[active['bonus']].description}}</span>
+                <span class="page_ref">{{bonus.pages[bonus.selected].description}}</span>
               </label>
-            <slide>-->
+            <slide>
           </slides>
-
-
-          <!--<template v-for="book in books">
-            <div class="book">
-              <div class="book_container"
-                v-bind:id="book.name"
-                v-bind:numberPages="book.pages.length">
-                <template v-for="page in book.pages">
-                  <img  class="book_page"
-                        v-bind:src="page.thumbnail"
-                        v-bind:originalPath="page.originalPath"
-                        v-bind:originalWidth="page.originalWidth"
-                        v-bind:originalHeight="page.originalHeight"
-                        v-bind:thumbnail="page.thumbnail"
-                        v-bind:dzi="page.dzi"
-                        v-bind:id="page.id"
-                        v-bind:alt="page.description"
-                        v-finger:long-tap="longTap"
-                        v-on:dblclick="zoom"
-                        v-finger:tap="tap">
-                </template>
-              </div>
-              <label class="book_label">
-                <span class="book_name">{{book.name}}</span>
-                <span class="page_ref">{{book.pages[active[book.name]].description}}</span>
-              </label>
-            </div>
-          </template>
-
-          <div  id="bonus"
-                class="library"
-                v-on:wheel="wheelOnBook"
-                v-finger:touch-start="startOnBook"
-                v-finger:touch-end="endOnBook"
-                v-finger:touch-cancel="endOnBook"
-                v-finger:press-move="moveOnBook"
-                v-on:mousedown.left="startOnBook"
-                v-on:mouseup.left="endOnBook"
-                v-on:mousemove.left="moveOnBook"
-                v-bind:numberPages="bonus.length">
-                <div class="library_container">
-                  <template v-for="page in bonus">
-                    <div  class="library_page"
-                          v-bind:style="{ 'background-image': 'url(' + page.thumbnail + ')' }"
-                          originalPath="page.originalPath"
-                          originalWidth="page.originalWidth"
-                          originalHeight="page.originalHeight"
-                          thumbnail="page.thumbnail"
-                          dzi="page.dzi"
-                          v-bind:id="page.id"
-                          v-bind:alt="page.description"
-                          v-finger:long-tap="longTap"
-                          :active="(bonus[active['bonus']].id == page.id)? true : false">
-                    </div>
-                  </template>
-                </div>
-                <label class="library_label">
-                  <span class="book_name">Bonus</span>
-                  <span class="page_ref">{{bonus.pages[active['bonus']].description}}</span>
-                </label>
-          </div>-->
         </div>
       </div>
 
