@@ -8,25 +8,23 @@ libraryShutter = new Vue({
   data:{
     books:books,
     bonus:bonus,
+    selectedIndex:{}
+  },
+  created:function(){
+    for (var i = 0; i < this.books.length; i++) {
+      this.selectedIndex[books[i].name] = 0;
+    }
+    this.selectedIndex['bonus'] = 0;
   },
   methods:{
     updateDescription:function(e){
-      if (e.id == 'bonus') {
-        this.bonus.selected = e.selected
-      } else {
-        for (var i = 0; i < this.books.length; i++) {
-          if(this.books[i].name == e.id){
-            this.books[i].selected == e.selected;
-            break;
-          }
-        }
-      }
+      this.selectedIndex[e.id] = e.selected;
     },
     selectedBookChanged:function(e){
       libraryStrip.$refs.libraryStripSlides.updateSelected(e.selected)
     },
     toMontage:function(e){
-      montageShutter.pushImage(e.target);
+      montageShutter.pushImage(e.data);
     },
     zoom:function(e){
       for (var i = 0; i < this.books.length; i++) {
@@ -56,6 +54,13 @@ function saveBooks(){
 
 ipcRenderer.on('sync_books', (event, arg) => {
   books = remote.getGlobal('books');
+
+  for (var i = 0; i < this.books.length; i++) {
+    if (libraryShutter.selectedIndex[books[i].name] === undefined) {
+      libraryShutter.selectedIndex[books[i].name] = 0;
+    }
+  }
+
   libraryShutter.books = books;
   libraryStrip.books = books;
 });

@@ -579,7 +579,9 @@ function createWindow () {
 
 
   // Open the DevTools.
-  win.webContents.openDevTools()
+  if (CONFIG.debug) {
+    win.webContents.openDevTools()
+  }
 
   win.on('close', () => {
     //event.preventDefault()

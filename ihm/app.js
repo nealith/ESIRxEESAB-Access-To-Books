@@ -85,13 +85,9 @@ window.onresize = function(e){
     splash.resize();
 */}
 
-shutterController = {
-  onLibraryStripMove:function(x){
-    libraryShutter.style.width  = (strToFloat(libraryShutter.style.width) - x ) + 'px';
-    montageShutter.style.width  = (strToFloat(montageShutter.style.width) + x ) + 'px';
-    zoom.style.width = montageShutter.style.width;
-    zoom.styleReduced.width = montageShutter.style.width;
-  }
+
+window.onload = function(e){
+  
 }
 
 // SYNC DATA

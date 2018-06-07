@@ -2,6 +2,8 @@ var svgCanvas = {}
 
 var montage_data;
 
+var pW = 0.94;
+
 function saveMontage(montage){
   fs.writeFile(montage.src, svgCanvas[montage.name].svg(), function(err) {
     if(err) {
@@ -38,10 +40,11 @@ montageShutter = new Vue({
   data:{
     div:document.getElementById('montageShutter'),
     montages:remote.getGlobal('montages'),
-    down:false
+    down:false,
+    selected:-1
   },
   methods:{
-    resize:function(){
+    /*resize:function(){
       this.style.left = (strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left))+'px';
       this.style.height = frame.h+'px';
       this.style.width = (strToFloat(libraryStrip.style.left)-(strToFloat(montageStrip.style.width)+strToFloat(montageStrip.style.left))) +'px';
@@ -62,46 +65,16 @@ montageShutter = new Vue({
           this.draggable({
             minX:0,
             minY:0,
-            maxX:montageSize,
-            maxY:montageSize
+            maxX:frame.w*pW,
+            maxY:frame.h
           });
         },true)
       }
 
-    },
-    wheelOnMontages:function(e){
-      var delta = Math.max(-1, Math.min(1, e.deltaY));
-      document.getElementById("montageShutter").scrollTop += (delta*40); // Multiplied by 40
-      document.getElementById("montageStrip").scrollTop += (delta*40); // Multiplied by 40
-      var t = document.getElementById(e.currentTarget.id);
-
-      e.preventDefault();
-    },
-    startOnMontages:function(e){
-      console.log(e);
-      //DEBUG
-      //console.log('montageShutter:mouseDown');
-      this.down = true;
-    },
-    endOnMontages:function(e){
-      //DEBUG
-      //console.log('montageShutter:mouseUp');
-      this.down = false;
-    },
-    moveOnMontages:function(e){
-      //DEBUG
-      //console.log('montageShutter:mouseMove');
-      e.movementY = e.movementY || e.deltaY;
-      if (this.down == true) {
-        var delta = Math.max(-1, Math.min(1, e.movementY));
-        document.getElementById("montageShutter").scrollTop -= (delta*40); // Multiplied by 40
-        document.getElementById("montageStrip").scrollTop -= (delta*40); // Multiplied by 40
-        var t = document.getElementById(e.currentTarget.id);
-        e.preventDefault();
-        //DEBUG
-        //console.log('montageShutter:mouseMove:true');
-
-      }
+    },*/
+    selectedMontageChanged:function(e){
+      this.selected = e.selected;
+      montageStrip.$refs.montageStripSlides.updateSelected(e.selected);
     },
     newMontage:function(name){
       ipcRenderer.send('new_montage',{
@@ -118,39 +91,41 @@ montageShutter = new Vue({
         img.rotate(e.angle);
       }
     },
-    getTargetMontage:function(){
-      var targetWorkspace;
-      $("#montageShutter").children().each(function() {
-        var workspaceY = $(this).offset().top;
-        if (workspaceY <= frame.h/2 && workspaceY >= -frame.h/2) {
-          targetWorkspace = $(this);
-          return false;
-        }
-      });
-      return targetWorkspace.id;
+    pinchOnImage:function(e){
+      if (e.target.tagName == 'image') {
+        img = SVG.get(e.target.id);
+        img.transform({scale:e.zoom});
+      }
     },
     pushImage:function(img){
-      var montageId = getTargetMontage();
+      if (this.selected>=0) {
+        var montageId = this.montages[this.selected].name;
 
-      var rect = $("#"+montageId).getBoundingClientRect();
-      var x = rect.width/2 - img.offsetx;
-      var y = rect.height/2 - img.offsety;
-      var img = svgCanvas[montageId].image(img.thumbnail,img.width,img.height).move(x,y);
-      img.attr('originalPath',img.originalPath);
-      img.attr('dzi',img.dzi);
-      img.attr('originalWidth',img.originalWidth);
-      img.attr('originalHeight',img.originalHeight);
-      img.attr('thumbnail',img.thumbnail)
-      img.draggable({
-        minX:0,
-        minY:0,
-        maxX:montageSize,
-        maxY:montageSize
-      });
-      saveMontage(montages[k]);
+        var rectMontage = rect(byId(montageId));
+        var rectImg = rect(byId(img.id));
+        var x = rectMontage.width/2 - rectImg.width/2;
+        var y = rectMontage.height/2 - rectImg.height/2;
+        var svgimg = svgCanvas[montageId].image(img.thumbnail,img.width,img.height).move(x,y);
 
+        byId(svgimg.node.id).setAttribute('originalPath',img.originalPath);
+        byId(svgimg.node.id).setAttribute('dzi',img.dzi);
+        byId(svgimg.node.id).setAttribute('originalWidth',img.originalWidth);
+        byId(svgimg.node.id).setAttribute('originalHeight',img.originalHeight);
+        byId(svgimg.node.id).setAttribute('thumbnail',img.thumbnail)
+        svgimg.draggable({
+          minX:0,
+          minY:0,
+          maxX:frame.w*pW,
+          maxY:frame.h
+        });
+
+        console.log(svgimg);
+
+        saveMontage(montages[this.selected]);
+      }
     },
     export:function(e){
+      /*
       var montageId = this.theMostVisible();
       svgCanvas[montageId]
 
@@ -226,6 +201,107 @@ montageShutter = new Vue({
           }
         }));
       });
+    }*/
+    k = this.selected;
+
+      if (k != -1) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(svgCanvas[montages[k].name].svg(), "image/svg+xml");
+
+        var images = doc.getElementsByTagName('image');
+
+        var minRatio = 1000000000;
+
+        for (var i = 0; i < images.length; i++) {
+          imgData = {};
+
+          imgData.originalPath = images[i].getAttribute('originalPath');
+          imgData.dzi = images[i].getAttribute('dzi');
+          imgData.originalWidth = images[i].getAttribute('originalWidth');
+          imgData.originalHeight = images[i].getAttribute('originalHeight');
+          imgData.thumbnail = images[i].getAttribute('thumbnail')
+
+
+          console.log(images[i]);
+          width = images[i].width.baseVal.value;
+          height = images[i].height.baseVal.value;
+
+          if (imgData.originalWidth / width < minRatio) {
+            minRatio = imgData.originalWidth / width;
+          }
+          if (imgData.originalHeight / height < minRatio) {
+            minRatio = imgData.originalHeight / height;
+          }
+        }
+        var montageIO = SVG('montageIO').size(frame.w*pW * minRatio,frame.h * minRatio)
+
+        imgs = [];
+        paths = [];
+        counter = 0;
+
+        for (var i = 0; i < images.length; i++) {
+          imgData = {};
+
+          imgData.originalPath = images[i].getAttribute('originalPath');
+          imgData.dzi = images[i].getAttribute('dzi');
+          imgData.originalWidth = images[i].getAttribute('originalWidth');
+          imgData.originalHeight = images[i].getAttribute('originalHeight');
+          imgData.thumbnail = images[i].getAttribute('thumbnail')
+          console.log(images[i]);
+          console.log(imgData);
+          imgData.width = images[i].width.baseVal.value*minRatio;
+          imgData.height = images[i].height.baseVal.value*minRatio;
+          imgData.x = images[i].x.baseVal.value*minRatio;
+          imgData.y = images[i].y.baseVal.value*minRatio;
+          imgData.angle = 0.0;
+          for (var j = 0; j < images[i].length; j++) {
+            if(images[i].transform.baseVal[j].angle != 0){
+              imgData.angle = images[i].transform.baseVal[j].angle;
+            }
+          }
+
+          imgs.push(imgData);
+          paths.push(path.basename(imgData.originalPath));
+          //ipcRenderer.sendSync('copyFileSync',{path:imgData.originalPath,dest:path.basename(imgData.originalPath)});
+          fs.createReadStream(imgData.originalPath).pipe(fs.createWriteStream(path.basename(imgData.originalPath)).on("close", function() {
+            counter+=1;
+            if (paths.length == counter) {
+
+              for (var l = 0; l < imgs.length; l++) {
+                montageIO.image(path.basename(imgs[l].originalPath), imgs[l].width, imgs[l].height).move(imgs[l].x,imgs[l].y).rotate(imgs[l].angle)
+              }
+
+              fs.writeFileSync(montages[k].name+'.svg', montageIO.svg());
+
+              n = 1;
+              zipOutput = montages[k].name+'_export'+n+'.zip';
+              exist = fs.existsSync(zipOutput);
+              while (exist) {
+                n+=1;
+                zipOutput = montages[k].name+'_export'+n+'.zip';
+                exist = fs.existsSync(zipOutput);
+              }
+
+              var zipfile = new yazl.ZipFile();
+              for (var i = 0; i < paths.length; i++) {
+                zipfile.addFile(paths[i],paths[i]);
+
+              }
+              zipfile.addFile(montages[k].name+'.svg',montages[k].name+'.svg');
+              zipfile.outputStream.pipe(fs.createWriteStream(zipOutput)).on("close", function() {
+                for (var l = 0; l < paths.length; l++) {
+                  if (fs.existsSync(paths[l])) {
+                    fs.unlinkSync(paths[l]);
+                  }
+                }
+                fs.unlinkSync(montages[k].name+'.svg');
+                console.log("export done");
+              });
+              zipfile.end();
+            }
+          }));
+        }
+      }
     }
   }
 });
@@ -241,7 +317,8 @@ ipcRenderer.on('new_montage_added', (event, arg) => {
   montageShutter.montages = montages;
   montageStrip.montages = montages;
   window.setTimeout(function() {
-    svgCanvas[arg.name] = SVG(arg.name).size($('#montageShutter').width(),frame.h);
+    console.log(frame.w*pW,frame.h);
+    svgCanvas[arg.name] = SVG(arg.name).size(frame.w*pW,frame.h);
     attachAutomaticSaving(arg);
     saveMontage(arg);
   },200);
@@ -255,24 +332,26 @@ function loadMontage(montage){
       return console.log(err);
     } else {
 
-      montageWidth = $('#montageShutter').width();
+      montageWidth = frame.w*pW;
       montageHeight = frame.h;
 
       var parser = new DOMParser();
       var doc = parser.parseFromString(data, "image/svg+xml");
       var root = doc.getElementsByTagName('svg')[0];
-      var ratioW = montageWidth/root.width.baseVal.value;
+      /*var ratioW = montageWidth/root.width.baseVal.value;
       var ratioH = montageHeight/root.width.baseVal.value;
       var ratio = ratioW;
       if (ratioH < ratio) {
         ratio = ratioH;
-      }
+      }*/
+      var ratio = 1;
+
       root.width = montageWidth;
       root.height = montageHeight;
 
       var images = doc.getElementsByTagName('image');
 
-      svgCanvas[montage.name] = SVG(montage.name).size(montageWidth,montageHeight);
+      svgCanvas[montage.name] = SVG(montage.name).size(frame.w*pW,frame.h);
 
       for (var i = 0; i < images.length; i++) {
         var width = images[i].width.baseVal.value*ratio;
@@ -287,6 +366,11 @@ function loadMontage(montage){
         }
         //console.log(x,y)
         var img = svgCanvas[montage.name].image(images[i]['href'].baseVal, width, height).move(x,y).rotate(angle);
+        byId(img.node.id).setAttribute('originalPath',images[i].getAttribute('originalPath'));
+        byId(img.node.id).setAttribute('dzi',images[i].getAttribute('dzi'));
+        byId(img.node.id).setAttribute('originalWidth',images[i].getAttribute('originalWidth'));
+        byId(img.node.id).setAttribute('originalHeight',images[i].getAttribute('originalHeight'));
+        byId(img.node.id).setAttribute('thumbnail',images[i].getAttribute('thumbnail'));
       }
 
       var XMLS = new XMLSerializer();
@@ -297,8 +381,8 @@ function loadMontage(montage){
         this.draggable({
           minX:0,
           minY:0,
-          maxX:montageSize,
-          maxY:montageSize
+          maxX:montageWidth,
+          maxY:montageHeight
         });
       },true)
 

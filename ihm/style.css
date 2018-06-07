@@ -24,6 +24,10 @@ html {
 :root {
 	--bars-width: 2vw;
   --number-of-books-visible:3;
+	--library-margin:30px;
+	--library-height:calc(100vh - 2 * var(--library-margin));
+	--height-book: calc(var(--library-height) / var(--number-of-books-visible));
+	--height-page:calc(var(--height-book) - 30px);
 }
 
 /* LES STYLES COMMENCENT ICI */
@@ -102,7 +106,6 @@ body {
 
 
 .space {
-	position:absolute;
 	cursor:crosshair;
 }
 
@@ -126,7 +129,7 @@ body {
 #dialogue{
   background: black;
   margin: 0px;
-  padding: 0px;
+  padding: 5px;
   z-index:10;
   transform-origin: left top 0;
   position: absolute;
@@ -134,8 +137,10 @@ body {
     left:50%;
     transform: translateY(-50%);
     transform: translateX(-50%);
-  width: calc(100vw/8);
-  height: calc(100vh/6);
+}
+
+#dialogue div{
+	margin:1px;
 }
 
 /* ZOOM */
@@ -190,7 +195,7 @@ until server capture all fake touch event from camera */
   z-index: 100;
   width: 100vw;
   height: 100vh;
-  opacity: 0.9;
+  opacity: 0.8;
 
 }
 
@@ -307,14 +312,14 @@ MONTAGES
 	position: absolute;
 	top:0px;
 	left: 0px;
-  width:50vh;
+  width:50vw;
   height:100vh;
   overflow:hidden;
-	width:calc(var(--bars-width)*2);
 }
 
 #montageShutter svg{
   height:100vh;
+	width: calc(100vw - 3 * var(--bars-width));
 }
 
 #ontageStrip svg + #montageStrip svg {
@@ -334,7 +339,7 @@ LIBRARIES
 #libraryStrip{
 	position: absolute;
   top:0px;
-  left:50%;
+  left:50vw;
   width:var(--bars-width);
   height:100vh;
   background-color:black;
@@ -351,25 +356,30 @@ LIBRARIES
 	position: absolute;
 	top:0px;
 	right:0px;
-	width:48vw;
+	width:calc(50vw - 3 * var(--bars-width));
 	height: 100vh;
 	z-index:2;
 	background-color:black;
+	padding-bottom: var(--library-margin);
+  padding-top: var(--library-margin);
 }
 
 #library-books-container{
-	padding-top: 30px;
-	padding-bottom: 30px;
-	height: 100vh;
+	height: calc(100vh - 2*var(--library-margin));
+}
+
+.library-book-container{
+	height: var(--height-book);
+}
+
+.library-book-container .slides{
+	height: var(--height-page);
 }
 
 .book_label {
 	position:absolute;
-	bottom:0px;
-	width:100%;
-	text-align:center;
-	white-space: nowrap;
-	pointer-events: none;
+	left:50%;
+	transform: translateX(-50%);
 }
 
 .book_label > .page_ref:before {
@@ -377,11 +387,15 @@ LIBRARIES
 }
 
 .book_page {
-	height: 100%;
+	height: var(--height-page);
 	margin-left:10px;
 	margin-right:10px;
 	opacity:0.6;
 	transition: opacity .3s ease-out;
+}
+
+.book_page img{
+	height: var(--height-page);
 }
 
 .book_page[selected] {
@@ -393,7 +407,7 @@ LIBRARIES
 
 .label-container{
 	transform-origin: 0 0 0;
-	transform: rotate(90deg) translateY(-50%) translateY(calc(var(--bars-width)*-.5));
+	transform: rotate(-90deg) translateX(-100%) translateY(-50%) translateY(calc(var(--bars-width)*.5));
 }
 
 .label-container label{
@@ -402,8 +416,8 @@ LIBRARIES
 }
 
 #libraryStrip .label-container{
-	height: calc(100vh/var(--number-of-books-visible));
-	width: calc(100vh/var(--number-of-books-visible));
+	height: calc(100vh / var(--number-of-books-visible));
+	width: calc(100vh / var(--number-of-books-visible));
 }
 
 #montageStrip .label-container{
@@ -448,10 +462,9 @@ KEYBOARD
   position: absolute;
     top: 50%;
     left:50%;
-    transform: translateY(-50%);
-    transform: translateX(-50%);
-    width:calc(var(--bars-width)*10+var(--bars-width)*0.1*20);
-    height:calc(var(--bars-width)*4+var(--bars-width)*0.1*8);
+    transform: translateY(-50%) translateX(-50%);
+    width:calc(var(--bars-width)*12);
+    height:calc(var(--bars-width)*4.8);
 
 }
 
@@ -480,6 +493,7 @@ KEYBOARD
 
 .key p {
   /*font-size: 1.2em;*/
+	margin:0px;
   font-weight: bold;
   text-align: center;
 }

@@ -16,15 +16,15 @@ dialogue = new Vue({
       this.toggle();
     },
     toggle:function(callback){
-      if (!active) {
+      if (!this.active) {
         this.active = true;
         this.callback=callback;
-        keyboard.addListener('montageName');
+        keyboard.addListener('name');
         keyboard.toggle();
       } else {
         this.active = false;
         this.callback=null;
-        keyboard.removeListener('montageName');
+        keyboard.removeListener('name');
         keyboard.toggle();
         this.name = "";
       }
@@ -34,19 +34,9 @@ dialogue = new Vue({
 
 document.getElementById('name').addEventListener('keypress', (e) => {
   if (e.key == 9166) {
-    montageDialogue.onOkPressed();
+    dialogue.onOkPressed();
   } else {
-    montageDialogue.name += String.fromCharCode(e.key);
+    dialogue.name += String.fromCharCode(e.key);
   }
   console.log(e.target.value);
 });
-
-/*
-$("#dialogue").draggable({
-  containment: "parent",
-  snap: "#rotationWrap",
-  snapTolerance: 20,
-  start: function(){},
-  drag: function(){},
-  stop: function(){}
-});*/

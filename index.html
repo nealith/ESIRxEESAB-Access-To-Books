@@ -101,7 +101,7 @@
             v-show="active"
             v-draggable="{containment:'parent'}">
         <template v-for="key in keys">
-          <div class="key" v-bind:id="key.label" v-on:click="onKeyPressed" v-finger:tap="onKeyPressed">
+          <div class="key" v-bind:id="key.label" v-simple-gesture:tap="onKeyPressed">
             <div>
               <p>{{key.letter}}</p>
             </div>
@@ -162,36 +162,41 @@
         </div>
       </div>
 
-      <div id="montageStrip">
-        <template v-for="montage in montages">
-          <div class="montage-label-container">
-            <div class="vertical-label-container">
-              <label>{{montage.name}}</label>
-            </div>
-          </div>
-        </template>
+
+      <div  id="montageStrip">
+        <slides id="montages-titles-container"
+                :lock="true"
+                :pos=0
+                ref="montageStripSlides">
+
+          <template v-for="montage in montages">
+            <slide aclass="label-container">
+                <div class="centered-label">
+                  <label>{{montage.name}}</label>
+                </div>
+            </slide>
+          </template>
+
+        </slides>
       </div>
 
       <div class="global_container">
 
-        <div  id="montageShutter"
-              class="space"
-              v-on:wheel="wheelOnMontages"
-              v-finger:touch-start="startOnMontages"
-              v-finger:touch-end="endOnMontages"
-              v-finger:touch-cancel="endOnMontages"
-              v-finger:press-move="moveOnMontages"
-              v-on:mousedown.left="startOnMontages"
-              v-on:mouseup.left="endOnMontages"
-              v-on:mousemove.left="moveOnMontages"
-              v-finger:rotate="rotateOnImage">
-          <template v-for="montage in montages">
-            <div class="workspace" v-bind:id="montage.name">
-            </div>
-          </template>
+        <div id="montageShutter" class="space">
+          <slides id="library-books-titles-container"
+                  :on-slide="selectedMontageChanged"
+                  :pos=0
+                  ref="montageShutterSlides">
+            <template v-for="montage in montages">
+              <slide>
+                <div v-bind:id="montage.name" v-finger:rotate="rotateOnImage" v-finger:pinch="pinchOnImage">
+                </div>
+              <slide>
+            </template>
+          </slides>
         </div>
 
-        <div  id="libraryStrip"
+          <div  id="libraryStrip"
               v-draggable="{axis:'x',containment:'parent',drag:move}">
           <slides id="library-books-titles-container"
                   :lock="true"
@@ -222,38 +227,42 @@
                   :on-slide="selectedBookChanged">
             <template v-for="book in books">
               <slide>
-                <slides :id="book.name"
+                <div class="library-book-container">
+                  <slides :id="book.name"
+                          :horizontal="true"
+                          :on-slide="updateDescription">
+                    <template v-for="page in book.pages">
+                      <slide  aclass="book_page"
+                              :data="page"
+                              :on-long-tap="toMontage"
+                              :on-double-tap="zoom" >
+                        <img :id="page.id" v-bind:src="page.thumbnail" draggable="false">
+                      </slide>
+                    </template>
+                  </slides>
+                  <label class="book_label">
+                    <span class="book_name">{{book.name}}</span>
+                    <span class="page_ref">{{book.pages[selectedIndex[book.name]].description}}</span>
+                  </label>
+                </div>
+              <slide>
+            </template>
+            <slide>
+              <div v-if="(bonus.length > 0)" class="library-book-container">
+                <slides id="bonus"
                         :horizontal="true"
                         :on-slide="updateDescription">
-                  <template v-for="page in book.pages">
-                    <slide  aclass="book_page"
-                            :data="page"
-                            :on-long-tap="toMontage"
-                            :on-double-tap="zoom" >
-                      <img v-bind:src="page.thumbnail" draggable="false">
+                  <template v-for="page in bonus">
+                    <slide :data="page">
+                      <img :id="page.id" v-bind:src="page.thumbnail" draggable="false">
                     </slide>
                   </template>
                 </slides>
-                <label class="book_label" v-if="book.selected">
-                  <span class="book_name">{{book.name}}</span>
-                  <span class="page_ref">{{book.pages[book.selected].description}}</span>
+                <label v-if="(bonus.selected != undefined) ? true : false" class="book_label">
+                  <span class="book_name">Bonus</span>
+                  <span class="page_ref">{{bonus.pages[selectedIndex['bonus']].description}}</span>
                 </label>
-              <slide>
-            </template>
-            <slide v-if="(bonus.length > 0)">
-              <slides id="bonus"
-                      :horizontal="true"
-                      :on-slide="updateDescription">
-                <template v-for="page in bonus">
-                  <slide :data="page">
-                    <img v-bind:src="page.thumbnail" draggable="false">
-                  </slide>
-                </template>
-              </slides>
-              <label class="book_label">
-                <span class="book_name">Bonus</span>
-                <span class="page_ref">{{bonus.pages[bonus.selected].description}}</span>
-              </label>
+              </div>
             <slide>
           </slides>
         </div>

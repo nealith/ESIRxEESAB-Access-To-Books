@@ -229,9 +229,6 @@ keyboard = new Vue({
       }
     },
     onKeyPressed:function(e){
-      if (!oracle.pass(e)) {
-        return;
-      }
       e.target = e.target || e.currentTarget;
       var id = e.target.id;
       if (e.target.tagName == 'P') {

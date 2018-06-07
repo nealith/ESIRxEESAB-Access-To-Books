@@ -16,6 +16,12 @@ VueSlides.install = function(Vue, options){
         selected:0
       };
     },
+    mounted:function(){
+      this.scrollToSelected();
+    },
+    updated:function(){
+      this.scrollToSelected();
+    },
     props:{
       id:String,
       pos:Number,
@@ -45,47 +51,51 @@ VueSlides.install = function(Vue, options){
         slides = (Array.from(container.children))[0];
         slidesChilds = Array.from(slides.children);
 
-        selectedEl = slidesChilds[this.selected];
-        rectSelectedEl = selectedEl.getBoundingClientRect();
-        rectContainer = container.getBoundingClientRect();
+        if (slidesChilds.length > 0) {
+          selectedEl = slidesChilds[this.selected];
+          rectSelectedEl = selectedEl.getBoundingClientRect();
+          rectContainer = container.getBoundingClientRect();
 
-        xContainerCenter = parseFloat(rectContainer.width)/2 + parseFloat(rectContainer.left);
-        yContainerCenter = parseFloat(rectContainer.height)/2 + parseFloat(rectContainer.top);
+          xContainerCenter = parseFloat(rectContainer.width)/2 + parseFloat(rectContainer.left);
+          yContainerCenter = parseFloat(rectContainer.height)/2 + parseFloat(rectContainer.top);
 
-        xSelectedElCenter = parseFloat(rectSelectedEl.width)/2 + parseFloat(rectSelectedEl.left);
-        ySelectedElCenter = parseFloat(rectSelectedEl.height)/2 + parseFloat(rectSelectedEl.top);
+          xSelectedElCenter = parseFloat(rectSelectedEl.width)/2 + parseFloat(rectSelectedEl.left);
+          ySelectedElCenter = parseFloat(rectSelectedEl.height)/2 + parseFloat(rectSelectedEl.top);
 
-        if (this.pos != undefined && this.pos==0) {
-          if (this.horizontal != undefined && this.horizontal == true) {
-            xContainerCenter = parseFloat(rectContainer.left);
-            xSelectedElCenter = parseFloat(rectSelectedEl.left);
-          } else {
-            yContainerCenter = parseFloat(rectContainer.top);
-            ySelectedElCenter = parseFloat(rectSelectedEl.top);
+          if (this.pos != undefined && this.pos==0) {
+            if (this.horizontal != undefined && this.horizontal == true) {
+              xContainerCenter = parseFloat(rectContainer.left);
+              xSelectedElCenter = parseFloat(rectSelectedEl.left);
+            } else {
+              yContainerCenter = parseFloat(rectContainer.top);
+              ySelectedElCenter = parseFloat(rectSelectedEl.top);
+            }
+          }
+
+          if (this.pos != undefined && this.pos==2) {
+            if (this.horizontal != undefined && this.horizontal == true) {
+              xContainerCenter = parseFloat(rectContainer.right);
+              xSelectedElCenter = parseFloat(rectSelectedEl.right);
+            } else {
+              yContainerCenter = parseFloat(rectContainer.bottom);
+              ySelectedElCenter = parseFloat(rectSelectedEl.bottom);
+            }
+          }
+
+          dLeft = xContainerCenter - xSelectedElCenter;
+          dTop = yContainerCenter - ySelectedElCenter;
+
+          slidesStyle = window.getComputedStyle(slides)
+          lefttop = 'left:'+(parseFloat(slidesStyle.left) + dLeft)+'px;top:'+(parseFloat(slidesStyle.top) + dTop)+'px;';
+          slides.setAttribute('style',lefttop);
+          selectedEl.setAttribute('selected',true);
+
+          if (this.onSlide != undefined) {
+            this.onSlide({selected:this.selected,id:this.id});
           }
         }
 
-        if (this.pos != undefined && this.pos==2) {
-          if (this.horizontal != undefined && this.horizontal == true) {
-            xContainerCenter = parseFloat(rectContainer.right);
-            xSelectedElCenter = parseFloat(rectSelectedEl.right);
-          } else {
-            yContainerCenter = parseFloat(rectContainer.bottom);
-            ySelectedElCenter = parseFloat(rectSelectedEl.bottom);
-          }
-        }
 
-        dLeft = xContainerCenter - xSelectedElCenter;
-        dTop = yContainerCenter - ySelectedElCenter;
-
-        slidesStyle = window.getComputedStyle(slides)
-        lefttop = 'left:'+(parseFloat(slidesStyle.left) + dLeft)+'px;top:'+(parseFloat(slidesStyle.top) + dTop)+'px;';
-        slides.setAttribute('style',lefttop);
-        selectedEl.setAttribute('selected',true);
-
-        if (this.onSlide != undefined) {
-          this.onSlide({selected:this.selected,id:this.id});
-        }
 
       },
       swipe:function(evt){
@@ -152,7 +162,7 @@ VueSlides.install = function(Vue, options){
       }
     },
     template:`
-      <div v-bind:id="id" :class="'slides-container '+aclass" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:pressMove="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="horizontal" :vertical="!horizontal">
+      <div v-bind:id="id" :class="aclass != undefined ? 'slides-container '+aclass : 'slides-container'" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:pressMove="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="horizontal" :vertical="!horizontal">
         <div class="slides">
           <slot></slot>
         </div>
@@ -193,7 +203,7 @@ VueSlides.install = function(Vue, options){
       }
     },
     template:`
-      <div :class="'slide '+aclass" v-simple-gesture:tap="tap" v-simple-gesture:doubleTap="doubleTap" v-simple-gesture:long-tap="longTap">
+      <div :class="aclass != undefined ? 'slide '+aclass : 'slide'" v-simple-gesture:tap="tap" v-simple-gesture:doubleTap="doubleTap" v-simple-gesture:long-tap="longTap">
         <slot></slot>
       </div>
     `

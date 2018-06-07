@@ -10,5 +10,6 @@
   "bonus":{
     "index":"./bonus.json",
     "path":"./bonus/"
-  }
+  },
+  "debug":true
 }
