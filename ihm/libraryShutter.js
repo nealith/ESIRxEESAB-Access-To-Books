@@ -27,18 +27,25 @@ libraryShutter = new Vue({
       montageShutter.pushImage(e.data);
     },
     zoom:function(e){
+      console.log(e);
       for (var i = 0; i < this.books.length; i++) {
         bookName = this.books[i].name;
-        if (e.target.id.includes(bookName)) {
+        if (e.data.id.includes(bookName)) {
           for (var j = 0; j < this.books[i].pages.length; j++) {
             var page = this.books[i].pages[j]
-            if (e.target.id == page.id) {
+            if (e.data.id == page.id) {
               zoom.toggle(page);
               return;
             }
           }
         }
-
+      }
+      for (var j = 0; j < this.bonus.length; j++) {
+        var page = this.bonus[j];
+        if (e.data.id == page.id) {
+          zoom.toggle(page);
+          return;
+        }
       }
     }
   }

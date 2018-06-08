@@ -20,8 +20,8 @@ VueSimpleGesture.install = function(Vue, options){
 
       options = options || {};
 
-      doubleTapTime = options.doubleTapTime || 150;
-      longTapTime = options.longTapTime || 200;
+      doubleTapTime = options.doubleTapTime || 250;
+      longTapTime = options.longTapTime || 500;
       swipeMinLength = options.swipeMinLength || 30;
 
       if (binding.arg == 'tap') {
@@ -31,7 +31,7 @@ VueSimpleGesture.install = function(Vue, options){
             isTap = true;
             window.setTimeout(function() { isTap = false;},longTapTime-10);
           }
-        });
+        },{passive: true});
         el.addEventListener('touchend',function(evt){
           if (isTap) {
             isTap = false;
@@ -77,50 +77,55 @@ VueSimpleGesture.install = function(Vue, options){
       }
 
       if (binding.arg == 'long-tap') {
-        var isLongTap = false;
+        var canBeLongTap = false;
         el.addEventListener('touchstart',function(evt){
-          if (!isLongTap) {
-              window.setTimeout(function() { isLongTap = true;},longTapTime);
-          }
+          canBeLongTap = true;
+          console.log(el);
+          window.setTimeout(function() {
+            if (canBeLongTap) {
+              binding.value(evt);
+            }
+          },longTapTime);
         });
         el.addEventListener('touchmove',function(evt){
-          if (isLongTap) {
-            isLongTap = false;
+          if (canBeLongTap) {
+            canBeLongTap = false;
           }
         });
         el.addEventListener('touchleave',function(evt){
-          if (isLongTap) {
-            isLongTap = false;
+          if (canBeLongTap) {
+            canBeLongTap = false;
           }
         });
         el.addEventListener('touchend',function(evt){
-          if (isLongTap) {
-            isLongTap = false;
-            binding.value(evt);
+          if (canBeLongTap) {
+            canBeLongTap = false;
           }
         });
 
 
 
         el.addEventListener('mousedown',function(evt){
-          if (!isLongTap) {
-              window.setTimeout(function() { isLongTap = true;},longTapTime);
-          }
+          canBeLongTap = true;
+          window.setTimeout(function() {
+            if (canBeLongTap) {
+              binding.value(evt);
+            }
+          },longTapTime);
         });
         el.addEventListener('mousemove',function(evt){
-          if (isLongTap) {
-            isLongTap = false;
+          if (canBeLongTap) {
+            canBeLongTap = false;
           }
         });
         el.addEventListener('mouseout',function(evt){
-          if (isLongTap) {
-            isLongTap = false;
+          if (canBeLongTap) {
+            canBeLongTap = false;
           }
         });
         el.addEventListener('mouseup',function(evt){
-          if (isLongTap) {
-            isLongTap = false;
-            binding.value(evt);
+          if (canBeLongTap) {
+            canBeLongTap = false;
           }
         });
       }

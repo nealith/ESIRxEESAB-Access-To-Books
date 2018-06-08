@@ -203,7 +203,7 @@ VueSlides.install = function(Vue, options){
       }
     },
     template:`
-      <div :class="aclass != undefined ? 'slide '+aclass : 'slide'" v-simple-gesture:tap="tap" v-simple-gesture:doubleTap="doubleTap" v-simple-gesture:long-tap="longTap">
+      <div :class="aclass != undefined ? 'slide '+aclass : 'slide'" v-simple-gesture:tap="tap" v-simple-gesture:double-tap="doubleTap" v-simple-gesture:long-tap="longTap">
         <slot></slot>
       </div>
     `

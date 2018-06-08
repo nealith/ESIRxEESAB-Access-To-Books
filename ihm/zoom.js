@@ -83,11 +83,14 @@ zoom = new Vue({
         this.view = null;
         this.imgInfos = null;
         this.active = false;
+        byId('marker1').removeAttribute("style");
+        byId('marker2').removeAttribute("style");
+
       } else {
         this.active = true;
         //if (fs.existsSync(data.dzi)) {
           this.view = OpenSeadragon({
-            id:'zoom',
+            id:'zoom-container',
             prefixUrl: './libs/openseadragon/images/',
             tileSources:data.dzi+'.dzi',
             showNavigationControl:false
@@ -121,14 +124,14 @@ zoom = new Vue({
 
       topMarker1 = rect(byId('marker1')).top;
 
-      rightMarker2 = rect(byId('marker2')).right;
+      rightMarker2 =  rect(byId('marker2')).right;
 
       bottomMarker2 = rect(byId('marker2')).bottom;
 
       rotation = this.view.viewport.getRotation()
 
-
-      if (rotation == 0 && leftMarker1 == 0 && topMarker1 == 0 && rightMarker2 == 0 && bottomMarker2 == 0) {
+      console.log(leftMarker1,topMarker1,rightMarker2,bottomMarker2,rotation);
+      if (rotation == 0 && leftMarker1 == 0 && topMarker1 == 0 && rightMarker2 == frame.w && bottomMarker2 == frame.h) {
         this.toggle(null);
         return;
       }

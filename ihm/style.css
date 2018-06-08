@@ -153,6 +153,11 @@ body {
   z-index: 50;
 }
 
+#zoom-container{
+	height: 100%;
+	width: 100%;
+}
+
 #marker1{
   background: darkorange;
   box-sizing: border-box;

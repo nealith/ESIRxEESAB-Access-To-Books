@@ -4,6 +4,62 @@ var montage_data;
 
 var pW = 0.94;
 
+var longTapTime = 500;
+
+function attachDragAndEvent(img){
+  img.draggable({
+    minX:0,
+    minY:0,
+    maxX:montageWidth,
+    maxY:montageHeight
+  });
+  img.onLongTap = false;
+  img.touchstart(function(){
+    this.onLongTap = true;
+    el = this;
+    window.setTimeout(function() {
+      if (el.onLongTap) {
+        el.remove();
+        saveMontage(montageShutter.montages[montageShutter.selected]);
+      }
+    },longTapTime);
+  });
+  img.mousedown(function(){
+    this.onLongTap = true;
+    el = this;
+    window.setTimeout(function() {
+      if (el.onLongTap) {
+        el.remove();
+        saveMontage(montageShutter.montages[montageShutter.selected]);
+      }
+    },longTapTime);
+  });
+
+  img.touchmove(function(){
+    this.onLongTap = false;
+  });
+
+  img.mousemove(function(){
+    this.onLongTap = false;
+  });
+
+  img.touchleave(function(){
+    this.onLongTap = false;
+  });
+
+  img.mouseout(function(){
+    this.onLongTap = false;
+  });
+
+  img.touchend(function(){
+    this.onLongTap = false;
+  })
+
+  img.mouseup(function(){
+    this.onLongTap = false;
+  })
+}
+
 function saveMontage(montage){
   fs.writeFile(montage.src, svgCanvas[montage.name].svg(), function(err) {
     if(err) {
@@ -89,12 +145,14 @@ montageShutter = new Vue({
       if (e.target.tagName == 'image') {
         img = SVG.get(e.target.id);
         img.rotate(e.angle);
+        saveMontage(this.montages[this.selected]);
       }
     },
     pinchOnImage:function(e){
       if (e.target.tagName == 'image') {
         img = SVG.get(e.target.id);
         img.transform({scale:e.zoom});
+        saveMontage(this.montages[this.selected]);
       }
     },
     pushImage:function(img){
@@ -111,14 +169,8 @@ montageShutter = new Vue({
         byId(svgimg.node.id).setAttribute('dzi',img.dzi);
         byId(svgimg.node.id).setAttribute('originalWidth',img.originalWidth);
         byId(svgimg.node.id).setAttribute('originalHeight',img.originalHeight);
-        byId(svgimg.node.id).setAttribute('thumbnail',img.thumbnail)
-        svgimg.draggable({
-          minX:0,
-          minY:0,
-          maxX:frame.w*pW,
-          maxY:frame.h
-        });
-
+        byId(svgimg.node.id).setAttribute('thumbnail',img.thumbnail);
+        attachDragAndEvent(svgimg);
         console.log(svgimg);
 
         saveMontage(montages[this.selected]);
@@ -351,7 +403,7 @@ function loadMontage(montage){
 
       var images = doc.getElementsByTagName('image');
 
-      svgCanvas[montage.name] = SVG(montage.name).size(frame.w*pW,frame.h);
+      svgCanvas[montage.name] = SVG(montage.name).size(montageWidth,montageHeight);
 
       for (var i = 0; i < images.length; i++) {
         var width = images[i].width.baseVal.value*ratio;
@@ -378,12 +430,7 @@ function loadMontage(montage){
 
       // Make image draggable
       svgCanvas[montage.name].each(function(i, children) {
-        this.draggable({
-          minX:0,
-          minY:0,
-          maxX:montageWidth,
-          maxY:montageHeight
-        });
+        attachDragAndEvent(this);
       },true)
 
 

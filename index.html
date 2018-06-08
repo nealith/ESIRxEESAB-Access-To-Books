@@ -152,6 +152,9 @@
             v-finger:long-tap="longTap"
             v-on:mousedown.left="start"
             v-show="active">
+        <div id="zoom-container">
+
+        </div>
         <div  id="marker1"
               class="marker"
               v-draggable="{containment:'parent'}">
@@ -182,14 +185,14 @@
 
       <div class="global_container">
 
-        <div id="montageShutter" class="space">
-          <slides id="library-books-titles-container"
+        <div id="montageShutter" class="space" v-finger:rotate="rotateOnImage" v-finger:pinch="pinchOnImage">
+          <slides id="montages-container"
                   :on-slide="selectedMontageChanged"
                   :pos=0
                   ref="montageShutterSlides">
             <template v-for="montage in montages">
               <slide>
-                <div v-bind:id="montage.name" v-finger:rotate="rotateOnImage" v-finger:pinch="pinchOnImage">
+                <div v-bind:id="montage.name">
                 </div>
               <slide>
             </template>
@@ -253,7 +256,10 @@
                         :horizontal="true"
                         :on-slide="updateDescription">
                   <template v-for="page in bonus">
-                    <slide :data="page">
+                    <slide  aclass="book_page"
+                            :data="page"
+                            :on-long-tap="toMontage"
+                            :on-double-tap="zoom" >
                       <img :id="page.id" v-bind:src="page.thumbnail" draggable="false">
                     </slide>
                   </template>

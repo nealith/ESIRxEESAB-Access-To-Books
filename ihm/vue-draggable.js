@@ -100,7 +100,7 @@ VueDraggable.install = function(Vue, options){
         if (binding.value.start) {
           binding.value.start(evt);
         }
-      });
+      },{passive: true});
 
       function drag(evt){
         VueDraggable.drag(evt,el);
