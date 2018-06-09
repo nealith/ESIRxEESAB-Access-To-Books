@@ -200,7 +200,7 @@
         </div>
 
           <div  id="libraryStrip"
-              v-draggable="{axis:'x',containment:'parent',drag:move}">
+              v-draggable="{axis:'x',containment:'parent',drag:move,end:end}">
           <slides id="library-books-titles-container"
                   :lock="true"
                   :pos=0

@@ -5,31 +5,11 @@ VueSizeChanged.install = function(Vue, options){
     bind: function(el, binding, vnode){
 
       var style = window.getComputedStyle(el);
-      var transition = style.transition;
-      if (!(style.transition.includes('width'))) {
-        let width='width 0.01s ease 0.01s';
-        if (transition == '') {
-          transition+=width;
-        } else {
-          transition+=','+width;
-        }
-      }
-
-      if (!(style.transition.includes('height'))) {
-        let height='height 0.01s ease 0.01s';
-        if (transition == '') {
-          transition+=height;
-        } else {
-          transition+=','+height;
-        }
-      }
-
-      el.setAttribute('style','transition:'+transition+';');
-
       var currentWidth = style.width;
       var currentHeigth = style.height;
 
-      el.addEventListener('transitionend',function(evt){
+      function onTransition(evt){
+        console.log('test');
         let newStyle = window.getComputedStyle(el);
         SizeChangeEvent = {
           oldWidth:currentWidth,
@@ -45,8 +25,9 @@ VueSizeChanged.install = function(Vue, options){
           currentHeigth = newStyle.height;
           binding.value(SizeChangeEvent);
         }
-      });
+      }
 
+      el.addEventListener('transitionend',onTransition);
 
     }
   });

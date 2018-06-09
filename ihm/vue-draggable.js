@@ -111,7 +111,7 @@ VueDraggable.install = function(Vue, options){
 
       function end(evt){
         VueDraggable.dragStop(evt,el);
-        if (binding.value.end && el.getAttribute('is-dragged') === 'true') {
+        if (binding.value.end && el.getAttribute('is-dragged') === 'false') {
           binding.value.end(evt);
         }
       }
