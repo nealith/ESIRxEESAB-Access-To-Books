@@ -53,6 +53,10 @@
         </div>
       </div>
 
+      <div id="discretAlert" v-simple-gesture:tap="hide" :error="error" :warning="warning" :succes="succes" :active="active">
+          <p>{{msg}}</p>
+      </div>
+
       <div  id="dialogue"
             class="full-border"
             v-show="active"
@@ -294,6 +298,7 @@
 
     <script type="text/javascript" src="./ihm/app.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/alert.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/discretAlert.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/keyboard.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/rotationButtons.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/dialogue.js" charset="utf-8"></script>

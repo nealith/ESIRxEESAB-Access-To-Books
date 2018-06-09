@@ -256,104 +256,109 @@ montageShutter = new Vue({
     }*/
     k = this.selected;
 
-      if (k != -1) {
-        var parser = new DOMParser();
-        var doc = parser.parseFromString(svgCanvas[montages[k].name].svg(), "image/svg+xml");
+      try {
+        if (k != -1) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(svgCanvas[montages[k].name].svg(), "image/svg+xml");
 
-        var images = doc.getElementsByTagName('image');
+          var images = doc.getElementsByTagName('image');
 
-        var minRatio = 1000000000;
+          var minRatio = 1000000000;
 
-        for (var i = 0; i < images.length; i++) {
-          imgData = {};
+          for (var i = 0; i < images.length; i++) {
+            imgData = {};
 
-          imgData.originalPath = images[i].getAttribute('originalPath');
-          imgData.dzi = images[i].getAttribute('dzi');
-          imgData.originalWidth = images[i].getAttribute('originalWidth');
-          imgData.originalHeight = images[i].getAttribute('originalHeight');
-          imgData.thumbnail = images[i].getAttribute('thumbnail')
+            imgData.originalPath = images[i].getAttribute('originalPath');
+            imgData.dzi = images[i].getAttribute('dzi');
+            imgData.originalWidth = images[i].getAttribute('originalWidth');
+            imgData.originalHeight = images[i].getAttribute('originalHeight');
+            imgData.thumbnail = images[i].getAttribute('thumbnail')
 
+            width = images[i].width.baseVal.value;
+            height = images[i].height.baseVal.value;
 
-          console.log(images[i]);
-          width = images[i].width.baseVal.value;
-          height = images[i].height.baseVal.value;
-
-          if (imgData.originalWidth / width < minRatio) {
-            minRatio = imgData.originalWidth / width;
-          }
-          if (imgData.originalHeight / height < minRatio) {
-            minRatio = imgData.originalHeight / height;
-          }
-        }
-        var montageIO = SVG('montageIO').size(frame.w*pW * minRatio,frame.h * minRatio)
-
-        imgs = [];
-        paths = [];
-        counter = 0;
-
-        for (var i = 0; i < images.length; i++) {
-          imgData = {};
-
-          imgData.originalPath = images[i].getAttribute('originalPath');
-          imgData.dzi = images[i].getAttribute('dzi');
-          imgData.originalWidth = images[i].getAttribute('originalWidth');
-          imgData.originalHeight = images[i].getAttribute('originalHeight');
-          imgData.thumbnail = images[i].getAttribute('thumbnail')
-          console.log(images[i]);
-          console.log(imgData);
-          imgData.width = images[i].width.baseVal.value*minRatio;
-          imgData.height = images[i].height.baseVal.value*minRatio;
-          imgData.x = images[i].x.baseVal.value*minRatio;
-          imgData.y = images[i].y.baseVal.value*minRatio;
-          imgData.angle = 0.0;
-          for (var j = 0; j < images[i].length; j++) {
-            if(images[i].transform.baseVal[j].angle != 0){
-              imgData.angle = images[i].transform.baseVal[j].angle;
+            if (imgData.originalWidth / width < minRatio) {
+              minRatio = imgData.originalWidth / width;
+            }
+            if (imgData.originalHeight / height < minRatio) {
+              minRatio = imgData.originalHeight / height;
             }
           }
+          var montageIO = SVG('montageIO').size(frame.w*pW * minRatio,frame.h * minRatio)
 
-          imgs.push(imgData);
-          paths.push(path.basename(imgData.originalPath));
-          //ipcRenderer.sendSync('copyFileSync',{path:imgData.originalPath,dest:path.basename(imgData.originalPath)});
-          fs.createReadStream(imgData.originalPath).pipe(fs.createWriteStream(path.basename(imgData.originalPath)).on("close", function() {
-            counter+=1;
-            if (paths.length == counter) {
+          imgs = [];
+          paths = [];
+          counter = 0;
 
-              for (var l = 0; l < imgs.length; l++) {
-                montageIO.image(path.basename(imgs[l].originalPath), imgs[l].width, imgs[l].height).move(imgs[l].x,imgs[l].y).rotate(imgs[l].angle)
+          for (var i = 0; i < images.length; i++) {
+            imgData = {};
+
+            imgData.originalPath = images[i].getAttribute('originalPath');
+            imgData.dzi = images[i].getAttribute('dzi');
+            imgData.originalWidth = images[i].getAttribute('originalWidth');
+            imgData.originalHeight = images[i].getAttribute('originalHeight');
+            imgData.thumbnail = images[i].getAttribute('thumbnail')
+
+            imgData.width = images[i].width.baseVal.value*minRatio;
+            imgData.height = images[i].height.baseVal.value*minRatio;
+            imgData.x = images[i].x.baseVal.value*minRatio;
+            imgData.y = images[i].y.baseVal.value*minRatio;
+            imgData.angle = 0.0;
+            for (var j = 0; j < images[i].length; j++) {
+              if(images[i].transform.baseVal[j].angle != 0){
+                imgData.angle = images[i].transform.baseVal[j].angle;
               }
+            }
 
-              fs.writeFileSync(montages[k].name+'.svg', montageIO.svg());
+            imgs.push(imgData);
+            paths.push(path.basename(imgData.originalPath));
+            //ipcRenderer.sendSync('copyFileSync',{path:imgData.originalPath,dest:path.basename(imgData.originalPath)});
+            fs.createReadStream(imgData.originalPath).pipe(fs.createWriteStream(path.basename(imgData.originalPath)).on("close", function() {
+              counter+=1;
+              if (paths.length == counter) {
 
-              n = 1;
-              zipOutput = montages[k].name+'_export'+n+'.zip';
-              exist = fs.existsSync(zipOutput);
-              while (exist) {
-                n+=1;
+                for (var l = 0; l < imgs.length; l++) {
+                  montageIO.image(path.basename(imgs[l].originalPath), imgs[l].width, imgs[l].height).move(imgs[l].x,imgs[l].y).rotate(imgs[l].angle)
+                }
+
+                fs.writeFileSync(montages[k].name+'.svg', montageIO.svg());
+
+                n = 1;
                 zipOutput = montages[k].name+'_export'+n+'.zip';
                 exist = fs.existsSync(zipOutput);
-              }
-
-              var zipfile = new yazl.ZipFile();
-              for (var i = 0; i < paths.length; i++) {
-                zipfile.addFile(paths[i],paths[i]);
-
-              }
-              zipfile.addFile(montages[k].name+'.svg',montages[k].name+'.svg');
-              zipfile.outputStream.pipe(fs.createWriteStream(zipOutput)).on("close", function() {
-                for (var l = 0; l < paths.length; l++) {
-                  if (fs.existsSync(paths[l])) {
-                    fs.unlinkSync(paths[l]);
-                  }
+                while (exist) {
+                  n+=1;
+                  zipOutput = montages[k].name+'_export'+n+'.zip';
+                  exist = fs.existsSync(zipOutput);
                 }
-                fs.unlinkSync(montages[k].name+'.svg');
-                console.log("export done");
-              });
-              zipfile.end();
-            }
-          }));
+
+                var zipfile = new yazl.ZipFile();
+                for (var i = 0; i < paths.length; i++) {
+                  zipfile.addFile(paths[i],paths[i]);
+
+                }
+                zipfile.addFile(montages[k].name+'.svg',montages[k].name+'.svg');
+                zipfile.outputStream.pipe(fs.createWriteStream(zipOutput)).on("close", function() {
+                  for (var l = 0; l < paths.length; l++) {
+                    if (fs.existsSync(paths[l])) {
+                      fs.unlinkSync(paths[l]);
+                    }
+                  }
+                  fs.unlinkSync(montages[k].name+'.svg');
+                  discretAlert.alert({msg:montages[k].name+' exported (:',succes:true});
+                });
+                zipfile.end();
+              }
+            }));
+          }
+        } else {
+          discretAlert.alert({msg:'no montage to export ):',warning:true});
         }
+
+      } catch (e) {
+        discretAlert.alert({msg:JSON.stringify(e)+' .... ):',error:true});
       }
+
     }
   }
 });

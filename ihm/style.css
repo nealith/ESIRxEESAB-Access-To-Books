@@ -196,6 +196,38 @@ body {
 	opacity: 0.6;
 }
 
+#discretAlert{
+	position: absolute;
+	width: 100vh;
+	height: var(--bars-width);
+	transform-origin: 0% 0% 0;
+	transform: rotate(-90deg);
+	left: 0px;
+	top:0px;
+	transition: top 2s ease-out;
+	z-index: 100;
+	padding-left: 10px;
+	overflow: hidden;
+
+}
+
+#discretAlert[active]{
+	top: 100vh;
+}
+
+#discretAlert[succes]{
+	background: seagreen;
+}
+
+#discretAlert[error]{
+	background: indianred;
+}
+
+#discretAlert[warning]{
+	background: coral;
+}
+
+
 
 #alert{
   position: absolute;

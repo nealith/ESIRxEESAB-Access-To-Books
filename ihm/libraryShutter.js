@@ -74,6 +74,11 @@ ipcRenderer.on('sync_books', (event, arg) => {
 
 ipcRenderer.on('sync_bonus', (event, arg) => {
   bonus = remote.getGlobal('bonus');
+  let succes = (bonus.length != libraryShutter.bonus.length);
   libraryShutter.bonus = bonus;
   libraryStrip.bonus = bonus;
+
+  if (succes) {
+    discretAlert.alert({msg:'bonus '+libraryShutter.bonus[libraryShutter.bonus.length-1].id+' created (:',succes:true});
+  }
 });

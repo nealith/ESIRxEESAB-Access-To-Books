@@ -101,7 +101,6 @@ zoom = new Vue({
           this.view.addHandler('canvas-press',function(e){
             zoom.longClick = true;
             window.setTimeout(function() {
-              console.log('test');
               if (zoom.longClick) {
                 zoom.longTap(null);
               }
@@ -130,7 +129,6 @@ zoom = new Vue({
 
       rotation = this.view.viewport.getRotation()
 
-      console.log(leftMarker1,topMarker1,rightMarker2,bottomMarker2,rotation);
       if (rotation == 0 && leftMarker1 == 0 && topMarker1 == 0 && rightMarker2 == frame.w && bottomMarker2 == frame.h) {
         this.toggle(null);
         return;
