@@ -416,7 +416,7 @@ const onlyDir = through2.obj(function (item, enc, next) {
   if (item.stats.isDirectory()) {
     this.push(item)
     dirs.push({
-      name:path.basename(item),
+      name:path.basename(item.path),
       path:item.path
     })
   }
@@ -427,15 +427,16 @@ var items = [] // files, directories, symlinks, etc
 
 ipcMain.on('walkon',(event,arg) => {
 
-  klaw(arg)
+  klaw(arg,{depthLimit:0})
     .pipe(onlyDir)
     .on('data', item => items.push(item.path))
     .on('end', () => {
-      console.dir(items)
       event.sender.send('receiveDirList',dirs)
     })
 
 })
+
+
 
 //----------------------------------------------------------------------
 // tuio - CaressServer

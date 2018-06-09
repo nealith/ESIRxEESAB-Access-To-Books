@@ -10,6 +10,9 @@
 
     <!-- Javascript -->
 
+    <script type="text/javascript" src="./ihm/base.js" charset="utf-8"></script>
+
+
     <script src="http://localhost:8098"></script>
 
     <script type="text/javascript" src="./libs/socket.io.slim.js" charset="utf-8"></script>
@@ -34,10 +37,19 @@
 
   </head>
   <body>
+    <div  id="splash">
+      <div>
+        <p id="splash-text"></p>
+      </div>
+    </div>
+    <script type="text/javascript" src="./ihm/splash.js" charset="utf-8"></script>
+
+
     <div id="rotationWrap">
-      <div  id="splash" v-show="active">
+
+      <div id="alert" v-simple-gesture:tap="hide" :error="error" :warning="warning" :succes="succes" v-show="active">
         <div>
-          <p>{{wait}}</p>
+          <p>{{msg}}</p>
         </div>
       </div>
 
@@ -280,9 +292,8 @@
 
     </div>
 
-
     <script type="text/javascript" src="./ihm/app.js" charset="utf-8"></script>
-    <script type="text/javascript" src="./ihm/splash.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/alert.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/keyboard.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/rotationButtons.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/dialogue.js" charset="utf-8"></script>

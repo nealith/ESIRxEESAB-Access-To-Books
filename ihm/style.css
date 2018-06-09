@@ -169,6 +169,12 @@ body {
   width:var(--bars-width);
   height:var(--bars-width);
   z-index: 50;
+	opacity: 1;
+	transition: opacity .3s ease-out;
+}
+
+#marker1[is-dragged]{
+	opacity: 0.6;
 }
 
 #marker2{
@@ -182,6 +188,63 @@ body {
   width:var(--bars-width);
   height:var(--bars-width);
   z-index: 50;
+	opacity: 1;
+	transition: opacity .3s ease-out;
+}
+
+#marker2[is-dragged]{
+	opacity: 0.6;
+}
+
+
+#alert{
+  position: absolute;
+  left: 50vw;
+  top: 50vh;
+	transform: translateX(-50%) translateY(-50%);
+  background: black;
+  box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+  z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0.6;
+}
+
+#alert div{
+	margin: auto;
+	padding: 10px;
+	transform-origin: top left 0;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	display: inline-block;
+	max-width: 32vw;
+}
+
+#alert p {
+	display: inline-block;
+	margin: 0px;
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+}
+
+#alert[succes] div{
+	color: green;
+	border: 1px solid green;
+}
+
+#alert[error] div{
+	color: red;
+	border: 1px solid red;
+}
+
+#alert[warning] div{
+	color: yellow;
+	border: 1px solid yellow;
 }
 
 /* SPLASH SCREEN : Used to put people in stand by
@@ -192,16 +255,15 @@ until server capture all fake touch event from camera */
   left: 0px;
   top: 0px;
   background: black;
-  box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-  border-left: 1px solid white;
-  border-right: 1px solid white;
-  z-index: 100;
+  z-index: 200;
   width: 100vw;
   height: 100vh;
-  opacity: 0.8;
+  opacity: 0.9;
+	display: none;
+}
 
+#splash[active]{
+	display: block;
 }
 
 #splash div{
@@ -213,6 +275,7 @@ until server capture all fake touch event from camera */
     transform: translateY(-50%);
 }
 #splash p {
+	margin:0px;
   font-size: 1.2em;
   font-weight: bold;
   text-align: center;

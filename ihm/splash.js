@@ -1,25 +1,18 @@
-splash = new Vue({
-  el: '#splash',
-  data:{
-    mapId:{},
-    mapCoord:{},
-    time:0,
-    wait:'',
-    active:true
-  },
-  methods:{
-    resize:function(){
-      this.style.height = frame.h+'px';
-      this.style.width = frame.w+'px';
-    }
-  }
-});
+byId('splash').setAttribute('active','');
 
-ipcRenderer.on('splash_update', (event, arg) => {
-  splash.wait += '.';
-});
+{
 
-ipcRenderer.on('splash_hide', (event, arg) => {
-  console.log("lol");
-  splash.active = false;
-});
+  let wait = '';
+
+  ipcRenderer.on('splash_update', (event, arg) => {
+    wait += '.';
+    byId('splash-text').innerHTML = wait;
+
+  });
+
+  ipcRenderer.on('splash_hide', (event, arg) => {
+    splash.active = false;
+    byId('splash').removeAttribute('active');
+  });
+
+}

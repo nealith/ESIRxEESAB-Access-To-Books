@@ -80,7 +80,6 @@ VueSimpleGesture.install = function(Vue, options){
         var canBeLongTap = false;
         el.addEventListener('touchstart',function(evt){
           canBeLongTap = true;
-          console.log(el);
           window.setTimeout(function() {
             if (canBeLongTap) {
               binding.value(evt);

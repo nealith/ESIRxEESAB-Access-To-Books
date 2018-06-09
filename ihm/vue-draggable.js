@@ -75,7 +75,7 @@ VueDraggable = {
     }
   },
   dragStop:function(evt,el){
-    el.setAttribute('is-dragged',false);
+    el.removeAttribute('is-dragged');
   }
 }
 
@@ -111,7 +111,7 @@ VueDraggable.install = function(Vue, options){
 
       function end(evt){
         VueDraggable.dragStop(evt,el);
-        if (binding.value.end && el.getAttribute('is-dragged') === 'false') {
+        if (binding.value.end && !el.hasAttribute('is-dragged')) {
           binding.value.end(evt);
         }
       }

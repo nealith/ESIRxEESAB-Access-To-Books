@@ -17,7 +17,6 @@ libraryStrip = new Vue({
     end:function(e){
       els = Array.from(byId('libraryShutter').querySelectorAll('div.slides-container'));
       for (var i = 0; i < els.length; i++) {
-        console.log(els[i]);
         els[i].dispatchEvent(new TransitionEvent('transitionend',{}));
       }
     }

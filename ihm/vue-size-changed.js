@@ -9,7 +9,6 @@ VueSizeChanged.install = function(Vue, options){
       var currentHeigth = style.height;
 
       function onTransition(evt){
-        console.log('test');
         let newStyle = window.getComputedStyle(el);
         SizeChangeEvent = {
           oldWidth:currentWidth,

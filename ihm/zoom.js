@@ -150,8 +150,9 @@ zoom = new Vue({
           original:this.imgInfos,
           angle:rotation
         }
-        console.log(arg);
         ipcRenderer.send('addBonus',arg);
+      } else {
+        console.error("orange marker must be above and at left of the cyan marker");
       }
       this.toggle(null);
     }

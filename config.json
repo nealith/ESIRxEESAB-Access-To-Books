@@ -11,5 +11,6 @@
     "index":"./bonus.json",
     "path":"./bonus/"
   },
-  "debug":true
+  "debug":true,
+  "user":"nealith"
 }

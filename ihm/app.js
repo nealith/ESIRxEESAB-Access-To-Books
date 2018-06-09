@@ -1,5 +1,3 @@
-const {ipcRenderer} = require('electron');
-const {remote} = require('electron');
 const path = require('path');
 const yazl = require("yazl");
 const fs = require('fs');
@@ -10,26 +8,13 @@ Vue.use(VueSlides);
 Vue.use(AlloyFingerVue);
 Vue.use(VueDraggable);
 
-//shorcut
-function byId(id){
-  return document.getElementById(id);
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+  // ... handle error ...
+  console.log(msg);
+  console.log(url);
+
+  return false;
 }
-
-function byTag(tag){
-  return document.getElementsByTagName(tag)
-}
-
-function byClass(clas){
-  return document.getElementsByClassName(clas);
-}
-
-function rect(el){
-  return el.getBoundingClientRect();
-}
-
-
-
-
 
 function newBook(name,path){
   ipcRenderer.send('walkonBook',{
@@ -37,6 +22,14 @@ function newBook(name,path){
     path:path
   })
 }
+
+function walkon(path){
+  ipcRenderer.send('walkon',path);
+}
+
+ipcRenderer.on('receiveDirList', (event, arg) => {
+  console.log(arg);
+});
 
 window.client = new Caress.Client({
     host: 'localhost',
@@ -57,6 +50,7 @@ function strToFloat(s){
   return parseFloat(ss);
 }
 
+var alert;
 var rotationButtons;
 var keyboard;
 var dialogue;
@@ -66,29 +60,7 @@ var libraryStrip;
 var montageShutter;
 var libraryShutter;
 var zoom;
-var splash;
 
-window.onresize = function(e){
-    frame.oldH = frame.h;
-    frame.oldW = frame.w;
-    frame.h = window.innerHeight;
-    frame.w = window.innerWidth;
-/*    mainStrip.resize();
-    montageStrip.resize();
-    libraryStrip.resize();
-    montageShutter.resize();
-    libraryShutter.resize();
-    keyboard.resize();
-    montageDialogue.resize();
-    rotationButtons.resize();
-    zoom.resize();
-    splash.resize();
-*/}
-
-
-window.onload = function(e){
-  
-}
 
 // SYNC DATA
 
