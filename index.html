@@ -191,7 +191,7 @@
                 ref="montageStripSlides">
 
           <template v-for="montage in montages">
-            <slide aclass="label-container">
+            <slide aclass="label-container" :data="{name:montage.name}" :on-tap="showDescription">
                 <div class="centered-label">
                   <label>{{montage.name}}</label>
                 </div>

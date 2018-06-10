@@ -147,6 +147,10 @@ montageShutter = new Vue({
         description:data['new-montage-description'],
         src:path.normalize(remote.getGlobal('montages_path')+'/'+data['new-montage-name']+'.svg')
       }
+
+      if (arg.description == '') {
+        arg.description='no description ):'
+      }
       if (arg.name != undefined && arg.description != undefined && arg.src != undefined) {
         ipcRenderer.send('new_montage',arg);
       }
