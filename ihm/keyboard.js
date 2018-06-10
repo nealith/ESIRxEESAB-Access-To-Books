@@ -246,7 +246,6 @@ keyboard = new Vue({
           id = 'keyOK';
         }
       }
-      console.log(id);
       if (id != "keyShift") {
         var key = null;
         for (var i = 0; i < keys.length; i++) {
@@ -277,19 +276,4 @@ keyboard = new Vue({
       }
     }
   }
-});
-/*
-$("#keyboard").draggable({
-  containment: "parent",
-  snap: "#rotationWrap",
-  snapTolerance: 20,
-  start: function(){},
-  drag: function(){},
-  stop: function(){}
-});*/
-
-//// Test
-
-window.addEventListener('keypress',function(e){
-  console.log(String.fromCharCode(e.key));
 });

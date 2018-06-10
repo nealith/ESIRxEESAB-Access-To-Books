@@ -118,30 +118,47 @@ body {
 	cursor:crosshair;
 }
 
-/* EXPORT AREA : used to create the svg that will be export  */
+/* IO AREA : used to create the svg that will be export  */
 
 #montageIO{
   display: none;
 }
 
-/* */
+/* DIALOGUE */
 
 #dialogue{
   background: black;
   margin: 0px;
   padding: 5px;
-  z-index:10;
+  z-index:90;
   transform-origin: left top 0;
   position: absolute;
     top: 50%;
     left:50%;
-    transform: translateY(-50%);
-    transform: translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
 }
 
 #dialogue div{
 	margin:1px;
 }
+
+#dialogue vue-dialogue-final {
+	position: relative;
+	left:50%;
+	transform: translateX(-50%);
+}
+
+#dialogue vue-dialogue-textarea {
+	min-height: 3vh;
+}
+
+#dialogue vue-dialogue-form-send, vue-dialogue-form-cancel{
+	background: black;
+	border: 1px solid white;
+}
+
+
+
 
 /* ZOOM */
 
@@ -486,6 +503,10 @@ LIBRARIES
 	content:"p.";
 }
 
+#bonus .book_label > .page_ref:before {
+	content:"";
+}
+
 .book_page {
 	height: var(--height-page);
 	margin-left:10px;
@@ -544,7 +565,7 @@ KEYBOARD
   box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-  border: 2px solid white;
+  border: 1px solid white;
   color:white;
   padding: 0px;
 }
@@ -557,7 +578,7 @@ KEYBOARD
   background: black;
   margin: 0px;
   padding: 0px;
-  z-index:10;
+  z-index:60;
   transform-origin: left top 0;
   position: absolute;
     top: 50%;

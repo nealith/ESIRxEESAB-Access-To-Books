@@ -132,11 +132,25 @@ montageShutter = new Vue({
       this.selected = e.selected;
       montageStrip.$refs.montageStripSlides.updateSelected(e.selected);
     },
-    newMontage:function(name){
-      ipcRenderer.send('new_montage',{
-        name:name,
-        src:path.normalize(remote.getGlobal('montages_path')+'/'+name+'.svg')
-      })
+    checkMontageExist:function(value){
+      for (var i = 0; i < this.montages.length; i++) {
+        if (this.montages[i].name == value) {
+          return true;
+        }
+      }
+      return false;
+    },
+    newMontage:function(data){
+      console.log(data);
+      arg = {
+        name:data['new-montage-name'],
+        description:data['new-montage-description'],
+        src:path.normalize(remote.getGlobal('montages_path')+'/'+data['new-montage-name']+'.svg')
+      }
+      if (arg.name != undefined && arg.description != undefined && arg.src != undefined) {
+        ipcRenderer.send('new_montage',arg);
+      }
+
     },
     printSVG:function(name){
       console.log(svgCanvas[name].svg());
@@ -176,7 +190,7 @@ montageShutter = new Vue({
         saveMontage(montages[this.selected]);
       }
     },
-    export:function(e){
+    export:function(dest){
       /*
       var montageId = this.theMostVisible();
       svgCanvas[montageId]
@@ -258,6 +272,9 @@ montageShutter = new Vue({
 
       try {
         if (k != -1) {
+          discretAlert.alert({msg:'exporting montage '+montages[k].name+" don't shutdown the computer or unmount the usb key if you export on",warning:true});
+
+
           var parser = new DOMParser();
           var doc = parser.parseFromString(svgCanvas[montages[k].name].svg(), "image/svg+xml");
 
@@ -323,12 +340,15 @@ montageShutter = new Vue({
 
                 fs.writeFileSync(montages[k].name+'.svg', montageIO.svg());
 
+
+                base = dest+'/'+montages[k].name;
+
                 n = 1;
-                zipOutput = montages[k].name+'_export'+n+'.zip';
+                zipOutput = base+'_export'+n+'.zip';
                 exist = fs.existsSync(zipOutput);
                 while (exist) {
                   n+=1;
-                  zipOutput = montages[k].name+'_export'+n+'.zip';
+                  zipOutput = base+'_export'+n+'.zip';
                   exist = fs.existsSync(zipOutput);
                 }
 
@@ -345,7 +365,7 @@ montageShutter = new Vue({
                     }
                   }
                   fs.unlinkSync(montages[k].name+'.svg');
-                  discretAlert.alert({msg:montages[k].name+' exported (:',succes:true});
+                  discretAlert.alert({msg:montages[k].name+' exported to '+zipOutput+' (:',succes:true});
                 });
                 zipfile.end();
               }
@@ -357,6 +377,7 @@ montageShutter = new Vue({
 
       } catch (e) {
         discretAlert.alert({msg:JSON.stringify(e)+' .... ):',error:true});
+        console.log(e);
       }
 
     }
@@ -378,6 +399,7 @@ ipcRenderer.on('new_montage_added', (event, arg) => {
     svgCanvas[arg.name] = SVG(arg.name).size(frame.w*pW,frame.h);
     attachAutomaticSaving(arg);
     saveMontage(arg);
+    discretAlert.alert({msg:'montage '+arg.name+' created (:',succes:true});
   },200);
 });
 

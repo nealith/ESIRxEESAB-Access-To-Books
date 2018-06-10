@@ -130,6 +130,7 @@ zoom = new Vue({
       rotation = this.view.viewport.getRotation()
 
       if (rotation == 0 && leftMarker1 == 0 && topMarker1 == 0 && rightMarker2 == frame.w && bottomMarker2 == frame.h) {
+        discretAlert.alert({msg:'Aucune modification détectée : annulation de la création de bonus',warning:true});
         this.toggle(null);
         return;
       }
@@ -139,20 +140,60 @@ zoom = new Vue({
         topleft =  this.view.viewport.viewportToImageCoordinates(this.view.viewport.pointFromPixelNoRotate(new OpenSeadragon.Point(leftMarker1,topMarker1),true)) ;
         bottomright = this.view.viewport.viewportToImageCoordinates(this.view.viewport.pointFromPixelNoRotate(new OpenSeadragon.Point(rightMarker2,bottomMarker2),true)) ;
 
-        arg = {
-          name:'bonus'+libraryShutter.bonus.length,
-          left:topleft.x,
-          top:topleft.y,
-          width:bottomright.x - topleft.x,
-          height:bottomright.y - topleft.y,
-          original:this.imgInfos,
-          angle:rotation
+
+
+        if (topleft.x >= 0 &&
+          topleft.y >= 0 &&
+          bottomright.x < this.imgInfos.originalWidth &&
+          bottomright.y < this.imgInfos.originalHeight
+        ) {
+
+          arg = {
+            name:'bonus'+libraryShutter.bonus.length,
+            left:topleft.x,
+            top:topleft.y,
+            width:bottomright.x - topleft.x,
+            height:bottomright.y - topleft.y,
+            original:this.imgInfos,
+            angle:rotation
+          }
+
+          dialogue.toggle(
+            [
+              {
+                type:'text',
+                checkingFunction:libraryShutter.checkBonusExist,
+                id:'new-bonus-name',
+                placeholder:'Name (:',
+                tap:dialogue.focus
+              },
+              {
+                type:'textarea',
+                id:'new-bonus-description',
+                placeholder:'Description (:',
+                tap:dialogue.focus
+              }
+            ],
+            function(data){
+              arg.name = data['new-bonus-name'];
+              arg.description = data['new-bonus-description']
+              ipcRenderer.send('addBonus',arg);
+              zoom.toggle(null);
+            },
+            function(){
+              zoom.toggle(null);
+            }
+          );
+        } else {
+          discretAlert.alert({msg:'markers must be on the image ! ):',warning:true});
         }
-        ipcRenderer.send('addBonus',arg);
+
+
+
       } else {
-        console.error("orange marker must be above and at left of the cyan marker");
+        discretAlert.alert({msg:'orange marker must be above and at left of the cyan marker ):',warning:true});
       }
-      this.toggle(null);
+
     }
 
   }

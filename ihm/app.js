@@ -7,11 +7,14 @@ Vue.use(VueSizeChanged);
 Vue.use(VueSlides);
 Vue.use(AlloyFingerVue);
 Vue.use(VueDraggable);
+Vue.use(VueDialogue);
 
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   // ... handle error ...
-  console.log(msg);
-  console.log(url);
+  // console.log(msg);
+  // console.log(url);
+
+  discretAlert.alert({msg:msg+'__url:'+url+'__line n°'+lineNo,error:true});
 
   return false;
 }
@@ -23,13 +26,15 @@ function newBook(name,path){
   })
 }
 
-function walkon(path){
+/*function walkon(path){
   ipcRenderer.send('walkon',path);
 }
 
+dir = [];
+
 ipcRenderer.on('receiveDirList', (event, arg) => {
-  console.log(arg);
-});
+  dir = arg;
+});*/
 
 window.client = new Caress.Client({
     host: 'localhost',
@@ -43,6 +48,15 @@ var frame = {
   w:window.innerWidth,
   oldH:0,
   oldW:0
+}
+
+window.onresize = function(e){
+  frame = {
+    h:window.innerHeight,
+    w:window.innerWidth,
+    oldH:frame.h,
+    oldW:frame.w
+  }
 }
 
 function strToFloat(s){

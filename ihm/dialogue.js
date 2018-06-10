@@ -2,41 +2,65 @@ dialogue = new Vue({
   el: '#dialogue',
   data:{
     active:false,
-    name:"",
-    callback:null
+    entries:[],
+    onsend:null,
+    okPressed:false,
+    currentFocus:null
   },
   methods:{
-    onOkPressed:function(){
-      var name = this.name;
-      callback = this.callback;
-      this.toggle();
-      callback(name);
+    onKeyPressed:function(e){
+      if (e.key != 9166 && e.key != 8657) {
+        this.currentFocus.vueel.$children[0].value += String.fromCharCode(e.key);
+      }
     },
-    onCancelPressed:function(){
+    focus:function(arg){
+      if (this.currentFocus != null) {
+        this.currentFocus.el.removeEventListener('keypress',this.onKeyPressed);
+        keyboard.removeListener(this.currentFocus.info.id);
+      }
+      this.currentFocus = arg;
+      keyboard.addListener(this.currentFocus.info.id);
+      this.currentFocus.el.addEventListener('keypress',this.onKeyPressed);
+    },
+    send:function(data){
+      if (this.onsend != null) {
+        onsend = this.onsend;
+        this.toggle();
+        onsend(data);
+      } else  {
+        this.toggle();
+      }
+    },
+    cancel:function(){
+      if (this.oncancel && this.oncancel != null) {
+        this.oncancel();
+      }
       this.toggle();
     },
-    toggle:function(callback){
+    toggle:function(entries,onsend,oncancel){
       if (!this.active) {
         this.active = true;
-        this.callback=callback;
-        keyboard.addListener('name');
+        this.entries = entries;
+        this.onsend = onsend;
+        this.oncancel = oncancel;
+        keyboard.addListener('dialogue');
         keyboard.toggle();
       } else {
+        this.okPressed = false;
         this.active = false;
-        this.callback=null;
-        keyboard.removeListener('name');
+        this.entries=[];
+        this.onsend=null;
+        this.oncancel = null;
+        keyboard.removeListener('dialogue');
         keyboard.toggle();
-        this.name = "";
       }
     },
   }
 });
 
-document.getElementById('name').addEventListener('keypress', (e) => {
+document.getElementById('dialogue').addEventListener('keypress', (e) => {
   if (e.key == 9166) {
-    dialogue.onOkPressed();
-  } else {
-    dialogue.name += String.fromCharCode(e.key);
+    console.log('test');
+    dialogue.okPressed = true;
   }
-  console.log(e.target.value);
 });

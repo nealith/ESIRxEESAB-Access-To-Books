@@ -8,17 +8,49 @@ libraryShutter = new Vue({
   data:{
     books:books,
     bonus:bonus,
-    selectedIndex:{}
+    selectedBonusId:'',
+    selectedBonusDescription:'',
+    selectedIndex:{},
   },
   created:function(){
     for (var i = 0; i < this.books.length; i++) {
-      this.selectedIndex[books[i].name] = 0;
+      this.selectedIndex[this.books[i].name] = 0;
+      this.books[i].selectedDescription = this.books[i].pages[0].description;
+      //byId(this.books[i].name+'_page_description').innerHTML = this.books[i].selectedDescription;
     }
     this.selectedIndex['bonus'] = 0;
+
+    if (this.bonus.length > 0) {
+      this.selectedBonusId = this.bonus[0].id;
+      this.selectedBonusDescription = this.bonus[0].description;
+    }
+
   },
   methods:{
+    checkBonusExist:function(value){
+      for (var i = 0; i < this.bonus.length; i++) {
+        if(this.bonus[i].id == value){
+          return true;
+        }
+      }
+      return false;
+    },
     updateDescription:function(e){
       this.selectedIndex[e.id] = e.selected;
+
+      if (e.id == 'bonus') {
+        this.selectedBonusId = this.bonus[e.selected].id;
+        this.selectedBonusDescription = this.bonus[e.selected].description;
+      } else {
+        for (var i = 0; i < this.books.length; i++) {
+          if(this.books[i].name == e.id){
+            this.books[i].selectedDescription = this.books[i].pages[e.selected].description;
+            byId(this.books[i].name+'_page_description').innerHTML = this.books[i].selectedDescription;
+            break;
+          }
+        }
+      }
+
     },
     selectedBookChanged:function(e){
       libraryStrip.$refs.libraryStripSlides.updateSelected(e.selected)

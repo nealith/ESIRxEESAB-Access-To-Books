@@ -31,6 +31,7 @@
     <script type="text/javascript" src="./ihm/vue-simple-gesture.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/vue-size-changed.js" charset="utf-8"></script>
     <script type="text/javascript" src="./ihm/vue-slides.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./ihm/vue-dialogue.js" charset="utf-8"></script>
 
     <script type="text/javascript" src="./libs/openseadragon/openseadragon.js" charset="utf-8"></script>
 
@@ -61,7 +62,8 @@
             class="full-border"
             v-show="active"
             v-draggable="{containment:'parent'}">
-        <div>
+            <dialogue :entries="entries" v-on:send="send" v-on:cancel="cancel" send-text="accept" cancel-text="cancel" :send-pressed="okPressed"></dialogue>
+        <!--<div>
           <input  autofocus="true"
                   id="name"
                   class="full-border"
@@ -82,7 +84,7 @@
                     v-finger:tap="onCancelPressed">
                     Annuler
           </button>
-        </div>
+        </div>-->
 
       </div>
 
@@ -261,7 +263,7 @@
                   </slides>
                   <label class="book_label">
                     <span class="book_name">{{book.name}}</span>
-                    <span class="page_ref">{{book.pages[selectedIndex[book.name]].description}}</span>
+                    <span class="page_ref" :id="book.name+'_page_description'"></span>
                   </label>
                 </div>
               <slide>
@@ -280,9 +282,9 @@
                     </slide>
                   </template>
                 </slides>
-                <label v-if="(bonus.selected != undefined) ? true : false" class="book_label">
-                  <span class="book_name">Bonus</span>
-                  <span class="page_ref">{{bonus.pages[selectedIndex['bonus']].description}}</span>
+                <label  class="book_label">
+                  <span class="book_name">{{selectedBonusId}}</span>
+                  <span class="page_ref">{{selectedBonusDescription}}</span>
                 </label>
               </div>
             <slide>

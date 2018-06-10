@@ -86,6 +86,8 @@ if (fs.existsSync(CONFIG.montages.index)){
 global.books_path = CONFIG.books.path
 global.bonus_path = CONFIG.bonus.path
 global.montages_path = CONFIG.montages.path
+global.user = CONFIG.user
+global.path_media = CONFIG.pathMedia
 
 if (!fs.existsSync(global.books_path)){
   fs.mkdirSync(global.books_path);
@@ -174,7 +176,8 @@ ipcMain.on('addBonus',(event,arg) => {
     original : arg.original,
     originalPath : global.bonus_path+'tiff/'+arg.name+'.tiff',
     thumbnail : global.bonus_path+'thumbnail/'+arg.name+'.png',
-    dzi : global.bonus_path+'dzi/'+arg.name+'.dzi'
+    dzi : global.bonus_path+'dzi/'+arg.name+'.dzi',
+    description : arg.description
   }
 
   if (!fs.existsSync(bonus_path+'tiff/')){
@@ -427,11 +430,11 @@ var items = [] // files, directories, symlinks, etc
 
 ipcMain.on('walkon',(event,arg) => {
 
-  klaw(arg,{depthLimit:0})
+  klaw(arg.path,{depthLimit:0})
     .pipe(onlyDir)
     .on('data', item => items.push(item.path))
     .on('end', () => {
-      event.sender.send('receiveDirList',dirs)
+      event.sender.send(arg.callback,dirs)
     })
 
 })

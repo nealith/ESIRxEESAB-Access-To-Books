@@ -12,5 +12,6 @@
     "path":"./bonus/"
   },
   "debug":true,
-  "user":"nealith"
+  "user":"nealith",
+  "pathMedia":"/run/media/"
 }
