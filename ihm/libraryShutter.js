@@ -30,6 +30,7 @@ libraryShutter = new Vue({
     checkBonusExist:function(value){
       for (var i = 0; i < this.bonus.length; i++) {
         if(this.bonus[i].id == value){
+          discretAlert.alert({msg:'bonus '+value+' already exist ):',warning:true});
           return true;
         }
       }

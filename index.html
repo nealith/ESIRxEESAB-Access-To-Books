@@ -161,14 +161,11 @@
 
       <div  id="zoom"
             class="full-space"
-            v-finger:tap="tap"
-            v-finger:touch-start="start"
-            v-finger:touch-end="end"
-            v-finger:touch-cancel="end"
-            v-finger:press-move="move"
+            v-simple-gesture:tap="tap"
+            v-simple-gesture:press-move="{start:start,move:move,end:end,leave:end}"
+            v-simple-gesture:long-tap="longTap"
             v-finger:rotate="rotate"
-            v-finger:long-tap="longTap"
-            v-on:mousedown.left="start"
+            v-finger:pinch="zoom"
             v-show="active">
         <div id="zoom-container">
 

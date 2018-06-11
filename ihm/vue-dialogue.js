@@ -124,8 +124,10 @@ VueDialogue.install = function(Vue,options){
     template:`
       <div class="vue-dialogue-checkbox-area">
         <template v-for="entry in entries">
-          <input class="vue-dialogue-checkbox" :value="entry.value" :id="entry.id" type="checkbox" v-model="value">
-          <label class="vue-dialogue-checkbox-label" :for="entry.id">{{entry.value}}</label>
+          <div class="vue-dialogue-checkbox-pair">
+            <input class="vue-dialogue-checkbox" :value="entry.value" :id="entry.id" type="checkbox" v-model="value">
+            <label class="vue-dialogue-checkbox-label" :for="entry.id">{{entry.value}}</label>
+          </div>
         </template>
       </div>
     `
@@ -148,8 +150,10 @@ VueDialogue.install = function(Vue,options){
     template:`
       <div class="vue-dialogue-radio-area">
         <template v-for="entry in entries">
-          <input class="vue-dialogue-radio" :value="entry.value" :id="entry.id" type="radio" v-model="value">
-          <label class="vue-dialogue-radio-label" :for="entry.id">{{entry.value}}</label>
+          <div class="vue-dialogue-radio-pair">
+            <input class="vue-dialogue-radio" :value="entry.value" :id="entry.id" type="radio" v-model="value">
+            <label class="vue-dialogue-radio-label" :for="entry.id">{{entry.value}}</label>
+          </div>
         </template>
       </div>
     `
@@ -201,7 +205,6 @@ VueDialogue.install = function(Vue,options){
       'cancel-pressed':Boolean
     },
     updated:function(){
-      console.log(this.sendPressed);
       if (this.sendPressed == true) {
         this.$emit('send',this.formData);
       } else if(this.cancelPressed == true){
@@ -227,12 +230,12 @@ VueDialogue.install = function(Vue,options){
         <div class="vue-dialogue-final">
           <button   class="vue-dialogue-form-send"
                     type="submit"
-                    v-simple-gesture:tap="function(){$emit('send',formData)}">
+                    v-simple-gesture:tap="function(){$emit('send',formData)}" :pressed="sendPressed">
                     {{sendText}}
           </button>
           <button   class="vue-dialogue-form-cancel"
                     type="submit"
-                    v-simple-gesture:tap="function(){$emit('cancel',null)}">
+                    v-simple-gesture:tap="function(){$emit('cancel',null)}" :pressed="cancelPressed">
                     {{cancelText}}
           </button>
         </div>

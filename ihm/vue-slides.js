@@ -162,7 +162,7 @@ VueSlides.install = function(Vue, options){
       }
     },
     template:`
-      <div v-bind:id="id" :class="aclass != undefined ? 'slides-container '+aclass : 'slides-container'" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:pressMove="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="horizontal" :vertical="!horizontal">
+      <div v-bind:id="id" :class="aclass != undefined ? 'slides-container '+aclass : 'slides-container'" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:press-move="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="horizontal" :vertical="!horizontal">
         <div class="slides">
           <slot></slot>
         </div>

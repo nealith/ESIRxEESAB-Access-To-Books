@@ -196,9 +196,10 @@ keyboard = new Vue({
     },
     removeListener:function(id){
       for (var i = 0; i < this.listener.length; i++) {
-        this.listener[i] == id;
-        this.listener.splice(i, 1);
-        break;
+        if (this.listener[i] == id) {
+          this.listener.splice(i, 1);
+          break;
+        }
       }
     },
     onCapslockPressed:function(){
@@ -247,29 +248,26 @@ keyboard = new Vue({
         }
       }
       if (id != "keyShift") {
-        var key = null;
-        for (var i = 0; i < keys.length; i++) {
-          if(keys[i].label == id){
-            key = keys[i];
-            break;
-          }
-        }
-        var event;
-        if (key.label != "keyOK") {
-          event = new KeyboardEvent('keypress',{
-            key:key.letter.charCodeAt(0)
-          });
-        } else {
-          event = new KeyboardEvent('keypress',{
-            key:9166
-          });
-        }
         for (var i = 0; i < this.listener.length; i++) {
+          var key = null;
+          for (var j = 0; j < keys.length; j++) {
+            if(keys[j].label == id){
+              key = keys[j];
+              break;
+            }
+          }
+          var event;
+          if (key.label != "keyOK") {
+            event = new KeyboardEvent('keypress',{
+              key:key.letter.charCodeAt(0)
+            });
+          } else {
+            event = new KeyboardEvent('keypress',{
+              key:9166
+            });
+          }
           document.getElementById(this.listener[i]).dispatchEvent(event);
         }
-
-
-        window.dispatchEvent(event);
 
       } else {
         this.onCapslockPressed();

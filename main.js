@@ -413,22 +413,22 @@ ipcMain.on('walkonBook',(event,arg) => {
 // Rerpertory walking
 //----------------------------------------------------------------------
 
-var dirs = []
-
-const onlyDir = through2.obj(function (item, enc, next) {
-  if (item.stats.isDirectory()) {
-    this.push(item)
-    dirs.push({
-      name:path.basename(item.path),
-      path:item.path
-    })
-  }
-  next()
-})
-
-var items = [] // files, directories, symlinks, etc
-
 ipcMain.on('walkon',(event,arg) => {
+
+  var dirs = []
+
+  var items = [] // files, directories, symlinks, etc
+
+  var onlyDir = through2.obj(function (item, enc, next) {
+    if (item.stats.isDirectory()) {
+      this.push(item)
+      dirs.push({
+        name:path.basename(item.path),
+        path:item.path
+      })
+    }
+    next()
+  })
 
   klaw(arg.path,{depthLimit:0})
     .pipe(onlyDir)

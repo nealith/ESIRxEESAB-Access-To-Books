@@ -142,19 +142,42 @@ body {
 	margin:1px;
 }
 
-#dialogue vue-dialogue-final {
+#dialogue .vue-dialogue-final {
 	position: relative;
 	left:50%;
 	transform: translateX(-50%);
 }
 
-#dialogue vue-dialogue-textarea {
-	min-height: 3vh;
-}
-
-#dialogue vue-dialogue-form-send, vue-dialogue-form-cancel{
+#dialogue .vue-dialogue-input {
+	color: white;
 	background: black;
 	border: 1px solid white;
+	margin-bottom: 10px;
+}
+
+#dialogue .vue-dialogue-textarea {
+	min-height: 3vh;
+	color: white;
+	background: black;
+	border: 1px solid white;
+	margin-bottom: 10px;
+}
+
+#dialogue .vue-dialogue-radio {
+	background: black;
+	border-color: white;
+}
+
+#dialogue .vue-dialogue-radio-area {
+	margin-bottom: 10px;
+
+}
+
+#dialogue .vue-dialogue-form-send, .vue-dialogue-form-cancel{
+	color: white;
+	background: black;
+	border: 1px solid white;
+	text-transform: uppercase;
 }
 
 

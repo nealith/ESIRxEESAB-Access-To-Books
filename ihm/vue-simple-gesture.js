@@ -6,7 +6,7 @@ VueSimpleGesture = {}
  * double tap
  * long tap
  * swipe to any direction return one or two char string, if two, first letter if for left or right, second pour top or bottom (L:left R:right B:bottom T:top)
- * pressMove (need a object with four function : start, move, end, leave)
+ * press-move (need a object with four function : start, move, end, leave)
  */
 
 // options
@@ -32,6 +32,11 @@ VueSimpleGesture.install = function(Vue, options){
             window.setTimeout(function() { isTap = false;},longTapTime-10);
           }
         },{passive: true});
+        el.addEventListener('touchmove',function(evt){
+          if (isTap) {
+            isTap = false;
+          }
+        },{passive: true});
         el.addEventListener('touchend',function(evt){
           if (isTap) {
             isTap = false;
@@ -43,6 +48,11 @@ VueSimpleGesture.install = function(Vue, options){
           if (!isTap) {
             isTap = true;
             window.setTimeout(function() { isTap = false;},longTapTime-10);
+          }
+        });
+        el.addEventListener('mousemove',function(evt){
+          if (isTap) {
+            isTap = false;
           }
         });
         el.addEventListener('mouseup',function(evt){
@@ -63,7 +73,7 @@ VueSimpleGesture.install = function(Vue, options){
             isDoubleTap = false;
             binding.value(evt);
           }
-        });
+        },{passive: true});
 
         el.addEventListener('mousedown',function(evt){
           if (!isDoubleTap) {
@@ -85,12 +95,12 @@ VueSimpleGesture.install = function(Vue, options){
               binding.value(evt);
             }
           },longTapTime);
-        });
+        },{passive: true});
         el.addEventListener('touchmove',function(evt){
           if (canBeLongTap) {
             canBeLongTap = false;
           }
-        });
+        },{passive: true});
         el.addEventListener('touchleave',function(evt){
           if (canBeLongTap) {
             canBeLongTap = false;
@@ -137,14 +147,14 @@ VueSimpleGesture.install = function(Vue, options){
 
       var press = false;
 
-      if (binding.arg == 'pressMove') {
+      if (binding.arg == 'press-move') {
 
         el.addEventListener('touchstart',function(evt){
           press = true;
           currentX = evt.changedTouches[0].pageX;
           currentY = evt.changedTouches[0].pageY;
           binding.value.start(evt);
-        });
+        },{passive: true});
         el.addEventListener('mousedown',function(evt){
           press = true;
           binding.value.start(evt);
@@ -161,7 +171,7 @@ VueSimpleGesture.install = function(Vue, options){
             binding.value.move(evt);
           }
 
-        });
+        },{passive: true});
         el.addEventListener('mousemove',function(evt){
           if (press) {
             binding.value.move(evt);
@@ -193,7 +203,7 @@ VueSimpleGesture.install = function(Vue, options){
           press = true;
           currentX = evt.changedTouches[0].pageX;
           currentY = evt.changedTouches[0].pageY;
-        });
+        },{passive: true});
         el.addEventListener('mousedown',function(evt){
           currentX = evt.pageX;
           currentY = evt.pageY;

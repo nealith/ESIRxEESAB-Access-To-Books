@@ -135,6 +135,7 @@ montageShutter = new Vue({
     checkMontageExist:function(value){
       for (var i = 0; i < this.montages.length; i++) {
         if (this.montages[i].name == value) {
+          discretAlert.alert({msg:'montage '+value+' already exist ):',warning:true});
           return true;
         }
       }

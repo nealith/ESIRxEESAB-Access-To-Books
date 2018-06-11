@@ -28,48 +28,9 @@ mainStrip = new Vue({
     },
     onExportMontagePressed:function(e){
 
-      pathToUSB = remote.getGlobal('path_media')+remote.getGlobal('user')+'/';
-      console.log(pathToUSB);
+      let pathToUSB = remote.getGlobal('path_media')+remote.getGlobal('user')+'/';
 
       ipcRenderer.send('walkon',{path:pathToUSB,callback:'walkonUSB'});
-
-      ipcRenderer.on('walkonUSB', (event, dir) => {
-
-        dir.push({name:'./',path:'./'});
-
-        dirS = [];
-
-        for (var i = 0; i < dir.length; i++) {
-          if (dir[i].name != remote.getGlobal('user')) {
-            dirS.push({id:dir[i].name,value:dir[i].name});
-          }
-
-        }
-
-        dialogue.toggle(
-          [
-            {
-              type:'radio',
-              id:'export-montage-radio',
-              entries:dirS
-            }
-          ],
-          function(data){
-
-            if (data['export-montage-radio']!= './') {
-              for (var i = 0; i < dir.length; i++) {
-
-                if (dir[i].name === data['export-montage-radio']) {
-                  data['export-montage-radio'] = dir[i].path;
-                }
-              }
-            }
-
-            montageShutter.export(data['export-montage-radio']);
-          }
-        );
-      });
-
 
     },
     onAddPostIt:function(e){
@@ -78,4 +39,41 @@ mainStrip = new Vue({
     onEnableVocalPressed:function(e){
     }
   }
+});
+
+ipcRenderer.on('walkonUSB', (event, dir) => {
+
+  dir.push({name:'./',path:'./'});
+
+  let dirS = [];
+
+  for (var i = 0; i < dir.length; i++) {
+    if (dir[i].name != remote.getGlobal('user')) {
+      dirS.push({id:dir[i].name,value:dir[i].name});
+    }
+
+  }
+
+  dialogue.toggle(
+    [
+      {
+        type:'radio',
+        id:'export-montage-radio',
+        entries:dirS
+      }
+    ],
+    function(data){
+
+      if (data['export-montage-radio']!= './') {
+        for (var i = 0; i < dir.length; i++) {
+
+          if (dir[i].name === data['export-montage-radio']) {
+            data['export-montage-radio'] = dir[i].path;
+          }
+        }
+      }
+
+      montageShutter.export(data['export-montage-radio']);
+    }
+  );
 });

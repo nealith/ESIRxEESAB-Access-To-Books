@@ -17,7 +17,7 @@ zoom = new Vue({
   },
   methods:{
     zoom:function(e){
-      this.currentZoomFactor += e.deltaY || e.zoom;
+      this.currentZoomFactor += e.zoom;
       if (this.view != null) {
         this.view.viewport.zoomBy(this.currentZoomFactor);
       }
@@ -25,29 +25,19 @@ zoom = new Vue({
     tap:function(e){
 
       this.currentZoomLevel+=this.incZoom;
-      console.log(this.currentZoomLevel);
       if (this.currentZoomLevel >= this.view.viewport.getMaxZoom()) {
         this.incZoom = -0.1;
       } else if(this.currentZoomLevel <= this.view.viewport.getMinZoom()) {
         this.incZoom = 0.1;
       }
-      console.log(this.view.viewport.getMaxZoom());
-      console.log(this.view.viewport.getMinZoom());
       this.view.viewport.zoomTo(this.currentZoomLevel);
-      console.log(this.view.viewport.getZoom());
     },
     start:function(e){
 
       id = e.target.id || e.currentTarget.id;
       if (id != 'marker1' && id != 'marker2' ) {
-        if (this.doubleTap) { // double-tap event with alloy_finger is not handle...
-          this.doubleTap = false;
-          this.toggleForeground();
-        } else if (this.view != null) {
+        if (this.view != null) {
           this.center = this.view.viewport.getCenter();
-          this.doubleTap = true;
-          window.setTimeout(function() { zoom.doubleTap = false;},150);
-
         }
       }
     },
@@ -95,107 +85,93 @@ zoom = new Vue({
             tileSources:data.dzi+'.dzi',
             showNavigationControl:false
           });
+          this.view.setMouseNavEnabled(false);
           this.currentZoomLevel = this.view.viewport.getMinZoom();
           this.imgInfos = data;
-
-          this.view.addHandler('canvas-press',function(e){
-            zoom.longClick = true;
-            window.setTimeout(function() {
-              if (zoom.longClick) {
-                zoom.longTap(null);
-              }
-              zoom.longClick = false;
-            },200);
-          })
-
-          this.view.addHandler('canvas-release',function(e){
-            zoom.longClick = false;
-          })
-
-          this.view.addHandler('canvs-drag',function(e){
-            zoom.longClick = false;
-          })
 
       }
     },
     longTap:function(e){
-      leftMarker1 = rect(byId('marker1')).left;
 
-      topMarker1 = rect(byId('marker1')).top;
+      if (this.view != null) {
+        leftMarker1 = rect(byId('marker1')).left;
 
-      rightMarker2 =  rect(byId('marker2')).right;
+        topMarker1 = rect(byId('marker1')).top;
 
-      bottomMarker2 = rect(byId('marker2')).bottom;
+        rightMarker2 =  rect(byId('marker2')).right;
 
-      rotation = this.view.viewport.getRotation()
+        bottomMarker2 = rect(byId('marker2')).bottom;
 
-      if (rotation == 0 && leftMarker1 == 0 && topMarker1 == 0 && rightMarker2 == frame.w && bottomMarker2 == frame.h) {
-        discretAlert.alert({msg:'Aucune modification détectée : annulation de la création de bonus',warning:true});
-        this.toggle(null);
-        return;
-      }
+        rotation = this.view.viewport.getRotation()
 
-      if (leftMarker1 < rightMarker2 && topMarker1 < bottomMarker2) {
-
-        topleft =  this.view.viewport.viewportToImageCoordinates(this.view.viewport.pointFromPixelNoRotate(new OpenSeadragon.Point(leftMarker1,topMarker1),true)) ;
-        bottomright = this.view.viewport.viewportToImageCoordinates(this.view.viewport.pointFromPixelNoRotate(new OpenSeadragon.Point(rightMarker2,bottomMarker2),true)) ;
-
-
-
-        if (topleft.x >= 0 &&
-          topleft.y >= 0 &&
-          bottomright.x < this.imgInfos.originalWidth &&
-          bottomright.y < this.imgInfos.originalHeight
-        ) {
-
-          arg = {
-            name:'bonus'+libraryShutter.bonus.length,
-            left:topleft.x,
-            top:topleft.y,
-            width:bottomright.x - topleft.x,
-            height:bottomright.y - topleft.y,
-            original:this.imgInfos,
-            angle:rotation
-          }
-
-          dialogue.toggle(
-            [
-              {
-                type:'text',
-                checkingFunction:libraryShutter.checkBonusExist,
-                id:'new-bonus-name',
-                placeholder:'Name (:',
-                tap:dialogue.focus
-              },
-              {
-                type:'textarea',
-                id:'new-bonus-description',
-                placeholder:'Description (:',
-                tap:dialogue.focus
-              }
-            ],
-            function(data){
-              arg.name = data['new-bonus-name'];
-              arg.description = data['new-bonus-description']
-              ipcRenderer.send('addBonus',arg);
-              zoom.toggle(null);
-            },
-            function(){
-              zoom.toggle(null);
-            }
-          );
-        } else {
-          discretAlert.alert({msg:'markers must be on the image ! ):',warning:true});
+        if (rotation == 0 && leftMarker1 == 0 && topMarker1 == 0 && rightMarker2 == frame.w && bottomMarker2 == frame.h) {
+          discretAlert.alert({msg:'no modifications detected, bonus creation cancelled',warning:true});
+          this.toggle(null);
+          return;
         }
 
+        if (leftMarker1 < rightMarker2 && topMarker1 < bottomMarker2) {
+
+          topleft =  this.view.viewport.viewportToImageCoordinates(this.view.viewport.pointFromPixelNoRotate(new OpenSeadragon.Point(leftMarker1,topMarker1),true)) ;
+          bottomright = this.view.viewport.viewportToImageCoordinates(this.view.viewport.pointFromPixelNoRotate(new OpenSeadragon.Point(rightMarker2,bottomMarker2),true)) ;
 
 
-      } else {
-        discretAlert.alert({msg:'orange marker must be above and at left of the cyan marker ):',warning:true});
+
+          if (topleft.x >= 0 &&
+            topleft.y >= 0 &&
+            bottomright.x < this.imgInfos.originalWidth &&
+            bottomright.y < this.imgInfos.originalHeight
+          ) {
+
+            arg = {
+              name:'bonus'+libraryShutter.bonus.length,
+              left:topleft.x,
+              top:topleft.y,
+              width:bottomright.x - topleft.x,
+              height:bottomright.y - topleft.y,
+              original:this.imgInfos,
+              angle:rotation
+            }
+
+            dialogue.toggle(
+              [
+                {
+                  type:'text',
+                  checkingFunction:libraryShutter.checkBonusExist,
+                  id:'new-bonus-name',
+                  placeholder:'Name (:',
+                  tap:dialogue.focus
+                },
+                {
+                  type:'textarea',
+                  id:'new-bonus-description',
+                  placeholder:'Description (:',
+                  tap:dialogue.focus
+                }
+              ],
+              function(data){
+                arg.name = data['new-bonus-name'];
+                arg.description = data['new-bonus-description']
+                ipcRenderer.send('addBonus',arg);
+                zoom.toggle(null);
+              },
+              function(){
+                zoom.toggle(null);
+              }
+            );
+          } else {
+            discretAlert.alert({msg:'markers must be on the image ! ):',warning:true});
+          }
+
+
+
+        } else {
+          discretAlert.alert({msg:'orange marker must be above and at left of the cyan marker ):',warning:true});
+        }
+
       }
 
     }
-
   }
 });
 

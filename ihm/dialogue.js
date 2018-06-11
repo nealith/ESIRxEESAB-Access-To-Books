@@ -37,30 +37,32 @@ dialogue = new Vue({
       }
       this.toggle();
     },
+    isOkPressed:function(e){
+      if (e.key == 9166) {
+        this.okPressed = true;
+      }
+    },
     toggle:function(entries,onsend,oncancel){
       if (!this.active) {
         this.active = true;
         this.entries = entries;
         this.onsend = onsend;
         this.oncancel = oncancel;
-        keyboard.addListener('dialogue');
+
         keyboard.toggle();
+        keyboard.addListener('dialogue');
+
+        byId('dialogue').addEventListener('keypress',this.isOkPressed);
       } else {
         this.okPressed = false;
         this.active = false;
         this.entries=[];
         this.onsend=null;
         this.oncancel = null;
+        byId('dialogue').removeEventListener('keypress',this.isOkPressed);
         keyboard.removeListener('dialogue');
         keyboard.toggle();
       }
     },
-  }
-});
-
-document.getElementById('dialogue').addEventListener('keypress', (e) => {
-  if (e.key == 9166) {
-    console.log('test');
-    dialogue.okPressed = true;
   }
 });
