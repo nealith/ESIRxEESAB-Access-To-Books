@@ -88,6 +88,8 @@ global.bonus_path = CONFIG.bonus.path
 global.montages_path = CONFIG.montages.path
 global.user = CONFIG.user
 global.path_media = CONFIG.pathMedia
+global.debug = CONFIG.debug
+global.enableCaress = CONFIG.enableCaress
 
 if (!fs.existsSync(global.books_path)){
   fs.mkdirSync(global.books_path);
@@ -445,17 +447,6 @@ ipcMain.on('walkon',(event,arg) => {
 // tuio - CaressServer
 //----------------------------------------------------------------------
 
-var server = require('http').createServer();
-var io = require('socket.io')(server);
-var CaressServer = require('caress-server');
-var caress = new CaressServer('0.0.0.0', 3333, {json: false});
-
-//DEBUG
-//caress.on('tuio', function(msg){
-//  console.log(msg);
-//});
-
-var badEvent = {}
 var transfer = false
 var time = 0
 
@@ -471,54 +462,73 @@ function wait(){
   }
 }
 
-function onSocketConnect(socket) {
-    console.log("Socket.io Client Connected");
+if (global.enableCaress == true) {
+  var server = require('http').createServer();
+  var io = require('socket.io')(server);
+  var CaressServer = require('caress-server');
+  var caress = new CaressServer('0.0.0.0', 3333, {json: false});
 
-    caress.on('tuio', function(msgObj){
-      if (transfer) {
-        var k = 0
-        while (k < msgObj.messages.length) {
-          e= msgObj.messages[k]
-          if (e.type != 'alive' && e.type != 'fseq') {
-            if( !(badEvent[e.sessionId] === undefined && badEvent[JSON.stringify({x:e.xPosition,y:e.yPosition})] === undefined)){
-              //console.log(e.sessionId);
-              //console.log(JSON.stringify({x:e.xPosition,y:e.yPosition}));
-                msgObj.messages.splice(k,1);
-                k--
-              }
+  //DEBUG
+  //caress.on('tuio', function(msg){
+  //  console.log(msg);
+  //});
+
+  var badEvent = {}
+
+  function onSocketConnect(socket) {
+      console.log("Socket.io Client Connected");
+
+      caress.on('tuio', function(msgObj){
+        console.log(msgObj);
+        if (transfer) {
+          var k = 0
+          while (k < msgObj.messages.length) {
+            e= msgObj.messages[k]
+            if (e.type != 'alive' && e.type != 'fseq') {
+              if( !(badEvent[e.sessionId] === undefined && badEvent[JSON.stringify({x:e.xPosition,y:e.yPosition})] === undefined)){
+                //console.log(e.sessionId);
+                //console.log(JSON.stringify({x:e.xPosition,y:e.yPosition}));
+                  msgObj.messages.splice(k,1);
+                  k--
+                }
+            }
+            k++
           }
-          k++
-        }
-        if (msgObj.messages.length > 2) {
-          socket.emit('tuio', msgObj)
+          if (msgObj.messages.length > 2) {
+            socket.emit('tuio', msgObj)
+          } else {
+            //console.log("event removed")
+          }
+
         } else {
-          //console.log("event removed")
-        }
-
-      } else {
-        var k = 0
-        while (k < msgObj.messages.length) {
-          e= msgObj.messages[k]
-          if (e.type != 'alive' && e.type != 'fseq') {
-            badEvent[e.sessionId]=e
-            badEvent[JSON.stringify({x:e.xPosition,y:e.yPosition})]=e
+          var k = 0
+          while (k < msgObj.messages.length) {
+            e= msgObj.messages[k]
+            if (e.type != 'alive' && e.type != 'fseq') {
+              badEvent[e.sessionId]=e
+              badEvent[JSON.stringify({x:e.xPosition,y:e.yPosition})]=e
+            }
+            k++
           }
-          k++
         }
-      }
-    });
+      });
 
-    socket.on("disconnect", function(){
-      console.log("Socket.io Client Disconnected");
-    });
+      socket.on("disconnect", function(){
+        console.log("Socket.io Client Disconnected");
+      });
 
-    setTimeout(wait,1000)
+      setTimeout(wait,1000)
+  }
+
+  io.sockets.on("connection", onSocketConnect);
+
+
+  server.listen(5000);
+} else {
+  setTimeout(wait,1000)
 }
 
-io.sockets.on("connection", onSocketConnect);
 
-
-server.listen(5000);
 
 
 //----------------------------------------------------------------------

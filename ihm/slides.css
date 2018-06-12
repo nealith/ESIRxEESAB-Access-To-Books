@@ -11,6 +11,13 @@
   transition-timing-function: ease;
 }
 
+.slides[is-dragged]{
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
+
 .slide{
 }
 

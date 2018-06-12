@@ -18,7 +18,9 @@ VueDraggable = {
     }
   },
   drag:function(evt,el){
+
     if (el.getAttribute('is-dragged') === 'true') {
+
       let containment = null
       if (el.getAttribute('drag-containment') == 'parent') {
         containment = el.parentElement;
@@ -47,7 +49,7 @@ VueDraggable = {
             evt.deltaX = Math.max(evt.deltaX,rectContainment.left-rectEl.left);
           }
         }
-        left = parseFloat(window.getComputedStyle(el,null).getPropertyValue('left'))+evt.deltaX;
+        left = evt.deltaX + parseFloat(window.getComputedStyle(el,null).getPropertyValue('left'));
 
       }
       if (el.getAttribute('drag-on-axis') == 'y' || el.getAttribute('drag-on-axis') == 'none') {
@@ -63,7 +65,7 @@ VueDraggable = {
             evt.deltaY = Math.max(evt.deltaY,rectContainment.top-rectEl.top);
           }
         }
-        top = parseFloat(window.getComputedStyle(el,null).getPropertyValue('top'))+evt.deltaY;
+        top = evt.deltaY + parseFloat(window.getComputedStyle(el,null).getPropertyValue('top'));
       }
 
       el.setAttribute('style','left:'+left+'px;top:'+top+'px;');
@@ -98,7 +100,7 @@ VueDraggable.install = function(Vue, options){
       el.addEventListener('touchstart',function(evt){
         VueDraggable.dragStart(evt,el);
         if (binding.value.start) {
-          binding.value.start(evt);
+            binding.value.start(evt);
         }
       },{passive: true});
 

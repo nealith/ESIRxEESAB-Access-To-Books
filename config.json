@@ -11,7 +11,8 @@
     "index":"./bonus.json",
     "path":"./bonus/"
   },
-  "debug":true,
+  "debug":false,
   "user":"nealith",
-  "pathMedia":"/run/media/"
+  "pathMedia":"/run/media/",
+  "enableCaress":true
 }

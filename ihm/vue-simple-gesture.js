@@ -27,21 +27,29 @@ VueSimpleGesture.install = function(Vue, options){
       if (binding.arg == 'tap') {
         var isTap = false;
         el.addEventListener('touchstart',function(evt){
-          if (!isTap) {
-            isTap = true;
-            window.setTimeout(function() { isTap = false;},longTapTime-10);
+          if (evt.touches.length == 1) {
+            if (!isTap) {
+              isTap = true;
+              window.setTimeout(function() { isTap = false;},longTapTime-10);
+            }
           }
         },{passive: true});
+
+
         el.addEventListener('touchmove',function(evt){
-          if (isTap) {
-            isTap = false;
+          if (evt.touches.length == 1) {
+            if (isTap) {
+              isTap = false;
+            }
           }
         },{passive: true});
         el.addEventListener('touchend',function(evt){
-          if (isTap) {
-            isTap = false;
-            binding.value(evt);
-          }
+          if (evt.touches.length == 1) {
+            if (isTap) {
+              isTap = false;
+              binding.value(evt);
+            }
+        }
         });
 
         el.addEventListener('mousedown',function(evt){
@@ -66,13 +74,24 @@ VueSimpleGesture.install = function(Vue, options){
       if (binding.arg == 'double-tap') {
         var isDoubleTap = false;
         el.addEventListener('touchstart',function(evt){
-          if (!isDoubleTap) {
-            isDoubleTap = true;
-            window.setTimeout(function() { isDoubleTap = false;},doubleTapTime);
-          } else {
-            isDoubleTap = false;
-            binding.value(evt);
+          if (evt.touches.length == 1) {
+            if (!isDoubleTap) {
+              isDoubleTap = true;
+              window.setTimeout(function() { isDoubleTap = false;},doubleTapTime);
+            } else {
+              isDoubleTap = false;
+              binding.value(evt);
+            }
           }
+        },{passive: true});
+
+        el.addEventListener('touchmove',function(evt){
+          if (evt.touches.length == 1) {
+            if (isDoubleTap) {
+              isDoubleTap = false;
+            }
+          }
+
         },{passive: true});
 
         el.addEventListener('mousedown',function(evt){
@@ -84,31 +103,45 @@ VueSimpleGesture.install = function(Vue, options){
             binding.value(evt);
           }
         });
+
+        el.addEventListener('mousemove',function(evt){
+          if (isDoubleTap) {
+            isDoubleTap = false;
+          }
+        })
       }
 
       if (binding.arg == 'long-tap') {
         var canBeLongTap = false;
         el.addEventListener('touchstart',function(evt){
-          canBeLongTap = true;
-          window.setTimeout(function() {
-            if (canBeLongTap) {
-              binding.value(evt);
-            }
-          },longTapTime);
+          if (evt.touches.length == 1) {
+            canBeLongTap = true;
+            window.setTimeout(function() {
+              if (canBeLongTap) {
+                binding.value(evt);
+              }
+            },longTapTime);
+          }
         },{passive: true});
         el.addEventListener('touchmove',function(evt){
-          if (canBeLongTap) {
-            canBeLongTap = false;
+          if (evt.touches.length == 1) {
+            if (canBeLongTap) {
+              canBeLongTap = false;
+            }
           }
         },{passive: true});
         el.addEventListener('touchleave',function(evt){
-          if (canBeLongTap) {
-            canBeLongTap = false;
+          if (evt.touches.length == 1) {
+            if (canBeLongTap) {
+              canBeLongTap = false;
+            }
           }
         });
         el.addEventListener('touchend',function(evt){
-          if (canBeLongTap) {
-            canBeLongTap = false;
+          if (evt.touches.length == 1) {
+            if (canBeLongTap) {
+              canBeLongTap = false;
+            }
           }
         });
 
@@ -150,10 +183,12 @@ VueSimpleGesture.install = function(Vue, options){
       if (binding.arg == 'press-move') {
 
         el.addEventListener('touchstart',function(evt){
-          press = true;
-          currentX = evt.changedTouches[0].pageX;
-          currentY = evt.changedTouches[0].pageY;
-          binding.value.start(evt);
+          if (evt.touches.length == 1) {
+            press = true;
+            currentX = evt.changedTouches[0].pageX;
+            currentY = evt.changedTouches[0].pageY;
+            binding.value.start(evt);
+          }
         },{passive: true});
         el.addEventListener('mousedown',function(evt){
           press = true;
@@ -161,14 +196,16 @@ VueSimpleGesture.install = function(Vue, options){
         });
 
         el.addEventListener('touchmove',function(evt){
-          if (press) {
-            evt.movementX = evt.changedTouches[0].pageX - currentX;
-            evt.movementY = evt.changedTouches[0].pageY - currentY;
+          if (evt.touches.length == 1) {
+            if (press) {
+              evt.movementX = evt.changedTouches[0].pageX - currentX;
+              evt.movementY = evt.changedTouches[0].pageY - currentY;
 
-            currentX = evt.changedTouches[0].pageX;
-            currentY = evt.changedTouches[0].pageY;
+              currentX = evt.changedTouches[0].pageX;
+              currentY = evt.changedTouches[0].pageY;
 
-            binding.value.move(evt);
+              binding.value.move(evt);
+            }
           }
 
         },{passive: true});
@@ -180,8 +217,10 @@ VueSimpleGesture.install = function(Vue, options){
         });
 
         el.addEventListener('touchend',function(evt){
-          press = false;
-          binding.value.end(evt);
+          if (evt.touches.length == 1) {
+            press = false;
+            binding.value.end(evt);
+          }
         });
         el.addEventListener('mouseup',function(evt){
           press = false;
@@ -189,8 +228,10 @@ VueSimpleGesture.install = function(Vue, options){
         });
 
         el.addEventListener('touchleave',function(evt){
-          press = false;
-          binding.value.leave(evt);
+          if (evt.touches.length == 1) {
+            press = false;
+            binding.value.leave(evt);
+          }
         });
         el.addEventListener('mouseout',function(evt){
           press = false;
@@ -200,9 +241,11 @@ VueSimpleGesture.install = function(Vue, options){
 
       if (binding.arg == 'swipe') {
         el.addEventListener('touchstart',function(evt){
-          press = true;
-          currentX = evt.changedTouches[0].pageX;
-          currentY = evt.changedTouches[0].pageY;
+          if (evt.touches.length == 1) {
+            press = true;
+            currentX = evt.changedTouches[0].pageX;
+            currentY = evt.changedTouches[0].pageY;
+          }
         },{passive: true});
         el.addEventListener('mousedown',function(evt){
           currentX = evt.pageX;
@@ -234,13 +277,15 @@ VueSimpleGesture.install = function(Vue, options){
         }
 
         el.addEventListener('touchend',function(evt){
-          if (press) {
-            press = false;
-            evt.movementX = evt.changedTouches[0].pageX - currentX;
-            evt.movementY = evt.changedTouches[0].pageY - currentY;
-            evt.direction = getDir(evt.movementX,evt.movementY);
+          if (evt.touches.length == 1) {
+            if (press) {
+              press = false;
+              evt.movementX = evt.changedTouches[0].pageX - currentX;
+              evt.movementY = evt.changedTouches[0].pageY - currentY;
+              evt.direction = getDir(evt.movementX,evt.movementY);
 
-            if(evt.direction != undefined && evt.direction != '' && evt.direction.length != 0){binding.value(evt);}
+              if(evt.direction != undefined && evt.direction != '' && evt.direction.length != 0){binding.value(evt);}
+            }
           }
         });
         el.addEventListener('mouseup',function(evt){
@@ -256,13 +301,15 @@ VueSimpleGesture.install = function(Vue, options){
         });
 
         el.addEventListener('touchleave',function(evt){
-          if (press) {
-            press = false;
-            evt.movementX = evt.changedTouches[0].pageX - currentX;
-            evt.movementY = evt.changedTouches[0].pageY - currentY;
-            evt.direction = getDir(evt.movementX,evt.movementY);
+          if (evt.touches.length == 1) {
+            if (press) {
+              press = false;
+              evt.movementX = evt.changedTouches[0].pageX - currentX;
+              evt.movementY = evt.changedTouches[0].pageY - currentY;
+              evt.direction = getDir(evt.movementX,evt.movementY);
 
-            if(evt.direction != undefined && evt.direction != '' && evt.direction.length != 0){binding.value(evt);}
+              if(evt.direction != undefined && evt.direction != '' && evt.direction.length != 0){binding.value(evt);}
+            }
           }
 
         });

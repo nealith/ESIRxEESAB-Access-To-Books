@@ -20,6 +20,7 @@ VueSizeChanged.install = function(Vue, options){
           target:el
         }
         if (SizeChangeEvent.widthChanged == true || SizeChangeEvent.heigthChanged == true) {
+          console.log('tsssss');
           currentWidth = newStyle.width;
           currentHeigth = newStyle.height;
           binding.value(SizeChangeEvent);

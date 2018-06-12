@@ -269,7 +269,8 @@
               <div v-if="(bonus.length > 0)" class="library-book-container">
                 <slides id="bonus"
                         :horizontal="true"
-                        :on-slide="updateDescription">
+                        :on-slide="updateDescription"
+                        :drag="true">
                   <template v-for="page in bonus">
                     <slide  aclass="book_page"
                             :data="page"

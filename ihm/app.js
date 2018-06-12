@@ -4,6 +4,7 @@ const fs = require('fs');
 
 Vue.use(VueSimpleGesture);
 Vue.use(VueSizeChanged);
+Vue.use(VueDraggable);
 Vue.use(VueSlides);
 Vue.use(AlloyFingerVue);
 Vue.use(VueDraggable);
@@ -36,11 +37,15 @@ ipcRenderer.on('receiveDirList', (event, arg) => {
   dir = arg;
 });*/
 
-window.client = new Caress.Client({
-    host: 'localhost',
-    port: 5000
-});
-client.connect();
+var enableCaress = remote.getGlobal('enableCaress');
+
+if (enableCaress == true) {
+  window.client = new Caress.Client({
+      host: 'localhost',
+      port: 5000
+  });
+  window.client.connect();
+}
 
 
 var frame = {
@@ -81,6 +86,38 @@ var zoom;
 var montages = remote.getGlobal('montages');
 var books = remote.getGlobal('books');
 var bonus = remote.getGlobal('bonus');
+var debug = remote.getGlobal('debug');
+
+if (debug == true) {
+  window.addEventListener('mouseup',function(e){
+    console.log(e);
+  });
+  window.addEventListener('mousemose',function(e){
+    console.log(e);
+  });
+  window.addEventListener('mousedown',function(e){
+    console.log(e);
+  });
+  window.addEventListener('mouseout',function(e){
+    console.log(e);
+  });
+
+  window.addEventListener('touchstart',function(e){
+    console.log(e);
+  });
+  window.addEventListener('touchmove',function(e){
+    console.log(e);
+  });
+  window.addEventListener('touchleave',function(e){
+    console.log(e);
+  });
+  window.addEventListener('touchend',function(e){
+    console.log(e);
+  });
+  window.addEventListener('touchcancel',function(e){
+    console.log(e);
+  });
+}
 
 
 //----------------------------------------------------------------------

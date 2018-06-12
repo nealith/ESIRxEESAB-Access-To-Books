@@ -1,8 +1,10 @@
 // IMPORTANT
 
+// NEED vue-draggable.js
 // NEED vue-size-changed.js
 // NEED vue-simple-gesture.js
 
+// if not done : don't forget Vue.use(VueDraggable);
 // if not done : don't forget Vue.use(VueSizeChanged);
 // if not done : don't forget Vue.use(VueSimpleGesture);
 
@@ -29,8 +31,9 @@ VueSlides.install = function(Vue, options){
       lock:Boolean,
       conf:Object,
       aclass:String,
-      drag:Boolean,
-      'on-slide':Function
+      'pseudo-drag':Boolean,
+      'on-slide':Function,
+      'drag':Boolean
     },
     methods:{
       updateSelected(selected){
@@ -47,6 +50,7 @@ VueSlides.install = function(Vue, options){
         }
       },
       scrollToSelected:function(){
+        console.log('lol');
         container = document.getElementById(this.id);
         slides = (Array.from(container.children))[0];
         slidesChilds = Array.from(slides.children);
@@ -99,8 +103,9 @@ VueSlides.install = function(Vue, options){
 
       },
       swipe:function(evt){
-        if ( (this.drag === undefined || this.drag == false) && (this.lock === undefined || this.lock == false)) {
+        if ((this.pseudoDrag === undefined || this.pseudoDrag == false) && (this.lock === undefined || this.lock == false)) {
           nextSelected=this.selected;
+
           if ((this.horizontal != undefined && this.horizontal == true ) && (evt.direction == 'R' || evt.direction == 'L')) {
             if (evt.direction == 'L') {
               nextSelected++;
@@ -130,18 +135,19 @@ VueSlides.install = function(Vue, options){
         }
       },
       move:function(evt){
-        if ((this.drag != undefined && this.drag == true) && (this.lock === undefined || this.lock == false)) {
+        if ((this.pseudoDrag != undefined && this.pseudoDrag == true) && (this.lock === undefined || this.lock == false)) {
+
           nextSelected=this.selected;
-          if ((this.horizontal != undefined && this.horizontal == true ) && evt.movementX > evt.movementY) {
-            if (evt.movementX > 0) {
+          if ((this.horizontal != undefined && this.horizontal == true )) {
+            if (evt.movementX < 0) {
               nextSelected++;
-            } else {
+            } else if (evt.movementX > 0) {
               nextSelected--;
             }
-          } else if((this.horizontal === undefined || this.horizontal == false) && evt.movementX < evt.movementY) {
-            if (evt.movementY > 0) {
+          } else if((this.horizontal === undefined || this.horizontal == false)) {
+            if (evt.movementY < 0) {
               nextSelected++;
-            } else {
+            } else if (evt.movementY > 0) {
               nextSelected--;
             }
           }
@@ -159,11 +165,102 @@ VueSlides.install = function(Vue, options){
             }
           }
         }
+      },
+      ondrag:function(evt){
+
+        console.log('enculer');
+
+        nextSelected=this.selected;
+        container = document.getElementById(this.id);
+        slides = (Array.from(container.children))[0];
+        slidesChilds = Array.from(slides.children);
+
+        rectContainer = container.getBoundingClientRect();
+
+        xContainerCenter = parseFloat(rectContainer.width)/2 + parseFloat(rectContainer.left);
+        yContainerCenter = parseFloat(rectContainer.height)/2 + parseFloat(rectContainer.top);
+
+        selectedEl = slidesChilds[this.selected];
+        selectedEl.removeAttribute('selected');
+
+        if (this.pos != undefined && this.pos==0) {
+          if (this.horizontal != undefined && this.horizontal == true) {
+            xContainerCenter = parseFloat(rectContainer.left);
+          } else {
+            yContainerCenter = parseFloat(rectContainer.top);
+          }
+        }
+
+        if (this.pos != undefined && this.pos==2) {
+          if (this.horizontal != undefined && this.horizontal == true) {
+            xContainerCenter = parseFloat(rectContainer.right);
+          } else {
+            yContainerCenter = parseFloat(rectContainer.bottom);
+          }
+        }
+
+        var bestEl = null;
+        var bestElRect;
+        var bestDistX;
+        var bestDistY;
+
+        for (var i = 0; i < slidesChilds.length; i++) {
+
+          nextselectedEl = slidesChilds[i];
+
+          rectSelectedEl = nextselectedEl.getBoundingClientRect();
+
+          xSelectedElCenter = parseFloat(rectSelectedEl.width)/2 + parseFloat(rectSelectedEl.left);
+          ySelectedElCenter = parseFloat(rectSelectedEl.height)/2 + parseFloat(rectSelectedEl.top);
+
+          if (this.pos != undefined && this.pos==0) {
+            if (this.horizontal != undefined && this.horizontal == true) {
+              xSelectedElCenter = parseFloat(rectSelectedEl.left);
+            } else {
+              ySelectedElCenter = parseFloat(rectSelectedEl.top);
+            }
+          }
+
+          if (this.pos != undefined && this.pos==2) {
+            if (this.horizontal != undefined && this.horizontal == true) {
+              xSelectedElCenter = parseFloat(rectSelectedEl.right);
+            } else {
+              ySelectedElCenter = parseFloat(rectSelectedEl.bottom);
+            }
+          }
+
+          distX = Math.abs(xContainerCenter - xSelectedElCenter);
+          distY = Math.abs(yContainerCenter - ySelectedElCenter);
+
+
+          if ((distY < bestDistY && this.horizontal == false) || (this.horizontal == true && distX < bestDistX) || bestEl == null) {
+            bestEl = nextselectedEl;
+            bestElRect = rectSelectedEl;
+            bestDistX = distX;
+            bestDistY = distY;
+            nextSelected = i;
+          } else {
+            break;
+          }
+        }
+
+        this.selected = nextSelected;
+        bestEl.setAttribute('selected',true);
       }
     },
     template:`
-      <div v-bind:id="id" :class="aclass != undefined ? 'slides-container '+aclass : 'slides-container'" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:press-move="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="horizontal" :vertical="!horizontal">
+      <div v-if="!drag" v-bind:id="id" :class="aclass != undefined ? 'slides-container '+aclass : 'slides-container'" v-size-changed="scrollToSelected" v-simple-gesture:swipe="swipe" v-simple-gesture:press-move="{start:function(){},move:move,end:function(){},leave:function(){}}" :horizontal="horizontal" :vertical="!horizontal">
         <div class="slides">
+          <slot></slot>
+        </div>
+      </div>
+
+      <div v-else-if="drag" v-bind:id="id" :class="aclass != undefined ? 'slides-container '+aclass : 'slides-container'" v-size-changed="scrollToSelected" :horizontal="horizontal" :vertical="!horizontal">
+        <div v-if="(horizontal != undefined || horizontal == true) ? true : false" class="slides" v-draggable="{axis:'x',drag:ondrag,end:scrollToSelected}">
+          <slot></slot>
+        </div>
+
+        <div v-else-if="(horizontal === undefined || horizontal == false) ? true : false" class="slides" v-draggable="{axis:'y',drag:ondrag,end:scrollToSelected}">
           <slot></slot>
         </div>
       </div>
