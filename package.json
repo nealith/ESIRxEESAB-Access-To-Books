@@ -10,11 +10,15 @@
     "image-size": "^0.6.2",
     "klaw": "^2.1.1",
     "mqtt": "^1.14.1",
+    "node-osc": "^2.1.0",
+    "osc": "2.2.2",
+    "osc-min": "^1.1.1",
     "sharp": "^0.20.3",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
     "through2": "^2.0.3",
-    "yazl": "^2.4.3"
+    "yazl": "^2.4.3",
+    "xml2js": "^0.4.19"
   },
   "scripts": {
     "start": "./node_modules/electron/dist/electron ./",

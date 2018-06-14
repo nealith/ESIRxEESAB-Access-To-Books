@@ -14,5 +14,6 @@
   "debug":false,
   "user":"nealith",
   "pathMedia":"/run/media/",
-  "enableCaress":true
+  "enableTuio":true,
+  "tuioData":"xml"
 }

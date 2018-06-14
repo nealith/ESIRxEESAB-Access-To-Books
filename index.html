@@ -22,7 +22,7 @@
     <script type="text/javascript" src="./libs/svg.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="./libs/svg.draggable.min.js" charset="utf-8"></script>
 
-    <script type="text/javascript" src="./libs/caress-0.1.0.min.js"></script>
+    <script type="text/javascript" src="./libs/caress-0.1.0.js"></script>
 
     <script type="text/javascript" src="./libs/alloy_finger.js"></script>
     <script type="text/javascript" src="./libs/alloy_finger.vue.js"></script>
@@ -248,7 +248,8 @@
                 <div class="library-book-container">
                   <slides :id="book.name"
                           :horizontal="true"
-                          :on-slide="updateDescription">
+                          :on-slide="updateDescription"
+                          :drag="true">
                     <template v-for="page in book.pages">
                       <slide  aclass="book_page"
                               :data="page"

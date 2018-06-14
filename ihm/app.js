@@ -37,9 +37,9 @@ ipcRenderer.on('receiveDirList', (event, arg) => {
   dir = arg;
 });*/
 
-var enableCaress = remote.getGlobal('enableCaress');
+var enableTuio = remote.getGlobal('enableTuio');
 
-if (enableCaress == true) {
+if (enableTuio == true) {
   window.client = new Caress.Client({
       host: 'localhost',
       port: 5000

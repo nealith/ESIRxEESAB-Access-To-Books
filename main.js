@@ -89,7 +89,8 @@ global.montages_path = CONFIG.montages.path
 global.user = CONFIG.user
 global.path_media = CONFIG.pathMedia
 global.debug = CONFIG.debug
-global.enableCaress = CONFIG.enableCaress
+global.enableTuio = CONFIG.enableTuio
+global.tuioData = CONFIG.tuioData
 
 if (!fs.existsSync(global.books_path)){
   fs.mkdirSync(global.books_path);
@@ -441,10 +442,8 @@ ipcMain.on('walkon',(event,arg) => {
 
 })
 
-
-
 //----------------------------------------------------------------------
-// tuio - CaressServer
+// SplashScreen
 //----------------------------------------------------------------------
 
 var transfer = false
@@ -462,74 +461,295 @@ function wait(){
   }
 }
 
-if (global.enableCaress == true) {
-  var server = require('http').createServer();
-  var io = require('socket.io')(server);
-  var CaressServer = require('caress-server');
-  var caress = new CaressServer('0.0.0.0', 3333, {json: false});
+if (global.enableTuio == true) {
 
-  //DEBUG
-  //caress.on('tuio', function(msg){
-  //  console.log(msg);
-  //});
+  //----------------------------------------------------------------------
+  // tuio - oracle
+  //----------------------------------------------------------------------
 
   var badEvent = {}
 
-  function onSocketConnect(socket) {
-      console.log("Socket.io Client Connected");
-
-      caress.on('tuio', function(msgObj){
-        console.log(msgObj);
-        if (transfer) {
-          var k = 0
-          while (k < msgObj.messages.length) {
-            e= msgObj.messages[k]
-            if (e.type != 'alive' && e.type != 'fseq') {
-              if( !(badEvent[e.sessionId] === undefined && badEvent[JSON.stringify({x:e.xPosition,y:e.yPosition})] === undefined)){
-                //console.log(e.sessionId);
-                //console.log(JSON.stringify({x:e.xPosition,y:e.yPosition}));
-                  msgObj.messages.splice(k,1);
-                  k--
-                }
-            }
-            k++
-          }
-          if (msgObj.messages.length > 2) {
-            socket.emit('tuio', msgObj)
-          } else {
-            //console.log("event removed")
-          }
-
-        } else {
-          var k = 0
-          while (k < msgObj.messages.length) {
-            e= msgObj.messages[k]
-            if (e.type != 'alive' && e.type != 'fseq') {
-              badEvent[e.sessionId]=e
-              badEvent[JSON.stringify({x:e.xPosition,y:e.yPosition})]=e
-            }
-            k++
-          }
-        }
-      });
-
-      socket.on("disconnect", function(){
-        console.log("Socket.io Client Disconnected");
-      });
-
-      setTimeout(wait,1000)
+  function isBadEvent(id,coordonates){
+    return (!(badEvent[id] === undefined && badEvent[JSON.stringify({x:coordonates.x,y:coordonates.y})] === undefined))
   }
 
-  io.sockets.on("connection", onSocketConnect);
+  function saveBadEvent(id,coordonates,evt){
+    if (badEvent[id] === undefined) {
+      badEvent[id] = []
+    }
+    badEvent[id].push(evt);
+    badEvent[JSON.stringify({x:coordonates.x,y:coordonates.y})]=evt
+  }
+
+  //----------------------------------------------------------------------
+  // tuio - Flash XML parser
+  //----------------------------------------------------------------------
+
+  var xmlParser = require('xml2js').parseString
+
+  function parseTUIOFromXMLString(str,callback){
+    objFromXML = xmlParser(str, function(err,result){
+      if (err && err != null) {
+        //console.log(err)
+      } else {
+        tuioBundle = {
+          bundle:true,
+          messages:[],
+          duplicate:false
+        }
+
+        var type = ''
+
+        for (var i = 0; i < result.OSCPACKET.MESSAGE.length; i++) {
+          //tuioBundle.messages.push(result.OSCPACKET.MESSAGE[i].ARGUMENT)
+
+          type = result.OSCPACKET.MESSAGE[i].$.NAME
+
+          if (result.OSCPACKET.MESSAGE[i].ARGUMENT[0].$.VALUE === "fseq") {
+            //console.log("fseq entry");
+
+            tuioBundle.messages.push({ profile: type,
+              type: 'fseq',
+              frameID:  parseFloat(result.OSCPACKET.MESSAGE[i].ARGUMENT[1].$.VALUE)})
+          } else if (result.OSCPACKET.MESSAGE[i].ARGUMENT[0].$.VALUE === "alive") {
+            //console.log("alive entry");
+
+            ids = []
+
+            for (var j = 1; j < result.OSCPACKET.MESSAGE[i].ARGUMENT.length; j++) {
+              ids.push(parseFloat(result.OSCPACKET.MESSAGE[i].ARGUMENT[j].$.VALUE))
+            }
+
+            tuioBundle.messages.push({ profile: type,
+              type: 'alive',
+              sessionIds:  ids})
+          } else {
+            //console.log("set entry");
+            var set;
+            try {
+              set = {
+                profile:type,
+                type:'set',
+                sessionId: parseFloat(result.OSCPACKET.MESSAGE[i].ARGUMENT[1].$.VALUE),
+                xPosition: parseFloat(result.OSCPACKET.MESSAGE[i].ARGUMENT[2].$.VALUE),
+                yPosition: parseFloat(result.OSCPACKET.MESSAGE[i].ARGUMENT[3].$.VALUE),
+                xVelocity: parseFloat(result.OSCPACKET.MESSAGE[i].ARGUMENT[4].$.VALUE),
+                yVelocity: parseFloat(result.OSCPACKET.MESSAGE[i].ARGUMENT[5].$.VALUE),
+                motionAcceleration: parseFloat(result.OSCPACKET.MESSAGE[i].ARGUMENT[6].$.VALUE)
+              }
+            } catch (e) {
+              //console.log(JSON.stringify(result.OSCPACKET.MESSAGE[i]));
+            }
+
+            tuioBundle.messages.push(set)
+
+          }
+        }
+        //console.log(JSON.stringify(tuioBundle));
+
+        var alive
+        var messages=[]
+        var fseq
+
+        for (var i = 0; i < tuioBundle.messages.length; i++) {
+          if (tuioBundle.messages[i].type == 'alive') {
+            alive = tuioBundle.messages[i]
+          } else if (tuioBundle.messages[i].type == 'fseq') {
+            fseq = tuioBundle.messages[i]
+          } else {
+            messages.push(tuioBundle.messages[i])
+          }
+        }
+
+        messages.unshift(alive)
+        messages.push(fseq)
+
+        tuioBundle.messages = messages
 
 
-  server.listen(5000);
+        callback(tuioBundle)
+      }
+
+    })
+  }
+
+
+
+  /* fail
+
+  //----------------------------------------------------------------------
+  // tuio - osc / Flash XML
+  //----------------------------------------------------------------------
+
+  ///// 1er DON'T WORK
+
+  var oscServer = null;
+
+  if (global.tuioData == 'lol') {
+    var osc = require('node-osc');
+
+    oscServer = new osc.Server(3000, '127.0.0.1');
+    oscServer.on("message", function (msg, rinfo) {
+          console.log("TUIO message:"+rinfo);
+          console.log(msg);
+    });
+  }
+
+  ///// 2eme DON'T WORK
+  var udpPort;
+  if (global.tuioData == 'lol') {
+    // Create an osc.js UDP Port listening on port 57121.
+    var osc = require("osc"),
+    udpPort = new osc.UDPPort({
+        localAddress: "127.0.0.1",
+        localPort: 3000,
+        metadata: false
+    });
+
+    // Listen for incoming OSC bundles.
+    udpPort.on("bundle", function (oscBundle, timeTag, info) {
+        console.log("An OSC bundle just arrived for time tag", timeTag, ":", oscBundle);
+        console.log("Remote info is: ", info);
+    });
+
+    // Open the socket.
+    udpPort.open();
+  }
+
+  /////// 3eme
+
+  var sock = null;
+  if (global.tuioData == 'lol') {
+    var osc = require ('osc-min')
+    var udp = require ('dgram')
+    var parseString = require('xml2js').parseString
+    sock = udp.createSocket("udp4", function(msg, rinfo) {
+      var error, error1;
+      try {
+        oscPacket = osc.fromBuffer(msg)
+        parseTUIOFromXMLString(oscPacket.address,function(e){console.log('lol');})
+      } catch (error1) {
+        error = error1;
+        return console.log("invalid OSC packet");
+      }
+    });
+
+    sock.bind(3000);
+  } */
+
+  //----------------------------------------------------------------------
+  // tuio - dgram UDP / Flash XML
+  //----------------------------------------------------------------------
+
+  var serverUDP = null;
+  if (global.tuioData == 'xml') {
+
+    var PORT = 3333;
+    var HOST = '127.0.0.1';
+
+    var dgram = require('dgram');
+    serverUDP = dgram.createSocket('udp4');
+
+    serverUDP.on('listening', function () {
+        var address = serverUDP.address();
+        console.log('UDP Server listening on ' + address.address + ":" + address.port);
+    });
+
+    serverUDP.bind(PORT, HOST);
+  }
+
+
+  //----------------------------------------------------------------------
+  // tuio - CaressServer
+  //----------------------------------------------------------------------
+
+  var CaressServer = require('caress-server');
+  var caressServer = null;
+  if (global.tuioData == 'json') {
+    caressServer = new CaressServer('0.0.0.0', 3333, {json: false});
+  }
+
+  //----------------------------------------------------------------------
+  // tuio - SocketIO -> Caress Client (match with both data type)
+  //----------------------------------------------------------------------
+
+  var ioServer = require('http').createServer();
+  var io = require('socket.io')(ioServer);
+
+  io.sockets.on("connection", function(socket){
+    console.log("Socket.io Client Connected");
+
+    function oracle(msgObj){
+      //console.log(new Date().getTime())
+      //console.log(msgObj)
+      if (transfer) {
+        var k = 0
+        while (k < msgObj.messages.length) {
+          e= msgObj.messages[k]
+          if (e.type != 'alive' && e.type != 'fseq') {
+            if(isBadEvent(e.sessionId,{x:e.xPosition,y:e.yPosition}) ){
+              msgObj.messages.splice(k,1);
+              k--
+            }
+          } else if (e.type == 'alive') {
+            ids = []
+            if (e.sessionIds != undefined) {
+              for (var l = 0; l < e.sessionIds.length; l++) {
+                if (!isBadEvent(e.sessionIds[l],{x:-1,y:-1})) {
+                  ids.push(e.sessionIds[l])
+                }
+              }
+              msgObj.messages[k].sessionIds = ids
+            }
+
+          }
+          k++
+        }
+        if (msgObj.messages.length > 2) {
+          console.log(JSON.stringify(msgObj));
+          socket.emit('tuio', msgObj)
+        }
+      } else {
+        var k = 0
+        while (k < msgObj.messages.length) {
+          e= msgObj.messages[k]
+          if (e.type != 'alive' && e.type != 'fseq') {
+            saveBadEvent(e.sessionId,{x:e.xPosition,y:e.yPosition},e)
+          }
+          k++
+        }
+      }
+    }
+
+    if (global.tuioData == 'json') {
+      caressServer.on('tuio', oracle);
+    } else if (global.tuioData == 'xml') {
+      messageXML = ''
+      serverUDP.on('message', function (message, remote) {
+        messageXML+=message
+        if (message.includes('</OSCPACKET>')) {
+          parseTUIOFromXMLString(messageXML.trim(),oracle)
+        } else if (message.includes('<OSCPACKET')) {
+          messageXML = message +''
+        }
+
+      });
+    }
+
+    socket.on("disconnect", function(){
+      console.log("Socket.io Client Disconnected");
+    });
+
+    setTimeout(wait,1000)
+
+  });
+
+
+  ioServer.listen(5000);
+
 } else {
   setTimeout(wait,1000)
 }
-
-
-
 
 //----------------------------------------------------------------------
 // ipc
