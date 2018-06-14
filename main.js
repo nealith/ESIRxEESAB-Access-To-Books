@@ -91,6 +91,7 @@ global.path_media = CONFIG.pathMedia
 global.debug = CONFIG.debug
 global.enableTuio = CONFIG.enableTuio
 global.tuioData = CONFIG.tuioData
+global.eventToPrint = CONFIG.eventToPrint
 
 if (!fs.existsSync(global.books_path)){
   fs.mkdirSync(global.books_path);
@@ -573,70 +574,6 @@ if (global.enableTuio == true) {
     })
   }
 
-
-
-  /* fail
-
-  //----------------------------------------------------------------------
-  // tuio - osc / Flash XML
-  //----------------------------------------------------------------------
-
-  ///// 1er DON'T WORK
-
-  var oscServer = null;
-
-  if (global.tuioData == 'lol') {
-    var osc = require('node-osc');
-
-    oscServer = new osc.Server(3000, '127.0.0.1');
-    oscServer.on("message", function (msg, rinfo) {
-          console.log("TUIO message:"+rinfo);
-          console.log(msg);
-    });
-  }
-
-  ///// 2eme DON'T WORK
-  var udpPort;
-  if (global.tuioData == 'lol') {
-    // Create an osc.js UDP Port listening on port 57121.
-    var osc = require("osc"),
-    udpPort = new osc.UDPPort({
-        localAddress: "127.0.0.1",
-        localPort: 3000,
-        metadata: false
-    });
-
-    // Listen for incoming OSC bundles.
-    udpPort.on("bundle", function (oscBundle, timeTag, info) {
-        console.log("An OSC bundle just arrived for time tag", timeTag, ":", oscBundle);
-        console.log("Remote info is: ", info);
-    });
-
-    // Open the socket.
-    udpPort.open();
-  }
-
-  /////// 3eme
-
-  var sock = null;
-  if (global.tuioData == 'lol') {
-    var osc = require ('osc-min')
-    var udp = require ('dgram')
-    var parseString = require('xml2js').parseString
-    sock = udp.createSocket("udp4", function(msg, rinfo) {
-      var error, error1;
-      try {
-        oscPacket = osc.fromBuffer(msg)
-        parseTUIOFromXMLString(oscPacket.address,function(e){console.log('lol');})
-      } catch (error1) {
-        error = error1;
-        return console.log("invalid OSC packet");
-      }
-    });
-
-    sock.bind(3000);
-  } */
-
   //----------------------------------------------------------------------
   // tuio - dgram UDP / Flash XML
   //----------------------------------------------------------------------
@@ -680,15 +617,15 @@ if (global.enableTuio == true) {
     console.log("Socket.io Client Connected");
 
     function oracle(msgObj){
-      //console.log(new Date().getTime())
-      //console.log(msgObj)
       if (transfer) {
         var k = 0
+        var removed = []
         while (k < msgObj.messages.length) {
           e= msgObj.messages[k]
           if (e.type != 'alive' && e.type != 'fseq') {
             if(isBadEvent(e.sessionId,{x:e.xPosition,y:e.yPosition}) ){
               msgObj.messages.splice(k,1);
+              removed.push(e);
               k--
             }
           } else if (e.type == 'alive') {
@@ -706,7 +643,20 @@ if (global.enableTuio == true) {
           k++
         }
         if (msgObj.messages.length > 2) {
-          console.log(JSON.stringify(msgObj));
+          if (global.debug) {
+            console.log('time :'+new Date().getTime())
+            if (global.eventToPrint == 'removed') {
+              console.log(JSON.stringify(removed))
+            } else if (global.eventToPrint == 'accepted') {
+              console.log(JSON.stringify(msgObj))
+            } else if (global.eventToPrint == 'both') {
+              console.log('removed :: ')
+              console.log(JSON.stringify(removed))
+              console.log('accepted :: ')
+              console.log(JSON.stringify(msgObj))
+            }
+
+          }
           socket.emit('tuio', msgObj)
         }
       } else {

@@ -15,5 +15,6 @@
   "user":"nealith",
   "pathMedia":"/run/media/",
   "enableTuio":true,
-  "tuioData":"xml"
+  "tuioData":"xml",
+  "eventToPrint":"removed" 
 }
