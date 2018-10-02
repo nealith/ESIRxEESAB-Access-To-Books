@@ -145,7 +145,7 @@ zoom = new Vue({
                 {
                   type:'textarea',
                   id:'new-bonus-description',
-                  placeholder:'Description (:',
+                  placeholder:'Description',
                   tap:dialogue.focus
                 }
               ],
@@ -174,22 +174,3 @@ zoom = new Vue({
     }
   }
 });
-
-/*
-$(document.getElementById('marker1')).draggable({
-  containment: "parent",
-  snap: "#zoom",
-  snapTolerance: 20,
-  start: function(){},
-  drag: function(){},
-  stop: function(){}
-});
-
-$(document.getElementById('marker2')).draggable({
-  containment: "parent",
-  snap: "#zoom",
-  snapTolerance: 20,
-  start: function(){},
-  drag: function(){},
-  stop: function(){}
-});*/

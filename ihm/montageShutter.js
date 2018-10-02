@@ -10,8 +10,8 @@ function attachDragAndEvent(img){
   img.draggable({
     minX:0,
     minY:0,
-    maxX:montageWidth,
-    maxY:montageHeight
+    maxX:frame.w*pW,
+    maxY:frame.h
   });
   img.onLongTap = false;
   img.touchstart(function(){

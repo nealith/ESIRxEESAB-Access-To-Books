@@ -81,7 +81,7 @@ body {
 
 #voice_filters_info, #title {
 	position:absolute;
-	top:20px;
+	top:30px;
 	height:10px;
 	width:800px;
 	left:calc(var(--bars-width)/2 + 3px - 800px);
@@ -199,7 +199,7 @@ body {
 }
 
 #marker1{
-  background: darkorange;
+  background: white;
   box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -218,7 +218,7 @@ body {
 }
 
 #marker2{
-  background: darkcyan;
+  background: white;
   box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -383,6 +383,7 @@ until server capture all fake touch event from camera */
   background-image: url(./vocal.svg), none;
   background-repeat: no-repeat;
   background-position: center;
+	margin-top: 5px;
 }
 
 #rotationWrap{
@@ -464,10 +465,6 @@ MONTAGES
 	width: calc(100vw - 3 * var(--bars-width));
 }
 
-#ontageStrip svg + #montageStrip svg {
-	border-top:1px solid white;
-}
-
 .montage-label-container {
   height:100vh;
 }
@@ -490,7 +487,7 @@ LIBRARIES
   cursor:move;
   z-index:3;
   overflow :hidden;
-
+	font-style: italic;
 
 }
 
@@ -522,13 +519,14 @@ LIBRARIES
 	position:absolute;
 	left:50%;
 	transform: translateX(-50%);
+	margin-top: 10px;
 }
 
 .book_label > .page_ref:before {
 	content:"p.";
 }
 
-#bonus .book_label > .page_ref:before {
+#bonus_container .book_label > .page_ref:before {
 	content:"";
 }
 

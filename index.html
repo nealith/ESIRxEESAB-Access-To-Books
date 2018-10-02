@@ -141,7 +141,7 @@
             </div>
           </div>
           <div  id="buttons_bottom">
-            <div  id="title">ACCESS TO TOOLS</div>
+            <div  id="title">ACCESS TO BOOKS</div>
             <div  id="add_montage"
                   class="button"
                   v-on:click="onNewMontagePressed"
@@ -231,7 +231,7 @@
 
             <slide aclass="label-container">
                 <div class="centered-label">
-                  <label>bonus</label>
+                  <label>Annexes</label>
                 </div>
             </slide>
 
@@ -267,7 +267,7 @@
               <slide>
             </template>
             <slide>
-              <div v-if="(bonus.length > 0)" class="library-book-container">
+              <div v-if="(bonus.length > 0)" id="bonus_container" class="library-book-container">
                 <slides id="bonus"
                         :horizontal="true"
                         :on-slide="updateDescription"

@@ -19,7 +19,7 @@ mainStrip = new Vue({
           {
             type:'textarea',
             id:'new-montage-description',
-            placeholder:'Description (:',
+            placeholder:'Description',
             tap:dialogue.focus
           }
         ],
