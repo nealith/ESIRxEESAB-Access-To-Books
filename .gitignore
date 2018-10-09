@@ -1,9 +1,9 @@
 package-lock.json
 node_modules/**
-bonus.json
-books.json
-montages.json
-montages/**
-books/**
-bonus/**
+data/bonus.json
+data/books.json
+data/montages.json
+data/montages/**
+data/books/**
+data/bonus/**
 *.zip
