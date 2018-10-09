@@ -1,20 +1,20 @@
 {
   "montages":{
-    "index":"./montages.json",
-    "path":"./montages/"
+    "index":"./data/montages.json",
+    "path":"./data/montages/"
   },
   "books":{
-    "index":"./books.json",
-    "path":"./books/"
+    "index":"./data/books.json",
+    "path":"./data/books/"
   },
   "bonus":{
-    "index":"./bonus.json",
-    "path":"./bonus/"
+    "index":"./data/bonus.json",
+    "path":"./data/bonus/"
   },
   "debug":false,
   "user":"nealith",
   "pathMedia":"/run/media/",
   "enableTuio":true,
   "tuioData":"xml",
-  "eventToPrint":"removed" 
+  "eventToPrint":"removed"
 }

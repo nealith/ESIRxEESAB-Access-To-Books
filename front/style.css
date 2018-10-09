@@ -33,14 +33,14 @@ html {
 /* LES STYLES COMMENCENT ICI */
 @font-face {
 	font-family:"Roboto";
-	src:url("../fonts/Roboto-Regular.ttf") format("ttf");
+	src:url("../resources/fonts/Roboto-Regular.ttf") format("ttf");
 	font-style:normal;
 	font-weight:400;
 }
 
 @font-face {
 	font-family:"Roboto";
-	src:url("../fonts/Roboto-Italic.ttf") format("ttf");
+	src:url("../resources/fonts/Roboto-Italic.ttf") format("ttf");
 	font-style:italic;
 	font-weight:400;
 }
@@ -362,25 +362,25 @@ until server capture all fake touch event from camera */
 }
 
 #export_montage{
-  background-image: url(./export.svg), none;
+  background-image: url(../resources/icons/export.svg), none;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 #add_montage{
-  background-image: url(./montage.svg), none;
+  background-image: url(../resources/icons/montage.svg), none;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 #add_post-it{
-  background-image: url(./notes.svg), none;
+  background-image: url(../resources/icons/notes.svg), none;
   background-repeat: no-repeat;
   background-position: center;
 }
 
 #activate_voice{
-  background-image: url(./vocal.svg), none;
+  background-image: url(../resources/icons/vocal.svg), none;
   background-repeat: no-repeat;
   background-position: center;
 	margin-top: 5px;
@@ -402,7 +402,7 @@ until server capture all fake touch event from camera */
 }
 
 .rotationButton{
-  background-image: url(./turn.svg), none;
+  background-image: url(../resources/icons/turn.svg), none;
   background-repeat: no-repeat;
   width:var(--bars-width);
   background-position: center;

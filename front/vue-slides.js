@@ -50,7 +50,6 @@ VueSlides.install = function(Vue, options){
         }
       },
       scrollToSelected:function(){
-        console.log('lol');
         container = document.getElementById(this.id);
         slides = (Array.from(container.children))[0];
         slidesChilds = Array.from(slides.children);
@@ -167,8 +166,6 @@ VueSlides.install = function(Vue, options){
         }
       },
       ondrag:function(evt){
-
-        console.log('enculer');
 
         nextSelected=this.selected;
         container = document.getElementById(this.id);
