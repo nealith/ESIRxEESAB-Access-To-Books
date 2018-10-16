@@ -14,48 +14,15 @@ const through2 = require('through2')
 const sharp = require('sharp')
 const sizeOf = require('image-size');
 
+
 /*
- * MQTT Communications
+ * Voice recognition
  *
  */
 
- const mqtt = require('mqtt')
- const client = mqtt.connect('mqtt://192.168.38.1')
+const Voice = require('./back/voice.js')
+var myVoiceReognition = new Voice('mqtt://192.168.38.1')
 
-const voicepi_status = 'voicepi/status';
-const voicepi_mic0_status = 'voicepi/0/status';
-const voicepi_mic0_message = 'voicepi/0/message';
-
-client.on('connect', () => {
-  client.subscribe(voicepi_status)
-  client.subscribe(voicepi_mic0_status)
-  client.subscribe(voicepi_mic0_message)
-})
-
-client.on('message', (topic, message) => {
-  switch (topic) {
-    case voicepi_status:
-      return processVoiceStatus(message)
-    case voicepi_mic0_status:
-      return processNewMic(message)
-    case voicepi_mic0_message:
-      return processVoiceMessage(message)
-  }
-  console.log('No handler for topic %s', topic)
-})
-
-function processVoiceStatus (message) {
-    console.log('Voice connected status %s', message)
-    data = JSON.parse(message)
-}
-function processNewMic (message) {
-  console.log('Mic connected status %s', message)
-    data = JSON.parse(message)
-}
-function processVoiceMessage (message) {
-    console.log('New voice message %s', message)
-    data = JSON.parse(message)
-}
 
 //----------------------------------------------------------------------
 // CONFIG AND DATA FILES
