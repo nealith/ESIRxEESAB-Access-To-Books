@@ -3,16 +3,15 @@ const path = require('path')
 const url = require('url')
 const {ipcMain} = require('electron')
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let win
-
-
 const fs = require('fs')
 const klaw = require('klaw')
 const through2 = require('through2')
 const sharp = require('sharp')
 const sizeOf = require('image-size');
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let win
 
 
 /*
@@ -72,62 +71,50 @@ if (!fs.existsSync(global.montages_path)){
   fs.mkdirSync(global.montages_path);
 }
 
+function saveIndex(index,path){
+  var jsonData = JSON.stringify(index);
+  if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']'){
+    fs.writeFile(path, jsonData, function(err) {
+        if(err) {
+            return console.log(err);
+        } else {
+          console.log("saved :)");
+        }
+    });
+  }
+}
 
 function saveBooksIndex(){
   if (global.books != undefined) {
-    console.log('saveBooksIndex...');
-    var jsonData = JSON.stringify(global.books);
-    if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']'){
-      fs.writeFile(CONFIG.books.index, jsonData, function(err) {
-          if(err) {
-              return console.log(err);
-          } else {
-            console.log("Books saved :)");
-          }
-      });
-    }
+    console.log('save Books index...');
+    saveIndex(global.books,CONFIG.books.index);
+  } else {
+    console.log('no Books index')
   }
-
 }
 
 
 function saveBonusIndex(){
   if (global.bonus != undefined) {
-    console.log('saveBooksIndex...');
-    var jsonData = JSON.stringify(global.bonus);
-    if(jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']'){
-      fs.writeFile(CONFIG.bonus.index, jsonData, function(err) {
-          if(err) {
-              return console.log(err);
-          } else {
-            console.log("Bonus saved :)");
-          }
-      });
-    }
+    console.log('save Bonus index...');
+    saveIndex(global.bonus,CONFIG.bonus.index);
+  } else {
+    console.log('no Bonus index')
   }
-
 }
 
 function saveMontagesIndex(){
   if (global.montages != undefined) {
-    console.log('saveMontagesIndex...');
-    var jsonData = JSON.stringify(global.montages);
-    if (jsonData.length != 0 && jsonData != '' && jsonData != ' ' && jsonData[0] == '[' && jsonData[jsonData.length-1] == ']') {
-      fs.writeFile(CONFIG.montages.index, jsonData, function(err) {
-          if(err) {
-              return console.log(err);
-          } else {
-            console.log("Montages saved :)");
-          }
-      });
-    }
+    console.log('save Montages index...');
+    saveIndex(global.montages,CONFIG.montages.index);
+  } else {
+    console.log('no Montages index')
   }
 }
 
 
 ipcMain.on('copyFileSync',(event,arg) => {
 
-  //fs.copyFileSync(arg.path,arg.dest)
   fs.createReadStream(arg.path).pipe(fs.createWriteStream(arg.dest));
   return
 })
@@ -163,9 +150,6 @@ ipcMain.on('addBonus',(event,arg) => {
     fs.mkdirSync(bonus_path+'thumbnail/');
   }
 
-  console.log('test');
-  console.log(arg);
-
   rect={
     left:Number.parseInt(arg.left,10),
     top:Number.parseInt(arg.top,10),
@@ -175,8 +159,6 @@ ipcMain.on('addBonus',(event,arg) => {
 
   image.originalWidth = rect.width;
   image.originalHeight = rect.height;
-
-  console.log(rect);
 
   sharp(original)
   .rotate(arg.angle)
